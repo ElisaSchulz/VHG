@@ -40,8 +40,9 @@ No banco ficam guardados **só os dados das respostas**. O relatório não é sa
    - **Nunca** use a *secret key* (ou a antiga `service_role`) no site.
 4. **Feche o cadastro público:** em *Authentication › Sign In / Providers › Email*, desligue a opção **"Allow new users to sign up"**. Assim, só entra quem o Vitor convidar.
 5. **Informe o endereço do site:** em *Authentication › URL Configuration*:
-   - *Site URL*: o endereço do site (por exemplo `https://vhg.com.br/entrar.html`)
-   - *Redirect URLs*: adicione `https://SEU-ENDERECO/entrar.html`
+   - *Site URL*: o endereço principal do site, por exemplo `https://vitorhugogermano.com.br`. Os links de convite e de nova senha chegam nesse endereço, e o site leva a pessoa sozinho para a tela de criar senha.
+   - *Redirect URLs*: adicione o mesmo endereço com `/**` no fim (por exemplo `https://vitorhugogermano.com.br/**`). Pode haver mais de um: durante os testes, deixe também o endereço de teste.
+   - Ao trocar de endereço (do teste para o definitivo), só estas duas configurações mudam. Nenhum arquivo do site precisa ser alterado.
 6. **Crie as contas de admin:** em *Authentication › Users › Add user › Send invitation*, convide `elisacmazzo@gmail.com` e `germanovitorhugo@gmail.com`. Esses dois e-mails já nascem como admin. A lista fica na função `emails_admin()` do `schema.sql`: para mudar, edite e rode o script de novo.
 7. *(Recomendado)* Em *Authentication › Emails*, traduza os modelos de e-mail ("Invite user" e "Reset password"). Antes de começar a convidar clientes, configure um **SMTP próprio** em *Authentication › Emails › SMTP Settings*: o e-mail padrão do Supabase tem um limite baixo de envios por hora.
 
