@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relatório do diagnóstico · VHG</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,ital,wght@6..72,0,200;6..72,0,300;6..72,0,400;6..72,1,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/vhg.css">
+<style>
+  body { display: block; }
+  .barra-acoes { position: fixed; top: 20px; right: 20px; z-index: 99; display: flex; gap: 8px; }
+  .barra-acoes .btn { padding: 14px 22px; font-size: 11px; }
+  .barra-acoes .btn-linha { background: var(--papel-claro); }
+  .barra-acoes .btn-petroleo { border: 1px solid rgba(242,237,228,.35); }
+
+  .capa { background: var(--petroleo); color: var(--papel); min-height: 92vh; padding: clamp(40px,7vw,80px) clamp(24px,5vw,72px); display: flex; flex-direction: column; justify-content: space-between; gap: 60px; }
+  .capa .topo { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .capa .logo { display: flex; align-items: baseline; gap: 12px; }
+  .capa .logo b { font-family: var(--serif); font-weight: 200; font-size: 28px; letter-spacing: .08em; padding-left: .08em; }
+  .capa .logo span { font-size: 9px; font-weight: 500; letter-spacing: .22em; color: rgba(242,237,228,.7); }
+  .capa .tag { font-size: 10px; font-weight: 500; letter-spacing: .24em; color: var(--cobre); }
+  .capa .nome { font-family: var(--serif); font-weight: 200; font-size: clamp(36px,7vw,58px); line-height: 1.1; letter-spacing: -.01em; }
+  .capa .data { margin-top: 22px; font-size: 15px; color: rgba(242,237,228,.7); }
+  .capa .pe { font-size: 12px; line-height: 1.7; color: rgba(242,237,228,.55); }
+
+  .secao { padding: clamp(48px,7vw,80px) clamp(20px,5vw,32px); }
+  .secao.fina { padding-top: clamp(44px,6vw,64px); padding-bottom: clamp(44px,6vw,64px); }
+  .secao.fio-topo { border-top: 1px solid var(--linha-suave); }
+  .miolo { max-width: 780px; margin: 0 auto; }
+  .miolo.largo { max-width: 900px; }
+  .olho { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .olho .fio { width: 48px; flex-shrink: 0; }
+  .olho .t { font-size: 10px; font-weight: 500; letter-spacing: .24em; color: var(--texto-4); flex: 1; text-transform: uppercase; }
+  .olho .n { font-size: 10px; font-weight: 500; letter-spacing: .1em; color: var(--texto-6); font-feature-settings: 'tnum'; }
+  .olho.claro .t { color: var(--cobre); }
+  h2.tit { margin: 0 0 30px; font-family: var(--serif); font-weight: 300; font-size: clamp(26px,4vw,34px); line-height: 1.18; letter-spacing: -.01em; }
+  h3.sub { margin: 0 0 16px; font-family: var(--serif); font-weight: 300; font-size: 22px; }
+  .lead { margin: -14px 0 24px; font-size: 14.5px; line-height: 1.7; color: var(--texto-2); max-width: 660px; text-wrap: pretty; }
+  .bloco-claro { background: var(--papel-claro); border: 1px solid var(--linha-suave); }
+  .rot-p { font-size: 10px; font-weight: 500; letter-spacing: .14em; color: var(--texto-5); margin-bottom: 6px; text-transform: uppercase; }
+  .rot-k { font-size: 9.5px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); margin-bottom: 8px; text-transform: uppercase; }
+  .valor-p { font-size: 16px; font-weight: 600; color: var(--petroleo); }
+  .valor-m { font-family: var(--serif); font-weight: 300; font-size: 26px; color: var(--petroleo); font-feature-settings: 'tnum'; }
+  .valor-k { font-family: var(--serif); font-weight: 300; font-size: 20px; color: var(--petroleo); font-feature-settings: 'tnum'; overflow-wrap: anywhere; }
+  .sub-k { font-size: 11.5px; color: var(--texto-5); margin-top: 5px; line-height: 1.45; }
+  .texto { font-size: 16px; line-height: 1.8; color: var(--texto-2); max-width: 640px; text-wrap: pretty; }
+  .texto p { margin: 0 0 18px; }
+  .texto p:last-child { margin: 0; }
+
+  .escuro { background: var(--petroleo); color: var(--papel); padding: clamp(28px,4vw,38px); }
+  .escuro .rot-e { font-size: 10px; font-weight: 500; letter-spacing: .2em; color: var(--cobre); margin-bottom: 10px; text-transform: uppercase; }
+  .escuro .caixinha { background: rgba(242,237,228,.07); padding: 20px 22px; }
+  .escuro .caixinha .tx { font-size: 14.5px; line-height: 1.7; color: rgba(242,237,228,.88); }
+
+  .grafico { position: relative; width: 100%; padding-bottom: 41.7%; }
+  .g-rot { position: absolute; font-size: 10.5px; line-height: 1.2; white-space: nowrap; pointer-events: none; font-family: var(--sans); }
+  .g-rot-eixo { color: var(--texto-4); }
+  .g-rot-meta { color: var(--cobre); font-weight: 600; }
+  .g-rot-marco { color: var(--texto-2); font-weight: 600; }
+  .g-rot-alerta { color: #A2503F; font-weight: 600; }
+  @media (max-width: 639px) { .grafico { padding-bottom: 78%; } .g-rot { font-size: 10px; } }
+
+  .vazio { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .vazio .caixa { max-width: 520px; text-align: center; padding: 48px 40px; }
+  .vazio h1 { margin: 0 0 16px; font-family: var(--serif); font-weight: 300; font-size: 28px; color: var(--petroleo); }
+  .vazio p { margin: 0 0 28px; font-size: 15px; line-height: 1.7; color: var(--texto-2); }
+  .previa { background: var(--cobre); color: var(--petroleo-escuro); text-align: center; font-size: 11px; font-weight: 600; letter-spacing: .18em; padding: 10px; }
+
+  @media print {
+    .no-print { display: none !important; }
+    body { background: #fff; }
+    @page { size: A4; margin: 16mm; }
+    @page sangria { margin: 0; }
+    .capa, .encerramento { page: sangria; min-height: 0 !important; height: 296mm; padding: 26mm 22mm !important; }
+    .encerramento { break-before: page; }
+    .secao { break-before: page; padding: 0 !important; border-top: none !important; }
+    .bloco, .bloco-claro, .escuro { break-inside: avoid; }
+    .quebra { break-before: page; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra-acoes no-print" id="acoes" hidden>
+  <a href="area.html" class="btn btn-linha" id="voltar">VOLTAR</a>
+  <button type="button" class="btn btn-petroleo" onclick="window.print()">BAIXAR PDF</button>
+</div>
+
+<div id="relatorio"><div class="carregando" style="padding-top:30vh">CARREGANDO…</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/vhg.js"></script>
+<script src="assets/js/diagnostico-core.js"></script>
+<script src="assets/js/exemplo-diagnostico.js"></script>
+<script>
+"use strict";
+var fmt = VHGDiag.fmt, pct = VHGDiag.pct, esc = VHGDiag.esc;
+var NIVEL_TEXTS = VHGDiag.NIVEL_TEXTS;
+var TOTAL = 13;
+
+/* Valores longos encolhem a fonte para caber na caixa (a mesma conta do
+   relatório original: ~0,55em por caractere com algarismos tabulares). */
+function tamanhoValor(txt, base, largura) {
+  var estimado = String(txt).length * base * 0.55, teto = largura * 0.94;
+  return estimado <= teto ? base : Math.max(base * 0.45, base * teto / estimado).toFixed(1);
+}
+
+function olho(eyebrow, num) {
+  return '<div class="olho"><div class="fio"></div><div class="t">' + eyebrow + "</div>" +
+    (num ? '<div class="n">' + num + " · " + TOTAL + "</div>" : "") + "</div>";
+}
+function cab(eyebrow, num, titulo) { return olho(eyebrow, num) + '<h2 class="tit">' + titulo + "</h2>"; }
+function blocoCab(eyebrow, titulo, margem) {
+  return '<div style="margin-top:' + (margem === undefined ? 36 : margem) + 'px">' + olho(eyebrow) + "</div>" + '<h3 class="sub">' + titulo + "</h3>";
+}
+
+function escalaNiveis(atual) {
+  var itens = "";
+  for (var n = 1; n <= 5; n++) {
+    var cor = n === atual ? "#C08A4E" : n < atual ? "#D9BE9B" : "#E6DFD2";
+    itens += '<div><div style="height:5px; background:' + cor + '; margin-bottom:8px"></div>' +
+      '<div style="font-size:9.5px; line-height:1.3; text-align:center; color:' + (n === atual ? "#123B47" : "#9A9184") + '; font-weight:' + (n === atual ? 600 : 400) + '">' + NIVEL_TEXTS[n].nome + "</div></div>";
+  }
+  return '<div style="display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:22px">' + itens + "</div>";
+}
+
+/* Rosca: a identidade fica no grupo (essenciais em tons de petróleo,
+   flexíveis em tons de cobre) e, dentro do grupo, a claridade segue o
+   tamanho da fatia. A lista ao lado nomeia cada fatia com o percentual. */
+var RAMPA = {
+  essenciais: ["#123B47", "#1C5266", "#2A6C81", "#3E8A96", "#6E9AA4", "#9AAFA9", "#B9C8C4", "#D3DDDA"],
+  flexiveis: ["#C08A4E", "#D0A068", "#DCB585", "#E2C9A6", "#EADBC4"]
+};
+function corCat(c, i) { var r = RAMPA[c.grupo] || RAMPA.essenciais; return r[Math.min(i, r.length - 1)]; }
+
+function renderDistribuicao(R) {
+  var d = R.distribuicao;
+  var COMENTARIO = {
+    essenciais: { ok: "Dentro da faixa geralmente considerada saudável.", fora: "Acima da faixa geralmente considerada saudável — vale ver se há espaço para reduzir algum desses gastos fixos." },
+    flexiveis: { ok: "Dentro da faixa geralmente considerada saudável.", fora: "Acima da faixa geralmente considerada saudável — é aqui que os cortes costumam ser mais fáceis." },
+    investimentos: { ok: "Dentro (ou acima) da faixa geralmente considerada saudável.", fora: "Abaixo da faixa geralmente considerada saudável — é o que mais pesa no longo prazo." }
+  };
+  var faixas = d.faixas.map(function (f) {
+    var cor = f.dentro ? "#123B47" : "#C08A4E";
+    var rotulo = f.limite === "ate" ? "(ideal até " + f.ideal + "%)" : "(ideal no mínimo " + f.ideal + "%)";
+    return '<div style="margin-bottom:20px">' +
+      '<div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:7px; flex-wrap:wrap">' +
+      '<div style="font-size:14px; font-weight:600; color:#123B47">' + f.nome + "</div>" +
+      '<div style="font-size:13px; font-weight:600; color:' + cor + '; font-feature-settings:\'tnum\'">' + pct(f.pct, 1) + ' <span style="color:#9A9184; font-weight:400">' + rotulo + "</span></div></div>" +
+      '<div style="position:relative; height:8px; background:#E6DFD2"><div style="width:' + Math.max(0, Math.min(100, f.pct)) + '%; height:100%; background:' + cor + '"></div>' +
+      '<div style="position:absolute; top:-3px; left:' + f.ideal + '%; width:2px; height:14px; background:#123B47"></div></div>' +
+      '<div style="font-size:12px; color:#8A8175; line-height:1.55; margin-top:7px">' + f.itens + " " + COMENTARIO[f.key][f.dentro ? "ok" : "fora"] + "</div></div>";
+  }).join("");
+
+  var referencia = '<div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; margin:34px 0 12px">REFERÊNCIA</div>' +
+    '<h3 class="sub" style="font-size:20px; margin-bottom:12px">O que seria uma distribuição equilibrada</h3>' +
+    '<p style="margin:0 0 18px; font-size:13.5px; line-height:1.75; color:#48534F; max-width:620px; text-wrap:pretty">Uma referência comum de planejamento sugere até 50% da renda em despesas essenciais, até 30% em flexíveis e pelo menos 20% direcionado a investimentos e reserva — a lógica do “50/30/20”. É um ponto de partida, não uma regra: serve para mostrar onde vale ajustar primeiro.</p>' +
+    '<div class="bloco-claro" style="padding:24px clamp(20px,3vw,28px)">' + faixas + "</div>";
+
+  var topo = '<section class="secao fio-topo"><div class="miolo">' + olho("PARA ONDE VAI O DINHEIRO", "06") +
+    '<h2 class="tit" style="margin-bottom:18px">Distribuição de despesas</h2>';
+
+  if (!d.categorias.length) {
+    return topo + '<p style="margin:0 0 6px; font-size:14px; line-height:1.7; color:#48534F">Você não detalhou as despesas por categoria, então não há distribuição a mostrar. A régua abaixo usa os totais informados.</p>' + referencia + "</div></section>";
+  }
+
+  var RAIO = 60, LARG = 22, C = 2 * Math.PI * RAIO, acc = 0, vistos = {};
+  var arcos = d.categorias.map(function (c) {
+    var i = (vistos[c.grupo] = vistos[c.grupo] || 0); vistos[c.grupo]++;
+    var comp = (c.pct / 100) * C, traco = Math.max(comp - 2, 0.8);
+    var el = '<circle cx="80" cy="80" r="' + RAIO + '" fill="none" stroke="' + corCat(c, i) + '" stroke-width="' + LARG + '" stroke-dasharray="' + traco.toFixed(2) + " " + (C - traco).toFixed(2) + '" stroke-dashoffset="' + (-acc).toFixed(2) + '"></circle>';
+    acc += comp;
+    return el;
+  }).join("");
+  vistos = {};
+  var lista = d.categorias.map(function (c) {
+    var i = (vistos[c.grupo] = vistos[c.grupo] || 0); vistos[c.grupo]++;
+    return '<div style="display:flex; align-items:flex-start; gap:8px; padding:5px 0">' +
+      '<div style="width:9px; height:9px; background:' + corCat(c, i) + '; flex-shrink:0; margin-top:4px"></div>' +
+      '<div style="flex:1; min-width:0"><div style="font-size:12.5px; color:#48534F; line-height:1.35">' + esc(c.label) + "</div>" +
+      '<div style="font-size:11.5px; color:#9A9184; font-feature-settings:\'tnum\'; line-height:1.35">' + fmt(c.valor) + "</div></div>" +
+      '<div style="font-size:12.5px; font-weight:600; color:#123B47; font-feature-settings:\'tnum\'">' + pct(c.pct, 1) + "</div></div>";
+  }).join("");
+
+  return topo +
+    '<p style="margin:0 0 22px; font-size:14px; line-height:1.7; color:#48534F; max-width:580px; text-wrap:pretty">Como os ' + fmt(d.total) + " que saem por mês se repartem entre as categorias. Aqui os percentuais são sobre a despesa; na régua abaixo, sobre a renda.</p>" +
+    '<div class="bloco-claro" style="padding:clamp(22px,3vw,30px); display:flex; gap:clamp(22px,4vw,32px); align-items:center; flex-wrap:wrap">' +
+    '<div style="position:relative; width:176px; height:176px; flex-shrink:0; margin:0 auto">' +
+    '<svg width="176" height="176" viewBox="0 0 160 160" role="img" aria-label="Distribuição das despesas por categoria, total de ' + fmt(d.total) + '">' +
+    '<circle cx="80" cy="80" r="' + RAIO + '" fill="none" stroke="#E6DFD2" stroke-width="' + LARG + '"></circle><g transform="rotate(-90 80 80)">' + arcos + "</g></svg>" +
+    '<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none">' +
+    '<div style="font-size:9.5px; font-weight:500; letter-spacing:.14em; color:#8A8175">TOTAL</div>' +
+    '<div style="font-family:var(--serif); font-weight:300; font-size:' + tamanhoValor(fmt(d.total), 17, 100) + 'px; color:#123B47; font-feature-settings:\'tnum\'; white-space:nowrap">' + fmt(d.total) + "</div></div></div>" +
+    '<div style="flex:1 1 280px; min-width:240px; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:4px 20px">' + lista + "</div></div>" +
+    referencia + "</div></section>";
+}
+
+function renderReport(R) {
+  var h = "";
+  var D = R.data;
+
+  // 01 · Capa
+  h += '<section class="capa"><div class="topo"><div class="logo"><b>VHG</b><span>PLANEJAMENTO FINANCEIRO</span></div><div class="tag">DIAGNÓSTICO FINANCEIRO</div></div>' +
+    '<div style="max-width:640px"><div class="olho claro" style="margin-bottom:26px"><div class="fio"></div><div class="t" style="letter-spacing:.26em">RELATÓRIO PERSONALIZADO</div></div>' +
+    '<div class="nome">' + esc(D.nome) + '</div><div class="data">' + R.dataFormatada + "</div></div>" +
+    '<div class="pe">Documento educacional e orientativo · Vitor Hugo Germano · Planejamento Financeiro</div></section>';
+
+  // 02 · Abertura
+  h += '<section class="secao"><div class="miolo">' + cab("ANTES DE COMEÇAR", "02", "Boas-vindas ao seu diagnóstico, " + esc(D.primeiroNome) + ".") +
+    '<div class="texto"><p>Este relatório traduz tudo o que você compartilhou em um retrato claro e honesto da sua vida financeira hoje, sem jargão e sem julgamento.</p>' +
+    "<p>Nas próximas páginas você encontra: o score geral e o nível de maturidade financeira, o perfil comportamental, os números centrais da sua situação, o desempenho em cada uma das seis dimensões avaliadas, a projeção do patrimônio até a aposentadoria — quanto precisa ter, quanto precisa guardar por mês e o que o ritmo atual entrega — e um plano de ação com uma lista prática para os próximos 30 dias.</p>" +
+    "<p>É um retrato do momento, não uma sentença. Toda situação financeira evolui com clareza e direção certas.</p></div></div></section>";
+
+  // 03 · Score
+  var rodape = R.insightPercepcao.show
+    ? blocoCab("PERCEPÇÃO X REALIDADE", "Onde a sensação diverge dos números") +
+      '<div class="bloco-claro bloco" style="border-left:2px solid #C08A4E; padding:20px 24px">' +
+      R.insightPercepcao.itens.map(function (t, i, a) { return '<div style="font-size:14px; line-height:1.7; color:#48534F' + (i < a.length - 1 ? "; margin-bottom:10px" : "") + '">' + t + "</div>"; }).join("") + "</div>"
+    : blocoCab("COMO CHEGO AO SCORE", "O que entra na conta") +
+      '<div style="font-size:14px; line-height:1.75; color:#48534F; max-width:560px">O score combina seis dimensões da sua vida financeira — fluxo de caixa, liquidez, endividamento, gestão de risco, patrimônio e metas — cada uma com peso próprio na fórmula. Nas páginas seguintes está o desempenho detalhado em cada uma delas.</div>';
+  var circ = 2 * Math.PI * 68, arco = (Math.max(0, Math.min(100, R.scoreGeral)) / 100) * circ;
+  h += '<section class="secao fina fio-topo"><div class="miolo">' + cab("ONDE VOCÊ ESTÁ", "03", "Score geral e nível de maturidade") +
+    '<div class="bloco-claro bloco" style="padding:clamp(26px,4vw,38px); display:flex; align-items:center; gap:clamp(24px,4vw,40px); flex-wrap:wrap">' +
+    '<div style="position:relative; width:158px; height:158px; flex:0 0 auto"><svg width="158" height="158" viewBox="0 0 160 160">' +
+    '<circle cx="80" cy="80" r="68" fill="none" stroke="#E6DFD2" stroke-width="12"></circle>' +
+    '<circle cx="80" cy="80" r="68" fill="none" stroke="#C08A4E" stroke-width="12" stroke-dasharray="' + arco.toFixed(1) + " " + circ.toFixed(1) + '" transform="rotate(-90 80 80)"></circle></svg>' +
+    '<div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none">' +
+    '<div style="font-family:var(--serif); font-weight:300; font-size:46px; line-height:1; color:#123B47; font-feature-settings:\'tnum\'">' + R.scoreGeral + "</div>" +
+    '<div style="font-size:9px; font-weight:500; letter-spacing:.14em; color:#8A8175; margin-top:5px">DE 100</div></div></div>' +
+    '<div style="flex:1 1 280px; min-width:250px"><div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; margin-bottom:10px; text-transform:uppercase">Nível ' + R.nivel.n + " · " + R.nivel.nome + "</div>" +
+    '<div style="font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">' + R.nivel.contexto + "</div>" + escalaNiveis(R.nivel.n) + "</div></div>" +
+    blocoCab("CONTEXTO", "Resumo do perfil") +
+    '<div class="bloco-claro bloco" style="padding:clamp(24px,4vw,32px)"><div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:20px 24px">' +
+    '<div><div class="rot-p">Idade</div><div class="valor-p">' + esc(D.idade) + " anos</div></div>" +
+    '<div><div class="rot-p">Estado civil</div><div class="valor-p">' + esc(D.estadoCivil) + "</div></div>" +
+    '<div><div class="rot-p">Filhos / dependentes</div><div class="valor-p">' + esc(D.filhos) + "</div></div>" +
+    '<div><div class="rot-p">Ocupação</div><div class="valor-p">' + esc(D.ocupacao) + "</div></div></div>" +
+    '<div style="height:1px; background:#E6DFD2; margin:24px 0"></div>' +
+    '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px 24px">' +
+    '<div><div class="rot-p">Renda total mensal</div><div class="valor-m">' + R.kpis.rendaTotalDisplay + "</div></div>" +
+    '<div><div class="rot-p">Patrimônio total</div><div class="valor-m">' + R.kpis.patrimonioTotalDisplay + "</div></div></div></div>" +
+    rodape + "</div></section>";
+
+  // 04 · Arquétipo
+  var V = R.vozCliente;
+  var voz = V.show
+    ? '<div style="border-top:1px solid rgba(242,237,228,.18); margin-top:26px; padding-top:24px"><div class="rot-e" style="margin-bottom:14px">NA SUA FALA</div>' +
+      [V.situacao, V.maiorDor, V.sonhos].filter(Boolean).map(function (t) {
+        return '<div style="font-family:var(--serif); font-style:italic; font-weight:300; font-size:16px; line-height:1.65; color:rgba(242,237,228,.85); margin-bottom:10px">“' + esc(t) + "”</div>";
+      }).join("") + "</div>"
+    : "";
+  h += '<section class="secao"><div class="miolo">' + cab("ANÁLISE COMPORTAMENTAL", "04", "Seu arquétipo financeiro") +
+    '<div class="escuro bloco"><div class="rot-e" style="letter-spacing:.24em; margin-bottom:16px">SEU ARQUÉTIPO</div>' +
+    '<div style="font-family:var(--serif); font-weight:300; font-style:italic; font-size:clamp(26px,4vw,32px); margin-bottom:18px">' + R.arquetipo.nome + "</div>" +
+    '<div style="font-family:var(--serif); font-weight:300; font-size:20px; line-height:1.6; color:#C08A4E; max-width:620px; margin-bottom:26px; text-wrap:pretty">“' + R.arquetipo.abertura + "”</div>" +
+    '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-bottom:16px">' +
+    '<div class="caixinha"><div class="rot-e">PADRÃO IDENTIFICADO</div><div class="tx">' + R.arquetipo.padrao + "</div></div>" +
+    '<div class="caixinha"><div class="rot-e">POR QUE ESTE É O SEU PADRÃO</div><div class="tx">' + R.arquetipo.naoOutro + "</div></div></div>" +
+    '<div style="background:rgba(192,138,78,.18); padding:20px 24px"><div class="rot-e" style="margin-bottom:8px">PRIORIDADE IMEDIATA</div>' +
+    '<div style="font-size:16px; line-height:1.6; font-weight:500">' + R.arquetipo.prioridade + "</div></div>" + voz + "</div></div></section>";
+
+  // 05 · KPIs
+  var grupos = R.kpiGrupos.map(function (g) {
+    var itens = g.itens.map(function (k) {
+      return '<div class="bloco-claro" style="padding:16px 18px"><div class="rot-k">' + k.label + "</div>" +
+        '<div class="valor-k" style="font-size:' + tamanhoValor(k.value, 20, 170) + 'px">' + k.value + "</div>" +
+        (k.sub ? '<div class="sub-k">' + k.sub + "</div>" : "") + "</div>";
+    }).join("");
+    return '<div class="bloco" style="margin-bottom:28px"><div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; padding-bottom:10px; margin-bottom:16px; border-bottom:1px solid #E6DFD2; text-transform:uppercase">' + g.titulo + "</div>" +
+      '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; align-items:stretch">' +
+      '<div style="background:#123B47; color:#F2EDE4; padding:26px; display:flex; flex-direction:column; justify-content:center">' +
+      '<div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#C08A4E; margin-bottom:12px; text-transform:uppercase">' + g.destaque.label + "</div>" +
+      '<div style="font-family:var(--serif); font-weight:300; font-size:' + tamanhoValor(g.destaque.value, 30, 180) + 'px; line-height:1.15; font-feature-settings:\'tnum\'; white-space:nowrap">' + g.destaque.value + "</div>" +
+      (g.destaque.sub ? '<div style="font-size:12px; color:rgba(242,237,228,.62); margin-top:10px">' + g.destaque.sub + "</div>" : "") + "</div>" +
+      '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:12px; align-content:start">' + itens + "</div></div></div>";
+  }).join("");
+  h += '<section class="secao fio-topo"><div class="miolo largo">' + cab("OS NÚMEROS POR TRÁS", "05", "Indicadores financeiros") + grupos + "</div></section>";
+
+  // 06 · Distribuição
+  h += renderDistribuicao(R);
+
+  // 07 · Dimensões
+  var legenda = [["Crítico", "#A2503F"], ["Insuficiente", "#C08A4E"], ["Adequado", "#4E7F7A"], ["Excelente", "#123B47"]].map(function (l) {
+    return '<div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#8A8175"><div style="width:10px; height:10px; background:' + l[1] + '"></div>' + l[0] + "</div>";
+  }).join("");
+  var dims = R.dimRows.map(function (d) {
+    return '<div class="bloco-claro bloco" style="padding:20px clamp(20px,3vw,26px); margin-bottom:12px">' +
+      '<div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap">' +
+      '<div style="font-family:var(--serif); font-weight:300; font-size:19px; color:#123B47">' + d.nome + "</div>" +
+      '<div style="font-family:var(--serif); font-weight:300; font-size:19px; color:#123B47; font-feature-settings:\'tnum\'">' + d.score + '<span style="font-size:13px; color:#9A9184"> / 100</span></div></div>' +
+      '<div style="height:7px; background:#E6DFD2; margin-bottom:12px"><div style="' + d.barStyle + ' height:100%; border-radius:0"></div></div>' +
+      '<div style="font-size:13.5px; color:#48534F; line-height:1.65; text-wrap:pretty">' + d.contexto + "</div></div>";
+  }).join("");
+  h += '<section class="secao"><div class="miolo">' + olho("DIMENSÃO POR DIMENSÃO", "07") + '<h2 class="tit" style="margin-bottom:20px">Score por dimensão</h2>' +
+    '<div style="display:flex; gap:22px; flex-wrap:wrap; margin-bottom:26px">' + legenda + "</div>" + dims + "</div></section>";
+
+  // 08 · Aposentadoria
+  var A = R.aposentadoria;
+  var VEREDITO = { ok: ["#123B47", "O PLANO ESTÁ DE PÉ"], atencao: ["#C08A4E", "PRECISA DE AJUSTE"], critico: ["#A2503F", "GAP RELEVANTE"] };
+  var vd = VEREDITO[A.veredito.tipo] || VEREDITO.atencao;
+  var cards = A.cards.map(function (c) {
+    return '<div class="bloco-claro bloco" style="padding:18px 20px"><div class="rot-k" style="margin-bottom:9px">' + esc(c.label) + "</div>" +
+      '<div class="valor-k" style="font-size:' + tamanhoValor(c.value, 21, 170) + 'px">' + esc(c.value) + "</div>" +
+      (c.sub ? '<div class="sub-k" style="margin-top:6px; line-height:1.5">' + esc(c.sub) + "</div>" : "") + "</div>";
+  }).join("");
+  var metas = R.metasDeclaradas.length
+    ? blocoCab("METAS DECLARADAS", "O que você disse que quer") + '<div class="bloco-claro bloco" style="padding:22px 26px; margin-bottom:16px">' +
+      R.metasDeclaradas.map(function (m) {
+        return '<div style="display:flex; gap:12px; margin-bottom:9px; align-items:baseline"><div style="font-family:var(--serif); font-style:italic; color:#C08A4E; flex-shrink:0">—</div>' +
+          '<div style="font-size:14px; line-height:1.6; color:#48534F"><span style="font-weight:600; color:#123B47">' + esc(m.titulo) + "</span>" + (m.detalhe ? " · " + esc(m.detalhe) : "") + "</div></div>";
+      }).join("") + "</div>"
+    : "";
+  var legChart = [["Plano necessário", "background:#123B47"], ["Ritmo atual", "border-top:2px dashed #9AAFA9; height:0"], ["Patrimônio necessário", "border-top:2px dashed #C08A4E; height:0"]].map(function (l) {
+    return '<div style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#48534F"><div style="width:22px; height:3px; ' + l[1] + '"></div>' + l[0] + "</div>";
+  }).join("");
+  h += '<section class="secao fio-topo"><div class="miolo largo">' + olho("PRA ONDE ISSO LEVA", "08") +
+    '<h2 class="tit" style="margin-bottom:14px">' + esc(A.titulo) + "</h2>" +
+    '<p style="margin:0 0 24px; font-size:14.5px; line-height:1.7; color:#48534F; max-width:660px; text-wrap:pretty">' + esc(A.subtitulo) + "</p>" +
+    '<div class="bloco-claro bloco" style="padding:24px 28px; margin-bottom:16px"><div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px; text-transform:uppercase">Estratégia escolhida · ' + esc(A.estrategiaLabel) + "</div>" +
+    '<div style="font-size:14.5px; line-height:1.7; color:#48534F; text-wrap:pretty">' + esc(A.estrategiaResumo) + "</div></div>" +
+    '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-bottom:24px">' + cards + "</div>" +
+    metas +
+    '<div class="quebra">' + blocoCab("A CURVA", "Como o patrimônio evolui até lá", 0) +
+    '<div class="bloco-claro bloco" style="padding:26px 24px 20px"><div class="grafico">' + A.chartSvg + "</div>" +
+    '<div style="display:flex; gap:24px; margin-top:16px; flex-wrap:wrap; padding-left:8px">' + legChart + "</div>" +
+    '<div style="font-size:12.5px; color:#8A8175; margin-top:18px; line-height:1.65; border-top:1px solid #E6DFD2; padding-top:14px">' + esc(A.premissas) + "</div></div>" +
+    '<div class="bloco" style="margin-top:16px; background:#FBF9F5; border:1px solid #DCD4C6; border-left:2px solid ' + vd[0] + '; padding:22px 26px">' +
+    '<div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:' + (vd[0] === "#123B47" ? "#123B47" : "#8A8175") + '; margin-bottom:10px">' + vd[1] + "</div>" +
+    '<div style="font-size:15px; line-height:1.75; color:#0B2530; text-wrap:pretty">' + esc(A.veredito.texto) + "</div></div></div></div></section>";
+
+  // 09 · Plano de ação
+  var plano = R.actionPlan.map(function (p) {
+    return '<div class="bloco-claro bloco" style="padding:24px clamp(20px,3vw,28px); margin-bottom:14px">' +
+      '<div style="display:flex; align-items:center; gap:14px; margin-bottom:16px"><div style="font-family:var(--serif); font-style:italic; font-weight:300; font-size:24px; color:#C08A4E">' + p.n + "</div>" +
+      '<div style="font-family:var(--serif); font-weight:300; font-size:20px; color:#123B47">' + p.dimNome + "</div></div>" +
+      '<div style="font-size:15px; line-height:1.75; color:#48534F; margin-bottom:16px; text-wrap:pretty">' + p.texto + "</div>" +
+      '<div style="background:#F2EDE4; border-left:2px solid #C08A4E; padding:15px 20px; font-size:14px; line-height:1.65; color:#0B2530"><span style="font-weight:600">Ação prática: </span>' + p.acao + "</div></div>";
+  }).join("");
+  var fortes = R.hasStrengths
+    ? '<div style="margin-top:36px"><h3 class="sub" style="font-size:20px; color:#123B47">Pontos fortes a manter</h3>' +
+      R.strengths.map(function (s) {
+        return '<div style="display:flex; gap:12px; margin-bottom:12px; align-items:baseline"><div style="font-family:var(--serif); font-style:italic; color:#C08A4E; flex-shrink:0">—</div>' +
+          '<div style="font-size:14.5px; line-height:1.65; color:#48534F"><span style="font-weight:600; color:#123B47">' + s.dimNome + ": </span>" + s.texto + "</div></div>";
+      }).join("") + "</div>"
+    : "";
+  var is = R.investSeguro;
+  var seguro = '<div class="quebra">' + blocoCab("ONDE COMEÇAR A APLICAR", "Alternativas seguras para o curto prazo") +
+    '<div class="escuro bloco"><div class="rot-e" style="letter-spacing:.24em; margin-bottom:14px">ONDE APLICAR COM SEGURANÇA</div>' +
+    '<div style="font-size:15px; line-height:1.7; color:rgba(242,237,228,.85); margin-bottom:22px; max-width:620px">' + esc(is.intro) + "</div>" +
+    '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-bottom:18px">' +
+    is.itens.map(function (i) {
+      return '<div class="caixinha"><div style="font-family:var(--serif); font-weight:300; font-size:18px; margin-bottom:8px">' + i.nome + '</div><div class="tx" style="font-size:13.5px">' + i.desc + "</div></div>";
+    }).join("") + "</div>" +
+    '<div style="font-size:11.5px; color:rgba(242,237,228,.5)">' + is.nota + "</div></div></div>";
+  h += '<section class="secao fio-topo"><div class="miolo">' + cab("O QUE FAZER", "09", R.planoOtimizacao ? "Plano de otimização" : "Plano de ação individualizado") +
+    (R.planoOtimizacao ? '<p class="lead">Nenhuma das seis dimensões está em faixa de correção. O que segue são ajustes de refinamento: o que fazer quando o básico já está resolvido.</p>' : "") +
+    plano + fortes + seguro + "</div></section>";
+
+  // 10 · Checklist
+  h += '<section class="secao fina"><div class="miolo">' + cab("COMECE POR AQUI", "10", "Checklist dos próximos 30 dias") +
+    '<div class="bloco-claro bloco" style="padding:10px clamp(20px,3vw,32px)">' +
+    R.checklist.map(function (c, i, a) {
+      return '<div style="display:flex; align-items:flex-start; gap:16px; padding:19px 0;' + (i < a.length - 1 ? " border-bottom:1px solid #EDE7DC" : "") + '">' +
+        '<div style="width:20px; height:20px; border:1px solid #C08A4E; flex-shrink:0; margin-top:2px"></div><div style="font-size:15px; line-height:1.6; color:#48534F">' + c + "</div></div>";
+    }).join("") + "</div></div></section>";
+
+  // 11 · Glossário
+  h += '<section class="secao fio-topo"><div class="miolo largo">' + cab("PARA CONSULTAR SEMPRE QUE PRECISAR", "11", "Glossário") +
+    '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:24px 32px">' +
+    R.glossario.map(function (g) {
+      return '<div class="bloco"><div style="font-size:10px; font-weight:500; letter-spacing:.18em; color:#8A8175; margin-bottom:8px; text-transform:uppercase">' + g.termo + "</div>" +
+        '<div style="font-size:14px; line-height:1.7; color:#48534F; text-wrap:pretty">' + g.definicao + "</div></div>";
+    }).join("") + "</div></div></section>";
+
+  // 12 · Próximo passo
+  var assunto = "mailto:" + VHG.config.EMAIL + "?subject=" + encodeURIComponent("Diagnóstico financeiro - próximos passos");
+  h += '<section class="secao fina fio-topo"><div class="miolo">' + olho("RECOMENDAÇÃO", "12") + '<h2 class="tit" style="margin-bottom:26px">Seu próximo passo</h2>' +
+    '<div class="bloco-claro bloco" style="padding:clamp(28px,5vw,44px)"><div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; margin-bottom:14px">PLANO RECOMENDADO</div>' +
+    '<div style="font-family:var(--serif); font-weight:300; font-size:clamp(26px,4vw,34px); color:#123B47; margin-bottom:20px">Acompanhamento de ' + esc(R.nextStep.duracao) + "</div>" +
+    '<p style="margin:0 0 30px; font-size:15.5px; line-height:1.8; color:#48534F; max-width:560px; text-wrap:pretty">' + R.nextStep.justificativa + "</p>" +
+    '<a href="' + assunto + '" class="btn btn-petroleo" style="padding:17px 30px">AGENDAR CONVERSA COM O VITOR</a></div></div></section>';
+
+  // 13 · Encerramento
+  h += '<section class="encerramento" style="background:#123B47; color:#F2EDE4; padding:clamp(56px,8vw,96px) clamp(24px,5vw,40px)"><div style="max-width:700px; margin:0 auto; text-align:center">' +
+    '<div style="font-family:var(--serif); font-weight:300; font-style:italic; font-size:24px; color:#C08A4E; margin-bottom:20px">Obrigado pela confiança, ' + esc(D.primeiroNome) + ".</div>" +
+    '<p style="margin:0 0 32px; font-size:15.5px; line-height:1.8; color:rgba(242,237,228,.82); text-wrap:pretty">Espero que este diagnóstico tenha trazido clareza. Fico à disposição para conversar sobre os próximos passos.</p>' +
+    '<div style="font-size:14px; color:rgba(242,237,228,.68); margin-bottom:28px">Vitor Hugo Germano · <a href="mailto:' + esc(VHG.config.EMAIL) + '" style="color:#C08A4E">' + esc(VHG.config.EMAIL) + '</a> · <a href="politica-privacidade.html" style="color:#C08A4E">Política de Privacidade</a></div>' +
+    '<div style="height:1px; background:rgba(242,237,228,.22); max-width:400px; margin:0 auto 24px"></div>' +
+    '<div style="font-size:11.5px; line-height:1.75; color:rgba(242,237,228,.6); max-width:560px; margin:0 auto">Este diagnóstico é educacional e orientativo. Não substitui uma consultoria financeira individualizada completa. Projeções e cenários apresentados são baseados em premissas assumidas e não constituem garantia ou promessa de retorno.</div>' +
+    "</div></section>";
+
+  return h;
+}
+
+function telaVazia(titulo, texto, botao, href) {
+  return '<div class="vazio"><div class="caixa bloco-claro"><h1>' + titulo + "</h1><p>" + texto + "</p>" +
+    '<a href="' + href + '" class="btn btn-petroleo">' + botao + "</a></div></div>";
+}
+
+/* Hook para testes e para gerar a prévia sem banco: ?demo carrega as
+   respostas de exemplo de assets/js/exemplo-diagnostico.js. */
+function mostrar(respostas, geradoEm, previa) {
+  var R = VHGDiag.computeReport(respostas, geradoEm);
+  // O gráfico vem do core como SVG + rótulos HTML posicionados.
+  R.aposentadoria.chartSvg = R.chart.svg + R.chart.rotulos.map(function (r) {
+    return '<div class="g-rot g-rot-' + r.tipo + '" style="' + r.style + '">' + esc(r.texto) + "</div>";
+  }).join("");
+  document.title = "Relatório · " + (R.data.nome || "Diagnóstico") + " · VHG";
+  document.getElementById("relatorio").innerHTML = (previa ? '<div class="previa no-print">' + previa + "</div>" : "") + renderReport(R);
+  document.getElementById("acoes").hidden = false;
+}
+
+(async function iniciar() {
+  var alvo = document.getElementById("relatorio");
+  var params = new URLSearchParams(location.search);
+
+  if (params.has("demo") && window.VHG_EXEMPLO) {
+    mostrar(window.VHG_EXEMPLO, new Date().toISOString(), "RELATÓRIO DE EXEMPLO · DADOS FICTÍCIOS");
+    document.getElementById("voltar").href = "index.html";
+    return;
+  }
+
+  if (!VHG.configurado()) { alvo.innerHTML = telaVazia("Relatório indisponível", "O acesso aos relatórios ainda não foi configurado.", "VOLTAR AO SITE", "index.html"); return; }
+  var s = await VHG.exigirLogin();
+  if (!s) return;
+  var c = VHG.sb();
+  var id = params.get("id");
+  var p = await VHG.perfil(s.user.id);
+  var admin = p && p.papel === "admin";
+
+  var q = c.from("diagnosticos").select("status, respostas, enviado_em, atualizado_em, relatorio_liberado");
+  q = id && admin ? q.eq("id", id) : q.eq("user_id", s.user.id);
+  var r = await q.maybeSingle();
+  var d = r.data;
+
+  if (admin && id) document.getElementById("voltar").href = "admin.html";
+
+  if (!d || !d.respostas || !d.respostas.nome) {
+    alvo.innerHTML = telaVazia("Nenhum diagnóstico encontrado", "Ainda não há respostas suficientes para montar o relatório.", admin ? "VOLTAR AO PAINEL" : "IR PARA O DIAGNÓSTICO", admin ? "admin.html" : "diagnostico.html");
+    return;
+  }
+  if (!admin && (d.status !== "enviado" || !d.relatorio_liberado)) {
+    alvo.innerHTML = telaVazia("Relatório em análise", "Recebi suas respostas e estou preparando a análise. Assim que o relatório estiver pronto, ele aparece na sua área do cliente e eu aviso por e-mail.", "VOLTAR PARA A ÁREA DO CLIENTE", "area.html");
+    return;
+  }
+  var previa = null;
+  if (admin) {
+    if (d.status !== "enviado") previa = "PRÉVIA · DIAGNÓSTICO AINDA EM ANDAMENTO";
+    else if (!d.relatorio_liberado) previa = "PRÉVIA DO ADMIN · AINDA NÃO LIBERADO PARA O CLIENTE";
+  }
+  mostrar(d.respostas, d.enviado_em || d.atualizado_em, previa);
+})();
+</script>
+</body>
+</html>

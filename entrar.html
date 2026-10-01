@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Área do cliente · VHG</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/vhg.css">
+</head>
+<body data-precisa-supabase>
+<div id="vhg-header"></div>
+
+<main class="wrap login">
+  <div class="coluna">
+    <div class="eyebrow cobre">ÁREA DO CLIENTE</div>
+
+    <!-- Entrar -->
+    <div id="modo-login">
+      <h1>Entrar</h1>
+      <p class="intro">Acesse sua ficha cadastral e o diagnóstico financeiro. O acesso é liberado por mim após a contratação.</p>
+      <form class="card form" id="form-login" novalidate>
+        <label class="campo"><span>E-MAIL</span>
+          <input class="input" type="email" name="email" required autocomplete="email" placeholder="voce@email.com"></label>
+        <label class="campo"><span>SENHA</span>
+          <input class="input" type="password" name="senha" required autocomplete="current-password" placeholder="Sua senha"></label>
+        <div class="erro" id="erro-login" role="alert" hidden></div>
+        <button type="submit" class="btn btn-petroleo btn-bloco" id="btn-login">ENTRAR</button>
+        <button type="button" class="link-discreto" style="align-self:center" id="ir-reset">Esqueci minha senha</button>
+      </form>
+    </div>
+
+    <!-- Pedir link de nova senha -->
+    <div id="modo-reset" hidden>
+      <h1>Nova senha</h1>
+      <p class="intro">Informe o e-mail cadastrado. Você receberá um link para criar uma nova senha.</p>
+      <form class="card form" id="form-reset" novalidate>
+        <label class="campo"><span>E-MAIL</span>
+          <input class="input" type="email" name="email" required autocomplete="email" placeholder="voce@email.com"></label>
+        <div class="erro" id="erro-reset" role="alert" hidden></div>
+        <button type="submit" class="btn btn-petroleo btn-bloco" id="btn-reset">ENVIAR LINK</button>
+      </form>
+      <div class="confirmacao" id="reset-enviado" hidden style="padding:clamp(24px,4vw,36px); font-size:15px; line-height:1.7">
+        Se houver uma conta para <strong style="font-weight:600" id="reset-email"></strong>, o link chega em alguns minutos. Confira também a caixa de spam.
+      </div>
+      <button type="button" class="link-discreto" style="margin-top:22px" id="voltar-login">Voltar para o login</button>
+    </div>
+
+    <!-- Criar senha (chegou pelo link do e-mail) -->
+    <div id="modo-senha" hidden>
+      <h1 id="titulo-senha">Criar senha</h1>
+      <p class="intro">Escolha uma senha com pelo menos 8 caracteres. Ela vale para os próximos acessos.</p>
+      <form class="card form" id="form-senha" novalidate>
+        <label class="campo"><span>NOVA SENHA</span>
+          <input class="input" type="password" name="senha" required minlength="8" autocomplete="new-password"></label>
+        <label class="campo"><span>REPITA A SENHA</span>
+          <input class="input" type="password" name="senha2" required minlength="8" autocomplete="new-password"></label>
+        <div class="erro" id="erro-senha" role="alert" hidden></div>
+        <button type="submit" class="btn btn-petroleo btn-bloco" id="btn-senha">SALVAR SENHA</button>
+      </form>
+    </div>
+
+    <div class="rodape">Ainda não é cliente? <a href="formularios.html" class="sublinhado">Comece pelo pedido de conversa</a>.</div>
+  </div>
+</main>
+
+<div id="vhg-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/vhg.js"></script>
+<script>
+(function () {
+  // Lido antes de o cliente do Supabase consumir o hash da URL.
+  var hash = location.hash || "";
+  var veioDeLink = /type=(recovery|invite|signup|magiclink)/.test(hash);
+  var ehConvite = /type=invite/.test(hash);
+
+  var modos = { login: document.getElementById("modo-login"), reset: document.getElementById("modo-reset"), senha: document.getElementById("modo-senha") };
+  function modo(m) { Object.keys(modos).forEach(function (k) { modos[k].hidden = k !== m; }); }
+  function erro(id, msg) { var el = document.getElementById(id); el.textContent = msg || ""; el.hidden = !msg; }
+
+  function destinoSeguro() {
+    var v = new URLSearchParams(location.search).get("volta") || "";
+    return /^[a-z0-9-]+\.html(\?[a-z0-9=&_-]*)?$/i.test(v) ? v : null;
+  }
+  async function seguir(session) {
+    var destino = destinoSeguro();
+    if (!destino) {
+      var p = await VHG.perfil(session.user.id);
+      destino = p && p.papel === "admin" ? "admin.html" : "area.html";
+    }
+    location.replace(destino);
+  }
+
+  var c = VHG.sb();
+
+  if (veioDeLink) {
+    document.getElementById("titulo-senha").textContent = ehConvite ? "Criar senha" : "Nova senha";
+    modo("senha");
+  } else if (c) {
+    VHG.sessao().then(function (s) { if (s) seguir(s); });
+  }
+
+  document.getElementById("form-login").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    erro("erro-login", "");
+    if (!c) return erro("erro-login", "O acesso está indisponível no momento.");
+    var f = e.target.elements;
+    var b = document.getElementById("btn-login");
+    b.disabled = true; b.textContent = "ENTRANDO…";
+    var r = await c.auth.signInWithPassword({ email: f.email.value.trim(), password: f.senha.value });
+    b.disabled = false; b.textContent = "ENTRAR";
+    if (r.error) return erro("erro-login", "E-mail ou senha incorretos.");
+    seguir(r.data.session);
+  });
+
+  document.getElementById("ir-reset").addEventListener("click", function () {
+    document.querySelector('#form-reset [name="email"]').value = document.querySelector('#form-login [name="email"]').value;
+    modo("reset");
+  });
+  document.getElementById("voltar-login").addEventListener("click", function () { modo("login"); });
+
+  document.getElementById("form-reset").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    erro("erro-reset", "");
+    var email = e.target.elements.email.value.trim();
+    if (!/\S+@\S+\.\S+/.test(email)) return erro("erro-reset", "Informe um e-mail válido.");
+    if (!c) return erro("erro-reset", "O acesso está indisponível no momento.");
+    var b = document.getElementById("btn-reset");
+    b.disabled = true; b.textContent = "ENVIANDO…";
+    var volta = location.href.split("#")[0].split("?")[0];
+    await c.auth.resetPasswordForEmail(email, { redirectTo: volta });
+    // Resposta genérica de propósito: não revela se o e-mail tem conta.
+    b.disabled = false; b.textContent = "ENVIAR LINK";
+    document.getElementById("reset-email").textContent = email;
+    e.target.hidden = true;
+    document.getElementById("reset-enviado").hidden = false;
+  });
+
+  document.getElementById("form-senha").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    erro("erro-senha", "");
+    var f = e.target.elements;
+    if (f.senha.value.length < 8) return erro("erro-senha", "A senha precisa ter pelo menos 8 caracteres.");
+    if (f.senha.value !== f.senha2.value) return erro("erro-senha", "As duas senhas não são iguais.");
+    if (!c) return erro("erro-senha", "O acesso está indisponível no momento.");
+    var b = document.getElementById("btn-senha");
+    b.disabled = true; b.textContent = "SALVANDO…";
+    var s = await VHG.sessao();
+    if (!s) {
+      b.disabled = false; b.textContent = "SALVAR SENHA";
+      return erro("erro-senha", "O link expirou ou já foi usado. Peça um novo em “Esqueci minha senha”.");
+    }
+    var r = await c.auth.updateUser({ password: f.senha.value });
+    b.disabled = false; b.textContent = "SALVAR SENHA";
+    if (r.error) return erro("erro-senha", "Não foi possível salvar: " + r.error.message);
+    history.replaceState(null, "", location.pathname);
+    seguir(s);
+  });
+})();
+</script>
+</body>
+</html>

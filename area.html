@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Área do cliente · VHG</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/vhg.css">
+</head>
+<body data-precisa-supabase>
+<div id="vhg-header"></div>
+
+<main class="wrap pagina">
+  <div class="carregando" id="carregando">CARREGANDO…</div>
+
+  <div id="conteudo" hidden>
+    <div class="cabeca-pagina cabeca-area">
+      <div style="min-width:0">
+        <div class="eyebrow">ÁREA DO CLIENTE</div>
+        <h1 class="h1-pagina" id="ola">Olá.</h1>
+        <div class="email" id="email"></div>
+      </div>
+      <div class="botoes">
+        <a href="admin.html" class="btn btn-linha" id="link-admin" hidden>PAINEL DO ADMIN</a>
+        <button type="button" class="btn btn-linha" id="sair">SAIR</button>
+      </div>
+    </div>
+
+    <div class="duas-colunas">
+      <div class="principal" style="flex-basis:520px">
+        <div class="eyebrow" style="margin-bottom:18px">SEUS FORMULÁRIOS</div>
+        <div class="lista-forms" id="forms"></div>
+      </div>
+
+      <aside>
+        <div class="card-escuro">
+          <div class="eyebrow cobre">COMO FUNCIONA</div>
+          <div class="passos">
+            <div>1 · Preencha a ficha cadastral.</div>
+            <div>2 · Responda o diagnóstico no seu ritmo.</div>
+            <div>3 · As respostas ficam salvas.</div>
+            <div>4 · Analiso e marco nossa reunião.</div>
+          </div>
+        </div>
+        <div class="texto-apoio">
+          Dúvida sobre algum campo? <a href="#" data-wa target="_blank" rel="noopener" class="sublinhado">Fale comigo no WhatsApp</a> ou <a href="#" data-email class="sublinhado">por e-mail</a>.
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<div id="vhg-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/vhg.js"></script>
+<script>
+(async function () {
+  var esc = VHG.esc;
+  if (!VHG.configurado()) { document.getElementById("carregando").textContent = "ÁREA DO CLIENTE INDISPONÍVEL NO MOMENTO."; return; }
+  var s = await VHG.exigirLogin();
+  if (!s) return;
+  var c = VHG.sb();
+
+  var resp = await Promise.all([
+    VHG.perfil(s.user.id),
+    c.from("diagnosticos").select("status, progresso, relatorio_liberado, enviado_em").eq("user_id", s.user.id).maybeSingle()
+  ]);
+  var p = resp[0], d = resp[1].data;
+
+  document.getElementById("ola").textContent = "Olá, " + (VHG.primeiroNome(p, s.user) || "") + ".";
+  document.getElementById("email").textContent = s.user.email;
+  if (p && p.papel === "admin") document.getElementById("link-admin").hidden = false;
+
+  var STATUS = {
+    nao_iniciado: { label: "NÃO INICIADO", cor: "#6B6358", acao: "COMEÇAR" },
+    andamento: { label: "EM ANDAMENTO", cor: "#C08A4E", acao: "CONTINUAR" },
+    enviado: { label: "ENVIADO ✓", cor: "#123B47", acao: "VER RESPOSTAS" }
+  };
+
+  var diag = d ? { status: d.status, progresso: d.progresso || 0 } : { status: "nao_iniciado", progresso: 0 };
+  if (diag.status === "enviado") diag.progresso = 100;
+
+  var FORMS = [
+    { num: "01", titulo: "Ficha cadastral", desc: "Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos.", href: "", estado: { status: "nao_iniciado", progresso: 0 } },
+    { num: "02", titulo: "Diagnóstico financeiro", desc: "Renda, gastos, patrimônio, dívidas e objetivos, em 10 etapas. Pode pausar e continuar depois.", href: "diagnostico.html", estado: diag,
+      relatorio: d && d.status === "enviado" ? (d.relatorio_liberado ? "liberado" : "analise") : null }
+  ];
+
+  document.getElementById("forms").innerHTML = FORMS.map(function (f) {
+    var st = STATUS[f.estado.status] || STATUS.nao_iniciado;
+    var rotulo = f.estado.status === "andamento" ? st.label + " · " + f.estado.progresso + "%" : st.label;
+    var acoes;
+    if (!f.href) {
+      acoes = '<span class="em-breve">EM BREVE</span>';
+    } else {
+      acoes = '<div class="acoes">' +
+        (f.relatorio === "liberado" ? '<a href="relatorio.html" class="btn btn-cobre">VER RELATÓRIO</a>' : "") +
+        '<a href="' + f.href + '" class="btn btn-petroleo">' + st.acao + '</a></div>';
+    }
+    var notaRelatorio = f.relatorio === "analise"
+      ? '<div style="margin-top:12px; font-size:13px; color:#6B6358">Relatório em análise. Aviso por e-mail quando estiver pronto.</div>'
+      : f.relatorio === "liberado" ? '<div style="margin-top:12px; font-size:13px; color:#123B47">Seu relatório está disponível.</div>' : "";
+    return '<div class="card form-card">' +
+      '<div class="num">' + f.num + '</div>' +
+      '<div class="info"><div class="tit">' + esc(f.titulo) + '</div><p>' + esc(f.desc) + '</p>' +
+        '<div class="progresso"><div class="barra"><div style="width:' + f.estado.progresso + '%"></div></div>' +
+        '<span class="status" style="color:' + st.cor + '">' + rotulo + '</span></div>' + notaRelatorio + '</div>' +
+      acoes + '</div>';
+  }).join("");
+
+  document.getElementById("sair").addEventListener("click", async function () {
+    await c.auth.signOut();
+    location.replace("entrar.html");
+  });
+
+  document.getElementById("carregando").hidden = true;
+  document.getElementById("conteudo").hidden = false;
+})();
+</script>
+</body>
+</html>
