@@ -146,7 +146,7 @@
   }
 
   function primeiroNome(p, user) {
-    var nome = (p && p.nome) || (user && user.user_metadata && (user.user_metadata.nome || user.user_metadata.full_name)) || "";
+    var nome = (p && p.nome) || (user && user.user_metadata && (user.user_metadata.display_name || user.user_metadata.nome || user.user_metadata.full_name)) || "";
     if (!nome && user && user.email) nome = user.email.split("@")[0];
     nome = String(nome).trim().split(/\s+/)[0] || "";
     return nome.charAt(0).toUpperCase() + nome.slice(1);

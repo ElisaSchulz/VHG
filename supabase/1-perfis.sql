@@ -33,7 +33,7 @@ returns trigger language plpgsql security definer set search_path = public as $$
 begin
   insert into public.perfis (id, email, nome, papel)
   values (new.id, new.email,
-          nullif(coalesce(new.raw_user_meta_data ->> 'nome', new.raw_user_meta_data ->> 'full_name'), ''),
+          nullif(coalesce(new.raw_user_meta_data ->> 'display_name', new.raw_user_meta_data ->> 'nome', new.raw_user_meta_data ->> 'full_name'), ''),
           case when lower(new.email) = any (public.emails_admin()) then 'admin' else 'cliente' end)
   on conflict (id) do nothing;
   return new;
