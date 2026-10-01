@@ -39,6 +39,25 @@ begin
   return new;
 end $$;
 
+-- Quando a ficha é enviada, o nome informado nela passa a ser o nome
+-- do perfil (e, pelo arquivo 1, o "Display name" no Supabase).
+create or replace function public.nome_da_ficha_no_perfil()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  nome_ficha text := nullif(trim(new.respostas ->> 'nome'), '');
+begin
+  if new.status = 'enviado' and nome_ficha is not null then
+    update public.perfis set nome = nome_ficha
+     where id = new.user_id and nome is distinct from nome_ficha;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists nome_da_ficha_no_perfil on public.fichas;
+create trigger nome_da_ficha_no_perfil
+  after insert or update on public.fichas
+  for each row execute function public.nome_da_ficha_no_perfil();
+
 drop trigger if exists antes_de_salvar_ficha on public.fichas;
 create trigger antes_de_salvar_ficha
   before insert or update on public.fichas

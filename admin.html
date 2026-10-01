@@ -24,6 +24,15 @@
   .passo-a-passo { font-size: 14px; line-height: 1.75; color: rgba(242,237,228,.88); margin: 0; padding-left: 18px; }
   .passo-a-passo a { color: var(--cobre); border-bottom: 1px solid rgba(192,138,78,.5); }
   .passo-a-passo code { font-size: 12.5px; background: rgba(242,237,228,.1); padding: 1px 5px; }
+  .barra-tab { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+  .anotacao { margin-top: 8px; font-size: 12.5px; color: var(--petroleo); background: var(--papel-claro); border-left: 2px solid var(--cobre); padding: 6px 10px; white-space: pre-wrap; }
+  dialog.editor { border: 1px solid var(--linha-suave); background: var(--papel-claro); padding: 0; width: min(640px, calc(100vw - 32px)); max-height: calc(100vh - 32px); color: var(--petroleo-escuro); }
+  dialog.editor::backdrop { background: rgba(11,37,48,.55); }
+  dialog.editor form { padding: clamp(22px,4vw,34px); display: flex; flex-direction: column; gap: 18px; }
+  dialog.editor h2 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 26px; color: var(--petroleo); }
+  dialog.editor .rodape-dialogo { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-top: 6px; }
+  dialog.editor .rodape-dialogo .botoes { gap: 10px; }
+  .btn-apagar { background: none; border: none; color: var(--erro); font-size: 13px; text-decoration: underline; cursor: pointer; padding: 8px 0; }
 </style>
 </head>
 <body data-precisa-supabase>
@@ -82,6 +91,21 @@
     </div>
   </div>
 </main>
+
+<dialog class="editor" id="editor" aria-labelledby="editor-titulo">
+  <form method="dialog" id="editor-form" novalidate>
+    <h2 id="editor-titulo">Editar</h2>
+    <div id="editor-campos" style="display:flex; flex-direction:column; gap:18px"></div>
+    <div class="erro" id="editor-erro" role="alert" hidden></div>
+    <div class="rodape-dialogo">
+      <button type="button" class="btn-apagar" id="editor-apagar" hidden>Apagar este contato</button>
+      <div class="botoes" style="margin-left:auto">
+        <button type="button" class="btn btn-linha" id="editor-cancelar">CANCELAR</button>
+        <button type="submit" class="btn btn-petroleo" id="editor-salvar">SALVAR</button>
+      </div>
+    </div>
+  </form>
+</dialog>
 
 <div id="vhg-footer"></div>
 
@@ -154,7 +178,8 @@
           : '<button type="button" class="acao-tabela" data-acao="liberar" data-id="' + d.id + '">LIBERAR</button>';
         acoes += '<button type="button" class="acao-tabela" data-acao="reabrir" data-id="' + d.id + '">REABRIR</button>';
       }
-      return "<tr><td><strong>" + esc(nome) + '</strong><div class="pequeno">' + esc(p.email) + "</div></td>" +
+      return "<tr><td><strong>" + esc(nome) + '</strong><div class="pequeno">' + esc(p.email) + "</div>" +
+        '<div style="margin-top:8px"><button type="button" class="acao-tabela" data-editar-cliente="' + p.id + '" data-nome="' + esc(p.nome || "") + '" data-email="' + esc(p.email) + '">EDITAR NOME</button></div></td>' +
         "<td>" + stFicha + "</td>" +
         "<td>" + status + "</td>" +
         '<td class="pequeno">' + VHG.dataBR([d && d.atualizado_em, fi && fi.atualizado_em].filter(Boolean).sort().pop(), true) + "</td>" +
@@ -162,6 +187,16 @@
     }).join("");
     var el = document.getElementById("aba-clientes");
     el.innerHTML = '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>CLIENTE</th><th>FICHA</th><th>DIAGNÓSTICO</th><th>ÚLTIMA ATUALIZAÇÃO</th><th></th></tr></thead><tbody>' + linhas + "</tbody></table></div>";
+    el.querySelectorAll("[data-editar-cliente]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        abrirEditor({
+          titulo: "Nome do cliente",
+          campos: [["nome", "Nome", "text", b.dataset.nome], ["_email", "E-mail (login)", "info", b.dataset.email]],
+          salvar: function (v) { return c.from("perfis").update({ nome: v.nome.trim() || null }).eq("id", b.dataset.editarCliente); },
+          depois: carregarClientes
+        });
+      });
+    });
     el.querySelectorAll("[data-reabrir-ficha]").forEach(function (b) {
       b.addEventListener("click", async function () {
         if (!confirm("Reabrir a ficha cadastral para o cliente editar?")) return;
@@ -198,8 +233,11 @@
     var novos = r.data.filter(function (l) { return l.status === "novo"; }).length;
     document.getElementById("n-leads").textContent = novos ? novos + " novo" + (novos > 1 ? "s" : "") : "";
     var el = document.getElementById("aba-leads");
-    if (!r.data.length) { el.innerHTML = '<div class="vazio-tab">Nenhum pedido de conversa ainda.</div>'; return; }
-    el.innerHTML = '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>RECEBIDO</th><th>CONTATO</th><th>MOMENTO E PRIORIDADES</th><th>MENSAGEM</th><th>STATUS</th></tr></thead><tbody>' +
+    leadsPorId = {};
+    r.data.forEach(function (l) { leadsPorId[l.id] = l; });
+    var barra = '<div class="barra-tab"><button type="button" class="btn btn-linha" data-novo-lead>+ ADICIONAR CONTATO</button></div>';
+    if (!r.data.length) { el.innerHTML = barra + '<div class="vazio-tab">Nenhum pedido de conversa ainda.</div>'; ligarLeads(el); return; }
+    el.innerHTML = barra + '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>RECEBIDO</th><th>CONTATO</th><th>MOMENTO E PRIORIDADES</th><th>MENSAGEM</th><th>STATUS</th></tr></thead><tbody>' +
       r.data.map(function (l) {
         var wa = l.whatsapp ? "https://wa.me/" + (l.whatsapp.replace(/\D/g, "").length <= 11 ? "55" : "") + l.whatsapp.replace(/\D/g, "") : null;
         return '<tr><td class="pequeno">' + VHG.dataBR(l.criado_em, true) + "</td>" +
@@ -207,11 +245,12 @@
           (l.whatsapp ? '<div class="pequeno"><a href="' + wa + '" target="_blank" rel="noopener">' + esc(l.whatsapp) + "</a></div>" : "") +
           (l.cidade ? '<div class="pequeno">' + esc(l.cidade) + "</div>" : "") + "</td>" +
           "<td>" + esc(l.momento || "—") + '<div class="pequeno">' + esc((l.prioridades || []).join(", ")) + "</div></td>" +
-          '<td class="msg">' + esc(l.mensagem || "—") + "</td>" +
+          '<td class="msg">' + esc(l.mensagem || "—") + (l.anotacoes ? '<div class="anotacao">' + esc(l.anotacoes) + "</div>" : "") + "</td>" +
           '<td><select data-lead="' + l.id + '" aria-label="Status do pedido">' +
           STATUS_LEAD.map(function (s) { return '<option value="' + s[0] + '"' + (l.status === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") +
-          "</select></td></tr>";
+          '</select><div style="margin-top:8px"><button type="button" class="acao-tabela" data-editar-lead="' + l.id + '">EDITAR</button></div></td></tr>';
       }).join("") + "</tbody></table></div>";
+    ligarLeads(el);
     el.querySelectorAll("[data-lead]").forEach(function (sel) {
       sel.addEventListener("change", async function () {
         var u = await c.from("leads").update({ status: sel.value }).eq("id", sel.dataset.lead);
@@ -221,6 +260,85 @@
       });
     });
   }
+
+  var leadsPorId = {};
+  var MOMENTOS = ["Solteiro, sem dependentes", "Casal sem filhos", "Família com filhos", "Profissional liberal ou autônomo", "Perto da aposentadoria", "Outro"];
+  function editarLead(l) {
+    var novo = !l;
+    l = l || { status: "novo" };
+    abrirEditor({
+      titulo: novo ? "Novo contato" : "Editar contato",
+      campos: [
+        ["nome", "Nome", "text", l.nome], ["email", "E-mail", "email", l.email],
+        ["whatsapp", "WhatsApp", "tel", l.whatsapp], ["cidade", "Cidade", "text", l.cidade],
+        ["momento", "Momento de vida", "select", l.momento, MOMENTOS.map(function (m) { return [m, m]; })],
+        ["status", "Status", "select", l.status, STATUS_LEAD],
+        ["mensagem", "Mensagem", "textarea", l.mensagem],
+        ["anotacoes", "Anotações internas (só o admin vê)", "textarea", l.anotacoes]
+      ],
+      validar: function (v) { if (!v.nome.trim()) return "Informe o nome."; if (!/\S+@\S+\.\S+/.test(v.email)) return "Informe um e-mail válido."; },
+      salvar: function (v) {
+        var dados = { nome: v.nome.trim(), email: v.email.trim(), whatsapp: v.whatsapp.trim() || null, cidade: v.cidade.trim() || null,
+          momento: v.momento || null, status: v.status, mensagem: v.mensagem.trim() || null, anotacoes: v.anotacoes.trim() || null };
+        if (novo) return c.from("leads").insert(Object.assign(dados, { consentimento: true }));
+        return c.from("leads").update(dados).eq("id", l.id);
+      },
+      apagar: novo ? null : function () { return c.from("leads").delete().eq("id", l.id); },
+      depois: carregarLeads
+    });
+  }
+  function ligarLeads(el) {
+    el.querySelectorAll("[data-novo-lead]").forEach(function (b) { b.addEventListener("click", function () { editarLead(null); }); });
+    el.querySelectorAll("[data-editar-lead]").forEach(function (b) { b.addEventListener("click", function () { editarLead(leadsPorId[b.dataset.editarLead]); }); });
+  }
+
+  /* ── Janela de edição (serve para clientes e contatos) ── */
+  var dlg = document.getElementById("editor");
+  var atual = null;
+  function abrirEditor(cfg) {
+    atual = cfg;
+    document.getElementById("editor-titulo").textContent = cfg.titulo;
+    document.getElementById("editor-erro").hidden = true;
+    document.getElementById("editor-apagar").hidden = !cfg.apagar;
+    document.getElementById("editor-campos").innerHTML = cfg.campos.map(function (f) {
+      var nome = f[0], rotulo = f[1], tipo = f[2], valor = f[3] == null ? "" : f[3];
+      var campo;
+      if (tipo === "info") campo = '<div style="font-size:15px; color:var(--texto-2)">' + esc(valor) + "</div>";
+      else if (tipo === "textarea") campo = '<textarea class="input" rows="3" name="' + nome + '">' + esc(valor) + "</textarea>";
+      else if (tipo === "select") campo = '<select class="input" name="' + nome + '"><option value="">—</option>' +
+        f[4].map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === valor ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>";
+      else campo = '<input class="input" type="' + tipo + '" name="' + nome + '" value="' + esc(valor) + '">';
+      return '<label class="campo"><span>' + esc(rotulo) + "</span>" + campo + "</label>";
+    }).join("");
+    dlg.showModal();
+    var primeiro = dlg.querySelector("input, textarea, select");
+    if (primeiro) primeiro.focus();
+  }
+  function valores() {
+    var v = {};
+    dlg.querySelectorAll("[name]").forEach(function (el) { v[el.name] = el.value; });
+    return v;
+  }
+  function erroEditor(msg) { var e = document.getElementById("editor-erro"); e.textContent = msg; e.hidden = !msg; }
+  document.getElementById("editor-cancelar").addEventListener("click", function () { dlg.close(); });
+  document.getElementById("editor-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var v = valores();
+    var problema = atual.validar && atual.validar(v);
+    if (problema) return erroEditor(problema);
+    var b = document.getElementById("editor-salvar");
+    b.disabled = true; b.textContent = "SALVANDO…";
+    var r = await atual.salvar(v);
+    b.disabled = false; b.textContent = "SALVAR";
+    if (r.error) { console.error(r.error); return erroEditor("Não foi possível salvar: " + r.error.message); }
+    dlg.close(); erro(""); atual.depois();
+  });
+  document.getElementById("editor-apagar").addEventListener("click", async function () {
+    if (!confirm("Apagar este contato? Não dá para desfazer.")) return;
+    var r = await atual.apagar();
+    if (r.error) { console.error(r.error); return erroEditor("Não foi possível apagar: " + r.error.message); }
+    dlg.close(); atual.depois();
+  });
 
   document.getElementById("sair").addEventListener("click", async function () {
     await c.auth.signOut();

@@ -82,3 +82,22 @@ drop policy if exists "perfil: dono ou admin edita" on public.perfis;
 create policy "perfil: dono ou admin edita" on public.perfis
   for update to authenticated using (id = auth.uid() or public.is_admin())
   with check (id = auth.uid() or public.is_admin());
+
+
+-- O nome editado no painel do admin (perfis.nome) também aparece como
+-- "Display name" na lista de usuários do Supabase.
+create or replace function public.sincronizar_display_name()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  update auth.users
+     set raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb)
+                              || jsonb_build_object('display_name', coalesce(new.nome, ''))
+   where id = new.id;
+  return new;
+end $$;
+
+drop trigger if exists sincronizar_display_name on public.perfis;
+create trigger sincronizar_display_name
+  after update of nome on public.perfis
+  for each row when (new.nome is distinct from old.nome)
+  execute function public.sincronizar_display_name();

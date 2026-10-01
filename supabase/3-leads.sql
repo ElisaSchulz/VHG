@@ -22,6 +22,9 @@ create table if not exists public.leads (
   status        text not null default 'novo' check (status in ('novo', 'contatado', 'cliente', 'arquivado'))
 );
 
+-- Anotações internas do admin sobre o contato (o visitante não vê).
+alter table public.leads add column if not exists anotacoes text;
+
 create index if not exists leads_criado_em_idx on public.leads (criado_em desc);
 
 alter table public.leads enable row level security;
@@ -31,6 +34,12 @@ drop policy if exists "lead: qualquer um envia" on public.leads;
 create policy "lead: qualquer um envia" on public.leads
   for insert to anon, authenticated
   with check (consentimento = true and status = 'novo');
+
+-- O admin também cadastra contatos à mão (quem chegou pelo WhatsApp,
+-- por indicação etc.), com qualquer status.
+drop policy if exists "lead: admin cadastra" on public.leads;
+create policy "lead: admin cadastra" on public.leads
+  for insert to authenticated with check (public.is_admin());
 
 drop policy if exists "lead: admin lê" on public.leads;
 create policy "lead: admin lê" on public.leads

@@ -15,7 +15,7 @@ O site é **HTML, CSS e JavaScript puro**: não precisa instalar nada nem rodar 
 | `ficha.html` | Ficha cadastral (passo 1 do cliente). Salva sozinha no Supabase |
 | `diagnostico.html` | Diagnóstico em 10 etapas, com as mesmas perguntas e a mesma lógica do diagnóstico da HZ. Salva sozinho no Supabase e permite pausar e continuar |
 | `relatorio.html` | Relatório em 13 seções, montado na hora a partir das respostas. O botão "Baixar PDF" usa a impressão do navegador |
-| `admin.html` | Painel do admin: clientes, fichas, diagnósticos, liberação de relatórios e pedidos de conversa |
+| `admin.html` | Painel do admin: clientes, fichas, diagnósticos, liberação de relatórios e pedidos de conversa. Permite editar o nome dos clientes e editar, adicionar ou apagar contatos, com anotações internas |
 | `politica-privacidade.html` | Política de privacidade (revise o texto antes de publicar) |
 
 Para ver um relatório de exemplo sem precisar de banco: `relatorio.html?demo`.
@@ -24,7 +24,7 @@ Para ver um relatório de exemplo sem precisar de banco: `relatorio.html?demo`.
 
 1. A pessoa envia o **pedido de conversa**. O pedido aparece no painel do admin, na aba "Pedidos de conversa".
 2. Depois da contratação, o Vitor **convida o cliente** pelo Supabase. O cliente recebe um e-mail, cria a senha e entra.
-3. No primeiro login, o cliente cai direto na **ficha cadastral**. O diagnóstico só abre depois que a ficha é enviada, e já vem com os dados de identificação preenchidos a partir dela.
+3. No primeiro login, o cliente cai direto na **ficha cadastral**. Ao enviá-la, o nome informado vira o nome do perfil (e o "Display name" no Supabase). O diagnóstico só abre depois que a ficha é enviada, e já vem com os dados de identificação preenchidos a partir dela.
 4. O cliente responde o **diagnóstico**. Cada alteração é salva automaticamente, então dá para parar e continuar depois. Ao final, ele clica em "Enviar diagnóstico".
 5. No painel, o Vitor abre o **relatório** (com o design do site) e, quando quiser, clica em **Liberar**. A partir daí o cliente vê o relatório na área dele e pode baixar o PDF.
 
