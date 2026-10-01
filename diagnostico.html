@@ -205,7 +205,6 @@ function parseCents(raw) {
 }
 function idadeAtual() { return VHGDiag.idadeEm(data.dataNascimento); }
 function dataBR(iso) { return VHGDiag.formatarData(iso) || ""; }
-function hoje() { return new Date().toISOString().slice(0, 10); }
 function anosTxt(n) { return n + (n === 1 ? " ano" : " anos"); }
 
 function hintPrazoAposentadoria() {
@@ -398,12 +397,12 @@ function renderStep1() {
     '<div class="inteiro">' + rot("E-mail") + '<input type="email" class="d-input" data-field="email" autocomplete="email" placeholder="voce@email.com" value="' + esc(data.email) + '"></div>' +
     "<div>" + rot("Estado") + selectHtml("estado", UF_LIST, data.estado) + "</div>" +
     "<div>" + rot("Cidade") + '<input type="text" class="d-input" id="cidade-input" data-field="cidade" ' + (data.estado ? "" : "disabled ") + 'placeholder="' + (data.estado ? "Digite sua cidade" : "Selecione um estado primeiro") + '" value="' + esc(data.cidade) + '"></div>' +
-    "<div>" + rot("Data de nascimento") + '<input type="date" class="d-input" data-field="dataNascimento" max="' + hoje() + '" value="' + esc(data.dataNascimento) + '"><div id="hint-nascimento">' + idadeHint(data.dataNascimento) + "</div></div>" +
+    "<div>" + rot("Data de nascimento") + '<input ' + VHG.attrsData() + ' class="d-input num" data-field="dataNascimento" value="' + esc(VHG.dataBRdeISO(data.dataNascimento)) + '"><div id="hint-nascimento">' + idadeHint(data.dataNascimento) + "</div></div>" +
     "<div>" + rot("Estado civil") + selectHtml("estadoCivil", ESTADO_CIVIL, data.estadoCivil) + "</div>" +
     '<div class="fio-grade"></div>' +
     '<div class="inteiro">' + rot("Tem cônjuge com renda própria?", "seg-rot") + simNaoSeg("temConjuge", data.temConjuge) + "</div>" +
     (data.temConjuge === true ?
-      "<div>" + rot("Data de nascimento do cônjuge <small>(opcional)</small>") + '<input type="date" class="d-input" data-field="dataNascimentoConjuge" max="' + hoje() + '" value="' + esc(data.dataNascimentoConjuge) + '"><div id="hint-nascimento-conjuge">' + idadeHint(data.dataNascimentoConjuge) + "</div></div>" +
+      "<div>" + rot("Data de nascimento do cônjuge <small>(opcional)</small>") + '<input ' + VHG.attrsData() + ' class="d-input num" data-field="dataNascimentoConjuge" value="' + esc(VHG.dataBRdeISO(data.dataNascimentoConjuge)) + '"><div id="hint-nascimento-conjuge">' + idadeHint(data.dataNascimentoConjuge) + "</div></div>" +
       '<div style="display:flex; align-items:flex-end"><div class="dica">A data do cônjuge fica registrada apenas como informação. A projeção de aposentadoria usa a sua idade.</div></div>' +
       '<div class="inteiro"><div class="dica" style="margin-top:0">A renda do cônjuge será perguntada na próxima etapa, junto com a escolha de somá-la ou não à análise. As etapas seguintes seguem essa escolha.</div></div>' : "") +
     '<div class="fio-grade"></div>' +
@@ -757,10 +756,16 @@ function bindEvents(raiz) {
   raiz.querySelectorAll("[data-field]").forEach(function (el) {
     el.addEventListener(el.tagName === "SELECT" ? "change" : "input", function () {
       var campo = el.dataset.field;
-      data[campo] = el.value;
+      if (el.hasAttribute("data-data")) {
+        el.value = VHG.mascaraData(el.value);
+        data[campo] = VHG.dataISO(el.value);
+      } else {
+        data[campo] = el.value;
+      }
       persist();
-      if (campo === "dataNascimento") document.getElementById("hint-nascimento").innerHTML = idadeHint(data.dataNascimento);
-      if (campo === "dataNascimentoConjuge") document.getElementById("hint-nascimento-conjuge").innerHTML = idadeHint(data.dataNascimentoConjuge);
+      var invalida = el.hasAttribute("data-data") && el.value.length === 10 && !data[campo] ? '<div class="dica erro">Data inválida.</div>' : null;
+      if (campo === "dataNascimento") document.getElementById("hint-nascimento").innerHTML = invalida || idadeHint(data.dataNascimento);
+      if (campo === "dataNascimentoConjuge") document.getElementById("hint-nascimento-conjuge").innerHTML = invalida || idadeHint(data.dataNascimentoConjuge);
       if (campo === "idadeAposentadoria") document.getElementById("hint-prazo").innerHTML = hintPrazoAposentadoria();
       if (campo === "estado") {
         var cidade = document.getElementById("cidade-input");

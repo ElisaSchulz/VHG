@@ -154,6 +154,11 @@ function faltando() { return obrigatorios().filter(function (r) { return !r[1]; 
 function rot(t, extra) { return '<label class="d-rot' + (extra ? " " + extra : "") + '">' + t + "</label>"; }
 function campo(f, label, tipo, extra) {
   extra = extra || {};
+  if (tipo === "date") {
+    return '<div' + (extra.classe ? ' class="' + extra.classe + '"' : "") + ">" + rot(label) +
+      '<input ' + VHG.attrsData() + ' class="d-input num" data-field="' + f + '" value="' + esc(VHG.dataBRdeISO(data[f])) + '">' +
+      '<div class="dica erro" data-erro-data="' + f + '" hidden>Data inválida.</div></div>';
+  }
   return '<div' + (extra.classe ? ' class="' + extra.classe + '"' : "") + ">" + rot(label) +
     '<input type="' + (tipo || "text") + '" class="d-input" data-field="' + f + '"' +
     (extra.ph ? ' placeholder="' + esc(extra.ph) + '"' : "") + (extra.auto ? ' autocomplete="' + extra.auto + '"' : "") +
@@ -184,7 +189,7 @@ function renderForm() {
     return '<div class="item-lista"><div class="topo"><div class="nome">Dependente ' + (i + 1) + '</div>' +
       '<button type="button" class="link-remover" data-remover="' + i + '">Remover</button></div><div class="grade justa">' +
       '<div class="inteiro">' + rot("Nome") + '<input type="text" class="d-input" data-ltext="nome" ' + a + ' value="' + esc(d.nome) + '"></div>' +
-      "<div>" + rot("Data de nascimento") + '<input type="date" class="d-input" data-ltext="nascimento" ' + a + ' value="' + esc(d.nascimento) + '"></div>' +
+      "<div>" + rot("Data de nascimento") + '<input ' + VHG.attrsData() + ' class="d-input num" data-ltext="nascimento" ' + a + ' value="' + esc(VHG.dataBRdeISO(d.nascimento)) + '"></div>' +
       "<div>" + rot("Parentesco") + '<select class="d-input" data-ltext="parentesco" ' + a + '><option value="">Selecione</option>' +
         PARENTESCO.map(function (p) { return "<option" + (d.parentesco === p ? " selected" : "") + ">" + p + "</option>"; }).join("") + "</select></div>" +
       "</div></div>";
@@ -316,6 +321,12 @@ function ligar(raiz) {
   raiz.querySelectorAll("[data-field]").forEach(function (el) {
     el.addEventListener(el.tagName === "SELECT" ? "change" : "input", function () {
       var f = el.dataset.field, v = el.value;
+      if (el.hasAttribute("data-data")) {
+        el.value = VHG.mascaraData(v);
+        v = VHG.dataISO(el.value);
+        var aviso = raiz.querySelector('[data-erro-data="' + f + '"]');
+        if (aviso) aviso.hidden = !(el.value.length === 10 && !v);
+      }
       if (f === "cpf") v = el.value = mascaraCpf(v);
       if (f === "whatsapp") v = el.value = mascaraFone(v);
       if (f === "cep") v = el.value = mascaraCep(v);
@@ -326,7 +337,9 @@ function ligar(raiz) {
   });
   raiz.querySelectorAll("[data-ltext]").forEach(function (el) {
     el.addEventListener(el.tagName === "SELECT" ? "change" : "input", function () {
-      data.dependentes[+el.dataset.index][el.dataset.ltext] = el.value; persist();
+      var v = el.value;
+      if (el.hasAttribute("data-data")) { el.value = VHG.mascaraData(v); v = VHG.dataISO(el.value); }
+      data.dependentes[+el.dataset.index][el.dataset.ltext] = v; persist();
     });
   });
   raiz.querySelectorAll("[data-set]").forEach(function (el) {

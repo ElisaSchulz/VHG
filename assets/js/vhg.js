@@ -161,7 +161,37 @@
     return d.toLocaleString("pt-BR", opts);
   }
 
+  /* ── Datas no formato dd/mm/aaaa ─────────────────────────
+     O seletor nativo (type="date") segue o idioma do navegador e
+     aparece como mm/dd/yyyy em navegadores em inglês. Os campos de
+     data são texto com máscara; por dentro a data fica em ISO
+     (aaaa-mm-dd), que é o que os cálculos e o banco usam. */
+  function mascaraData(v) {
+    var d = String(v).replace(/\D/g, "").slice(0, 8);
+    if (d.length > 4) return d.slice(0, 2) + "/" + d.slice(2, 4) + "/" + d.slice(4);
+    if (d.length > 2) return d.slice(0, 2) + "/" + d.slice(2);
+    return d;
+  }
+  // "dd/mm/aaaa" → "aaaa-mm-dd"; "" se incompleta, inexistente ou no futuro.
+  function dataISO(br) {
+    var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br || ""));
+    if (!m) return "";
+    var dia = +m[1], mes = +m[2], ano = +m[3];
+    var dt = new Date(Date.UTC(ano, mes - 1, dia));
+    if (ano < 1900 || dt.getUTCMonth() !== mes - 1 || dt.getUTCDate() !== dia) return "";
+    if (dt.getTime() > Date.now()) return "";
+    return m[3] + "-" + m[2] + "-" + m[1];
+  }
+  // "aaaa-mm-dd" → "dd/mm/aaaa" (aceita vazio).
+  function dataBRdeISO(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ""));
+    return m ? m[3] + "/" + m[2] + "/" + m[1] : "";
+  }
+  // Atributos do campo de data, para colar dentro de um <input>.
+  function attrsData() { return 'type="text" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="off" data-data'; }
+
   window.VHG = {
+    mascaraData: mascaraData, dataISO: dataISO, dataBRdeISO: dataBRdeISO, attrsData: attrsData,
     config: C, configurado: configurado, sb: sb, esc: esc, waLink: waLink, ICONE_WHATSAPP: ICONE_WHATSAPP,
     sessao: sessao, perfil: perfil, exigirLogin: exigirLogin, primeiroNome: primeiroNome, dataBR: dataBR, rolarAte: rolarAte
   };
