@@ -128,3 +128,7 @@ textarea.d-input { line-height: 1.6; resize: vertical; }
 .portao .acoes .btn-contorno:hover { background: transparent; color: var(--petroleo); border-color: var(--cobre); }
 .portao .rodape { font-size: 12.5px; line-height: 1.7; color: var(--texto-4); margin-top: 22px; }
 .portao .rodape a { color: var(--petroleo); text-decoration: underline; }
+/* Opções com texto longo (ex.: formas de pagamento): uma por linha. */
+.seg.vertical { display: flex; flex-direction: column; max-width: 560px; }
+.seg.vertical button { text-align: left; padding: 14px 18px; }
+.seg.vertical button + button { border-left: none; border-top: 1px solid var(--linha); }

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrato · VHG</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,ital,wght@6..72,0,200;6..72,0,300;6..72,0,400;6..72,1,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/vhg.css">
+<link rel="stylesheet" href="assets/css/formulario.css">
+<style>
+  .contrato { background: var(--branco); border: 1px solid var(--linha-suave); padding: clamp(24px,5vw,56px); }
+  .contrato .titulo-doc { font-family: var(--serif); font-weight: 400; font-size: clamp(20px,2.6vw,24px); line-height: 1.3; color: var(--petroleo); text-align: center; margin: 0 0 28px; }
+  .contrato p { margin: 0 0 14px; font-size: 14.5px; line-height: 1.75; color: var(--petroleo-escuro); text-align: justify; hyphens: auto; }
+  .contrato h3 { margin: 26px 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--petroleo); }
+  .contrato .rodape-doc { margin-top: 26px; font-size: 12px; color: var(--texto-4); text-align: center; }
+  .provisorio { background: #FFF6E5; border: 1px solid var(--cobre); padding: 14px 18px; font-size: 13.5px; line-height: 1.6; margin-bottom: 22px; }
+  .assinar { margin-top: 28px; }
+  .certificado { margin-top: 28px; border: 1px solid var(--petroleo); background: var(--papel-claro); padding: 22px 26px; }
+  .certificado .rot { font-size: 10px; font-weight: 600; letter-spacing: .2em; color: var(--petroleo); margin-bottom: 12px; }
+  .certificado .linha { font-size: 13.5px; line-height: 1.7; color: var(--petroleo-escuro); overflow-wrap: anywhere; }
+  .certificado .hash { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--texto-2); }
+  @media print {
+    .d-header, .d-footer, .no-print, .stepper { display: none !important; }
+    body { background: #fff; }
+    .d-main { padding: 0; }
+    .contrato { border: none; padding: 0; }
+    @page { size: A4; margin: 18mm; }
+  }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a href="area.html" class="marca" aria-label="Voltar para a área do cliente">
+    <span class="marca-vhg">VHG</span><span class="marca-sub">PLANEJAMENTO FINANCEIRO</span>
+  </a>
+  <div class="lado">CONTRATO</div>
+</header>
+
+<main class="d-main"><div id="app"><div class="carregando">CARREGANDO…</div></div></main>
+
+<footer class="d-footer">
+  <span>VITOR HUGO GERMANO · PLANEJAMENTO FINANCEIRO</span>
+  <span>BOTUCATU, SP</span>
+</footer>
+
+<div class="portao" id="portao" hidden>
+  <div class="caixa">
+    <div class="logo">VHG</div>
+    <div class="fio"></div>
+    <h2>Contrato</h2>
+    <p>O contrato fica na área do cliente. Entre com a sua conta para ler e assinar.</p>
+    <div class="acoes">
+      <a href="entrar.html?volta=contrato.html" class="btn btn-petroleo">ENTRAR NA MINHA CONTA</a>
+      <a href="formularios.html" class="btn btn-contorno">AINDA NÃO SOU CLIENTE</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/vhg.js"></script>
+<script src="assets/js/diagnostico-core.js"></script>
+<script src="assets/js/planos.js"></script>
+<script src="assets/js/contrato-modelo.js"></script>
+<script>
+"use strict";
+/* ─────────────────────────────────────────────────────────────
+   Contrato: passo 2 do cliente, entre a ficha e o diagnóstico.
+   O texto é gerado com os dados da ficha; ao assinar, ele é gravado
+   como foi lido, e o banco registra data, hora, IP e o código de
+   verificação (SHA-256 do texto).
+   ───────────────────────────────────────────────────────────── */
+var esc = VHG.esc;
+var app = document.getElementById("app");
+
+function normalizar(t) { return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim().toLowerCase(); }
+
+function documentoHtml(texto) {
+  var blocos = texto.split("\n\n");
+  return '<div class="contrato"><h2 class="titulo-doc">' + esc(blocos[0]) + "</h2>" +
+    blocos.slice(1).map(function (b, i, a) {
+      if (/^CLÁUSULA/.test(b)) return "<h3>" + esc(b) + "</h3>";
+      if (i === a.length - 1 && /^Documento gerado/.test(b)) return '<div class="rodape-doc">' + esc(b) + "</div>";
+      return "<p>" + esc(b) + "</p>";
+    }).join("") + "</div>";
+}
+
+function cabecalho(eyebrow, titulo, desc) {
+  return '<div class="linha-eyebrow"><div class="fio"></div><div class="txt">' + eyebrow + "</div></div>" +
+    '<h1 class="etapa-titulo">' + titulo + "</h1>" + (desc ? '<p class="etapa-desc">' + desc + "</p>" : "");
+}
+
+function telaAviso(titulo, texto, botao, href) {
+  app.innerHTML = '<div class="fim"><div class="tit">' + titulo + "</div><p>" + texto + "</p>" +
+    '<div class="fio"></div><a href="' + href + '" class="btn btn-cobre btn-d">' + botao + "</a></div>";
+}
+
+function certificadoHtml(k) {
+  var quando = new Date(k.assinado_em).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return '<div class="certificado"><div class="rot">ASSINADO ELETRONICAMENTE</div>' +
+    '<div class="linha">Por <b>' + esc(k.assinado_nome) + "</b> em " + esc(quando) + (k.ip ? " · IP " + esc(k.ip) : "") + "</div>" +
+    '<div class="linha">Versão do modelo: ' + esc(k.versao) + "</div>" +
+    '<div class="linha" style="margin-top:8px">Código de verificação (SHA-256 do texto):</div>' +
+    '<div class="linha hash">' + esc(k.hash_sha256) + "</div></div>";
+}
+
+function mostrarAssinado(k, admin) {
+  app.innerHTML = cabecalho(admin ? "CONTRATO DO CLIENTE" : "ÁREA DO CLIENTE · PASSO 2 DE 3", "Contrato assinado",
+      admin ? "" : "Este é o contrato que você assinou. Guarde uma cópia em PDF.") +
+    documentoHtml(k.texto) + certificadoHtml(k) +
+    '<div class="nav-etapas no-print"><a href="' + (admin ? "admin.html" : "area.html") + '" class="btn-voltar">Voltar</a>' +
+    '<div class="botoes"><button type="button" class="btn btn-linha" onclick="window.print()">BAIXAR PDF</button>' +
+    (admin ? "" : '<a href="diagnostico.html" class="btn btn-petroleo">IR PARA O DIAGNÓSTICO</a>') + "</div></div>";
+}
+
+function mostrarParaAssinar(c, usuario, ficha) {
+  var doc = VHG_CONTRATO.gerar(ficha, new Date());
+  var provisorio = VHG_CONTRATO.CONFIG.REVISADO ? "" :
+    '<div class="provisorio no-print"><b>Modelo em revisão.</b> Este texto ainda é provisório e pode mudar antes do uso definitivo.</div>';
+  app.innerHTML = cabecalho("ÁREA DO CLIENTE · PASSO 2 DE 3", "Contrato",
+      "Leia o contrato do plano escolhido, já preenchido com os dados da sua ficha. Para assinar, confirme a leitura e digite o seu nome completo.") +
+    provisorio + documentoHtml(doc.texto) +
+    '<div class="assinar d-card no-print"><div class="grade uma">' +
+      '<label class="marcar" style="margin-top:0"><input type="checkbox" id="li"><span>Li o contrato por inteiro e concordo com todas as cláusulas.</span></label>' +
+      '<div><label class="d-rot" for="nome-ass">Digite o seu nome completo para assinar</label>' +
+        '<input type="text" class="d-input" id="nome-ass" autocomplete="off" placeholder="' + esc(ficha.nome) + '">' +
+        '<div class="dica">Tem que ser igual ao nome da ficha cadastral: ' + esc(ficha.nome) + ".</div></div>" +
+      '<div class="msg-erro" id="erro" role="alert" hidden style="margin-top:0"></div>' +
+    "</div></div>" +
+    '<div class="nav-etapas no-print"><a href="area.html" class="btn-voltar">Assinar depois</a>' +
+    '<button type="button" class="btn btn-petroleo" id="assinar">ASSINAR CONTRATO</button></div>';
+
+  var erro = document.getElementById("erro");
+  document.getElementById("assinar").addEventListener("click", async function () {
+    var b = this;
+    var nome = document.getElementById("nome-ass").value;
+    erro.hidden = true;
+    if (!document.getElementById("li").checked) { erro.textContent = "Confirme que leu e concorda com o contrato."; erro.hidden = false; return; }
+    if (normalizar(nome) !== normalizar(ficha.nome)) { erro.textContent = "O nome digitado precisa ser igual ao da ficha cadastral: " + ficha.nome + "."; erro.hidden = false; return; }
+    b.disabled = true; b.textContent = "ASSINANDO…";
+    var r = await c.from("contratos").insert({
+      user_id: usuario.id, plano: ficha.plano, forma_pagamento: ficha.formaPagamento || null,
+      versao: doc.versao, texto: doc.texto, assinado_nome: nome.trim(), user_agent: navigator.userAgent.slice(0, 300)
+    });
+    if (r.error) {
+      console.error(r.error);
+      b.disabled = false; b.textContent = "ASSINAR CONTRATO";
+      erro.textContent = "Não foi possível assinar agora: " + r.error.message; erro.hidden = false; return;
+    }
+    var k = await c.from("contratos").select("*").eq("user_id", usuario.id).maybeSingle();
+    window.scrollTo({ top: 0 });
+    if (k.data) mostrarAssinado(k.data, false); else location.reload();
+  });
+}
+
+function falha(e) {
+  console.error(e);
+  var msg = String((e && (e.message || e)) || "erro desconhecido");
+  var tabela = (e && (e.code === "PGRST205" || e.code === "42P01")) || /schema cache|does not exist/i.test(msg);
+  telaAviso("Não foi possível abrir o contrato.",
+    tabela ? "O banco de dados ainda não tem a tabela de contratos. Rode o arquivo <b>supabase/6-contratos.sql</b> no SQL Editor do Supabase."
+           : "Recarregue a página em instantes. Detalhe técnico: " + esc(msg), "VOLTAR PARA A ÁREA DO CLIENTE", "area.html");
+}
+
+(async function iniciar() {
+  var s = await VHG.sessao();
+  if (!s) { document.getElementById("portao").hidden = false; return; }
+  var c = VHG.sb();
+  var id = new URLSearchParams(location.search).get("id");
+
+  if (id) {
+    var ra = await c.from("contratos").select("*").eq("id", id).maybeSingle();
+    if (ra.error) return falha(ra.error);
+    if (!ra.data) return telaAviso("Contrato não encontrado.", "Ele pode ter sido cancelado.", "VOLTAR AO PAINEL", "admin.html");
+    return mostrarAssinado(ra.data, true);
+  }
+
+  var resp = await Promise.all([
+    c.from("contratos").select("*").eq("user_id", s.user.id).maybeSingle(),
+    c.from("fichas").select("status, respostas").eq("user_id", s.user.id).maybeSingle()
+  ]);
+  if (resp[0].error) return falha(resp[0].error);
+  if (resp[1].error) return falha(resp[1].error);
+  if (resp[0].data) return mostrarAssinado(resp[0].data, false);
+
+  var ficha = resp[1].data;
+  if (!ficha || ficha.status !== "enviado") {
+    return telaAviso("Antes, a ficha cadastral.", "O contrato é montado com os dados da sua ficha. Preencha e envie a ficha primeiro.", "PREENCHER A FICHA", "ficha.html");
+  }
+  var f = ficha.respostas || {};
+  var falta = VHG_CONTRATO.faltandoNaFicha(f);
+  if (falta.length) {
+    return telaAviso("Faltam dados na ficha.", "Para gerar o contrato, a ficha precisa de: " + esc(falta.join(", ")) +
+      ". Me chame no WhatsApp que eu reabro a ficha para você completar.", "FALAR NO WHATSAPP", VHG.waLink());
+  }
+  mostrarParaAssinar(c, s.user, f);
+})().catch(falha);
+</script>
+</body>
+</html>

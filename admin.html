@@ -84,7 +84,8 @@
           <div class="texto-apoio">
             <p style="margin:0 0 10px"><b>Ver relatório</b> abre o relatório completo, com o design do site, a qualquer momento — mesmo antes do envio.</p>
             <p style="margin:0 0 10px"><b>Liberar</b> deixa o relatório visível para o cliente na área dele. <b>Ocultar</b> desfaz.</p>
-            <p style="margin:0"><b>Reabrir</b> devolve a ficha ou o diagnóstico para edição, caso o cliente precise corrigir algo.</p>
+            <p style="margin:0 0 10px"><b>Reabrir</b> devolve a ficha ou o diagnóstico para edição, caso o cliente precise corrigir algo.</p>
+            <p style="margin:0"><b>Cancelar</b> apaga o contrato assinado, para o cliente assinar de novo (por exemplo, depois de corrigir a ficha).</p>
           </div>
         </div>
       </aside>
@@ -112,6 +113,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/vhg.js"></script>
+<script src="assets/js/planos.js"></script>
 <script>
 (async function () {
   var esc = VHG.esc;
@@ -145,10 +147,13 @@
     var r = await Promise.all([
       c.from("perfis").select("id, nome, email, papel, criado_em").order("criado_em", { ascending: false }),
       c.from("diagnosticos").select("id, user_id, status, progresso, relatorio_liberado, atualizado_em, enviado_em, respostas->>nome"),
-      c.from("fichas").select("id, user_id, status, progresso, atualizado_em, enviado_em, respostas->>nome")
+      c.from("fichas").select("id, user_id, status, progresso, atualizado_em, enviado_em, respostas->>nome"),
+      c.from("contratos").select("id, user_id, plano, assinado_em")
     ]);
-    if (r[0].error || r[1].error || r[2].error) { erro("Não foi possível carregar os clientes."); console.error(r[0].error || r[1].error || r[2].error); return; }
-    var porUsuario = {}, fichaDe = {};
+    var falhou = r[0].error || r[1].error || r[2].error || r[3].error;
+    if (falhou) { erro("Não foi possível carregar os clientes: " + falhou.message); console.error(falhou); return; }
+    var porUsuario = {}, fichaDe = {}, contratoDe = {};
+    r[3].data.forEach(function (k) { contratoDe[k.user_id] = k; });
     r[1].data.forEach(function (d) { porUsuario[d.user_id] = d; });
     r[2].data.forEach(function (f) { fichaDe[f.user_id] = f; });
     var clientes = r[0].data.filter(function (p) { return p.papel !== "admin"; });
@@ -159,7 +164,12 @@
       return;
     }
     var linhas = clientes.map(function (p) {
-      var d = porUsuario[p.id], fi = fichaDe[p.id];
+      var d = porUsuario[p.id], fi = fichaDe[p.id], ct = contratoDe[p.id];
+      var stContrato = !ct ? '<span class="selo" style="color:#6B6358">NÃO ASSINADO</span>'
+        : '<span class="selo" style="color:#123B47">ASSINADO ✓</span><div class="pequeno">' + VHG.dataBR(ct.assinado_em) +
+          (VHG_PLANOS.PLANOS[ct.plano] ? " · " + VHG_PLANOS.PLANOS[ct.plano].nome.replace("Planejamento ", "") : "") + "</div>" +
+          '<div style="margin-top:6px"><a class="acao-tabela" href="contrato.html?id=' + ct.id + '">VER CONTRATO</a></div>' +
+          '<div style="margin-top:6px"><button type="button" class="acao-tabela" data-cancelar-contrato="' + ct.id + '">CANCELAR</button></div>';
       var nome = p.nome || (fi && fi.nome) || (d && d.nome) || "—";
       var stFicha = !fi ? '<span class="selo" style="color:#6B6358">NÃO INICIADA</span>'
         : fi.status === "andamento" ? '<span class="selo" style="color:#C08A4E">EM ANDAMENTO · ' + fi.progresso + "%</span>"
@@ -181,12 +191,13 @@
       return "<tr><td><strong>" + esc(nome) + '</strong><div class="pequeno">' + esc(p.email) + "</div>" +
         '<div style="margin-top:8px"><button type="button" class="acao-tabela" data-editar-cliente="' + p.id + '" data-nome="' + esc(p.nome || "") + '" data-email="' + esc(p.email) + '">EDITAR NOME</button></div></td>' +
         "<td>" + stFicha + "</td>" +
+        "<td>" + stContrato + "</td>" +
         "<td>" + status + "</td>" +
         '<td class="pequeno">' + VHG.dataBR([d && d.atualizado_em, fi && fi.atualizado_em].filter(Boolean).sort().pop(), true) + "</td>" +
         '<td><div class="acoes-linha">' + acoes + "</div></td></tr>";
     }).join("");
     var el = document.getElementById("aba-clientes");
-    el.innerHTML = '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>CLIENTE</th><th>FICHA</th><th>DIAGNÓSTICO</th><th>ÚLTIMA ATUALIZAÇÃO</th><th></th></tr></thead><tbody>' + linhas + "</tbody></table></div>";
+    el.innerHTML = '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>CLIENTE</th><th>FICHA</th><th>CONTRATO</th><th>DIAGNÓSTICO</th><th>ÚLTIMA ATUALIZAÇÃO</th><th></th></tr></thead><tbody>' + linhas + "</tbody></table></div>";
     el.querySelectorAll("[data-editar-cliente]").forEach(function (b) {
       b.addEventListener("click", function () {
         abrirEditor({
@@ -195,6 +206,16 @@
           salvar: function (v) { return c.from("perfis").update({ nome: v.nome.trim() || null }).eq("id", b.dataset.editarCliente); },
           depois: carregarClientes
         });
+      });
+    });
+    el.querySelectorAll("[data-cancelar-contrato]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        if (!confirm("Cancelar este contrato? Ele é apagado e o cliente precisará assinar de novo (por exemplo, depois de corrigir a ficha ou trocar de plano).")) return;
+        b.disabled = true;
+        var u = await c.from("contratos").delete().eq("id", b.dataset.cancelarContrato);
+        if (u.error) { erro("Não foi possível cancelar o contrato."); console.error(u.error); b.disabled = false; return; }
+        erro("");
+        carregarClientes();
       });
     });
     el.querySelectorAll("[data-reabrir-ficha]").forEach(function (b) {

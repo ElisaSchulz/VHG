@@ -12,7 +12,8 @@ O site é **HTML, CSS e JavaScript puro**: não precisa instalar nada nem rodar 
 | `formularios.html` | Pedido de conversa. As respostas vão para a tabela `leads` |
 | `entrar.html` | Login, "esqueci minha senha" e criação de senha (pelo link do convite) |
 | `area.html` | Área do cliente: status da ficha e do diagnóstico, e acesso ao relatório |
-| `ficha.html` | Ficha cadastral (passo 1 do cliente). Salva sozinha no Supabase |
+| `ficha.html` | Ficha cadastral (passo 1 do cliente): dados de qualificação do contrato, endereço (com busca por CEP) e plano escolhido. Salva sozinha no Supabase |
+| `contrato.html` | Contrato (passo 2): gerado com os dados da ficha e assinado eletronicamente no próprio site |
 | `diagnostico.html` | Diagnóstico em 10 etapas, com as mesmas perguntas e a mesma lógica do diagnóstico da HZ. Salva sozinho no Supabase e permite pausar e continuar |
 | `relatorio.html` | Relatório em 13 seções, montado na hora a partir das respostas. O botão "Baixar PDF" usa a impressão do navegador |
 | `admin.html` | Painel do admin: clientes, fichas, diagnósticos, liberação de relatórios e pedidos de conversa. Permite editar o nome dos clientes e editar, adicionar ou apagar contatos, com anotações internas |
@@ -24,21 +25,24 @@ Para ver um relatório de exemplo sem precisar de banco: `relatorio.html?demo`.
 
 1. A pessoa envia o **pedido de conversa**. O pedido aparece no painel do admin, na aba "Pedidos de conversa".
 2. Depois da contratação, o Vitor **convida o cliente** pelo Supabase. O cliente recebe um e-mail, cria a senha e entra.
-3. No primeiro login, o cliente cai direto na **ficha cadastral**. Ao enviá-la, o nome informado vira o nome do perfil (e o "Display name" no Supabase). O diagnóstico só abre depois que a ficha é enviada, e já vem com os dados de identificação preenchidos a partir dela.
-4. O cliente responde o **diagnóstico**. Cada alteração é salva automaticamente, então dá para parar e continuar depois. Ao final, ele clica em "Enviar diagnóstico".
-5. No painel, o Vitor abre o **relatório** (com o design do site) e, quando quiser, clica em **Liberar**. A partir daí o cliente vê o relatório na área dele e pode baixar o PDF.
+3. No primeiro login, o cliente cai direto na **ficha cadastral**, com tudo o que o contrato precisa (inclusive o plano e a forma de pagamento). Ao enviá-la, o nome informado vira o nome do perfil (e o "Display name" no Supabase).
+4. Em seguida vem o **contrato**, já preenchido com os dados da ficha. O cliente confirma a leitura e digita o nome completo para assinar. O banco registra data, hora, IP e um código de verificação do texto. O admin vê o contrato assinado no painel e pode cancelá-lo, se o cliente precisar assinar de novo.
+5. O diagnóstico só abre depois do contrato assinado, e já vem com os dados de identificação preenchidos a partir da ficha.
+6. O cliente responde o **diagnóstico**. Cada alteração é salva automaticamente, então dá para parar e continuar depois. Ao final, ele clica em "Enviar diagnóstico".
+7. No painel, o Vitor abre o **relatório** (com o design do site) e, quando quiser, clica em **Liberar**. A partir daí o cliente vê o relatório na área dele e pode baixar o PDF.
 
 No banco ficam guardados **só os dados das respostas**. O relatório não é salvo como arquivo: ele é gerado de novo a cada abertura, sempre com o design atual.
 
 ## Configurar o Supabase (uma vez só)
 
 1. **Crie o projeto** em [supabase.com](https://supabase.com). A região São Paulo (`sa-east-1`) é a mais próxima.
-2. **Crie as tabelas:** rode os cinco arquivos da pasta `supabase/`, **um por vez e na ordem**. Para cada um, abra *SQL Editor › New query*, cole o conteúdo do arquivo inteiro e clique em *Run*:
+2. **Crie as tabelas:** rode os seis arquivos da pasta `supabase/`, **um por vez e na ordem**. Para cada um, abra *SQL Editor › New query*, cole o conteúdo do arquivo inteiro e clique em *Run*:
    1. `1-perfis.sql`
    2. `2-diagnosticos.sql`
    3. `3-leads.sql`
    4. `4-fichas.sql`
    5. `5-admins-e-conferencia.sql`, que no final lista as quatro tabelas criadas.
+   6. `6-contratos.sql`, que cria a tabela dos contratos assinados.
 
    Todos podem ser rodados de novo sem perder dados.
 3. **Copie as chaves** em *Project Settings › API* para o arquivo `assets/js/config.js` (já preenchido para o projeto atual):
@@ -73,6 +77,8 @@ assets/css/vhg.css              design tokens e componentes (cores, tipografia, 
 assets/js/config.js             chaves do Supabase e contatos
 assets/js/vhg.js                cabeçalho, rodapé, cliente do Supabase e funções de login
 assets/js/diagnostico-core.js   regras de cálculo do diagnóstico (score, arquétipo, projeções)
+assets/js/planos.js              planos, preços, prazos e formas de pagamento (usado pela ficha e pelo contrato)
+assets/js/contrato-modelo.js     texto do contrato e dados do contratado — MODELO PROVISÓRIO, revisar antes de usar
 assets/js/exemplo-diagnostico.js respostas fictícias usadas em relatorio.html?demo
 assets/css/formulario.css       visual da ficha cadastral e do diagnóstico
 supabase/1…5-*.sql              tabelas e regras de segurança (RLS), em cinco partes

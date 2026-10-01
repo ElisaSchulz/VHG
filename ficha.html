@@ -51,6 +51,7 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/vhg.js"></script>
 <script src="assets/js/diagnostico-core.js"></script>
+<script src="assets/js/planos.js"></script>
 <script>
 "use strict";
 /* ─────────────────────────────────────────────────────────────
@@ -65,17 +66,18 @@ var OCUPACOES = ["Tecnologia", "Saúde", "Educação", "Direito", "Finanças / C
 var REGIME_TRABALHO = ["CLT", "Servidor(a) público(a)", "Autônomo(a) / Profissional liberal", "PJ", "Empresário(a)", "Aposentado(a)", "Outro"];
 var PARENTESCO = ["Filho(a)", "Enteado(a)", "Pai / Mãe", "Outro"];
 var COMO_CONHECEU = ["Indicação", "Instagram", "Google", "Outro"];
-var PLANOS = ["Planejamento Pontual (3 meses)", "Planejamento Recorrente (12 meses)", "Planejamento Patrimonial", "Ainda não decidi"];
 var HORARIOS = ["Manhã", "Tarde", "Noite", "Qualquer horário"];
 
 function defaultData() {
   return {
-    nome: "", cpf: "", dataNascimento: "", estadoCivil: "", regimeBens: "",
-    email: "", whatsapp: "", cep: "", endereco: "", cidade: "", estado: "",
+    nome: "", cpf: "", rg: "", nacionalidade: "Brasileira", dataNascimento: "", estadoCivil: "", regimeBens: "",
+    email: "", whatsapp: "",
+    cep: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "",
     temConjuge: "", conjugeNome: "", conjugeNascimento: "", conjugeProfissao: "",
     dependentes: [],
     ocupacao: "", profissao: "", empresa: "", regimeTrabalho: "",
-    planoContratado: "", comoConheceu: "", indicadoPor: "", melhorHorario: "", observacoes: "",
+    plano: "", formaPagamento: "", patrimonioEstimado: 0,
+    comoConheceu: "", indicadoPor: "", melhorHorario: "", observacoes: "",
     consentimento: false, consentimentoEm: ""
   };
 }
@@ -135,19 +137,30 @@ function obrigatorios() {
   return [
     ["Nome completo", data.nome.trim() !== ""],
     ["CPF válido", cpfValido(data.cpf)],
+    ["RG", data.rg.trim() !== ""],
+    ["Nacionalidade", data.nacionalidade.trim() !== ""],
     ["Data de nascimento", VHGDiag.idadeEm(data.dataNascimento) !== null],
     ["Estado civil", data.estadoCivil !== ""],
+    ["Profissão", data.profissao.trim() !== ""],
     ["E-mail", /\S+@\S+\.\S+/.test(data.email)],
     ["WhatsApp", data.whatsapp.replace(/\D/g, "").length >= 10],
-    ["Estado", data.estado !== ""],
+    ["CEP", data.cep.replace(/\D/g, "").length === 8],
+    ["Endereço (rua)", data.logradouro.trim() !== ""],
+    ["Número", data.numero.trim() !== ""],
+    ["Bairro", data.bairro.trim() !== ""],
     ["Cidade", data.cidade.trim() !== ""],
+    ["Estado", data.estado !== ""],
     ["Tem cônjuge ou companheiro(a)?", data.temConjuge === true || data.temConjuge === false],
     ["Nome do cônjuge", data.temConjuge !== true || data.conjugeNome.trim() !== ""],
     ["Ocupação", data.ocupacao !== ""],
     ["Regime de trabalho", data.regimeTrabalho !== ""],
+    ["Plano que deseja contratar", !!PL[data.plano]],
+    ["Forma de pagamento", !PL[data.plano] || PL[data.plano].pagamentos.length === 1 || data.formaPagamento !== ""],
+    ["Patrimônio a ser acompanhado (a partir de R$ 300 mil)", data.plano !== "patrimonial" || (data.patrimonioEstimado || 0) >= PL.patrimonial.patrimonioMinimo],
     ["Aceite da Política de Privacidade", data.consentimento === true]
   ];
 }
+var PL = VHG_PLANOS.PLANOS;
 function faltando() { return obrigatorios().filter(function (r) { return !r[1]; }).map(function (r) { return r[0]; }); }
 
 /* ── Interface ──────────────────────────────────────────── */
@@ -195,26 +208,31 @@ function renderForm() {
       "</div></div>";
   }).join("");
 
-  var html = '<div class="linha-eyebrow"><div class="fio"></div><div class="txt">ÁREA DO CLIENTE · PASSO 1 DE 2</div></div>' +
+  var html = '<div class="linha-eyebrow"><div class="fio"></div><div class="txt">ÁREA DO CLIENTE · PASSO 1 DE 3</div></div>' +
     '<h1 class="etapa-titulo">Ficha cadastral</h1>' +
-    '<p class="etapa-desc">Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos e fica salva enquanto você preenche. Depois dela vem o diagnóstico financeiro.</p>' +
+    '<p class="etapa-desc">Dados pessoais, endereço, família, profissão e o plano escolhido. São esses dados que entram no seu contrato, por isso quase todos são obrigatórios. Leva cerca de 10 minutos e fica salva enquanto você preenche.</p>' +
 
     secao("01", "Dados pessoais", '<div class="grade">' +
       campo("nome", "Nome completo", "text", { classe: "inteiro", auto: "name", ph: "Seu nome" }) +
       campo("cpf", "CPF", "text", { modo: "numeric", ph: "000.000.000-00" }) +
+      campo("rg", "RG e órgão emissor", "text", { ph: "Ex: 12.345.678-9 SSP/SP" }) +
+      campo("nacionalidade", "Nacionalidade", "text", { ph: "Brasileira" }) +
       campo("dataNascimento", "Data de nascimento", "date") +
       select("estadoCivil", "Estado civil", ESTADO_CIVIL) +
-      (casado() ? select("regimeBens", "Regime de bens <small>(se souber)</small>", REGIME_BENS) : "<div></div>") +
+      (casado() ? select("regimeBens", "Regime de bens <small>(se souber)</small>", REGIME_BENS) : "") +
       "</div>") +
 
-    secao("02", "Contatos", '<div class="grade">' +
+    secao("02", "Contatos e endereço", '<div class="grade">' +
       campo("email", "E-mail", "email", { auto: "email", ph: "voce@email.com" }) +
       campo("whatsapp", "WhatsApp", "tel", { auto: "tel", ph: "(00) 00000-0000" }) +
-      campo("cep", "CEP <small>(opcional)</small>", "text", { modo: "numeric", auto: "postal-code", ph: "00000-000" }) +
-      campo("endereco", "Endereço <small>(opcional)</small>", "text", { auto: "street-address", ph: "Rua, número, complemento" }) +
-      select("estado", "Estado", UF_LIST) +
-      campo("cidade", "Cidade", "text", { auto: "address-level2", ph: "Sua cidade" }) +
+      campo("cep", "CEP", "text", { modo: "numeric", auto: "postal-code", ph: "00000-000", dica: '<span id="cep-status">Ao digitar o CEP, o endereço é preenchido sozinho.</span>' }) +
       select("melhorHorario", "Melhor horário para contato <small>(opcional)</small>", HORARIOS) +
+      campo("logradouro", "Rua / avenida", "text", { classe: "inteiro", auto: "address-line1" }) +
+      campo("numero", "Número", "text", { auto: "off" }) +
+      campo("complemento", "Complemento <small>(opcional)</small>", "text", { auto: "address-line2", ph: "Apto, bloco, sala" }) +
+      campo("bairro", "Bairro", "text") +
+      campo("cidade", "Cidade", "text", { auto: "address-level2" }) +
+      select("estado", "Estado", UF_LIST) +
       "</div>") +
 
     secao("03", "Família", '<div class="grade">' +
@@ -231,12 +249,13 @@ function renderForm() {
     secao("04", "Profissão", '<div class="grade">' +
       select("ocupacao", "Ocupação", OCUPACOES) +
       select("regimeTrabalho", "Regime de trabalho", REGIME_TRABALHO) +
-      campo("profissao", "Profissão ou cargo <small>(opcional)</small>", "text", { ph: "Ex: Médica" }) +
+      campo("profissao", "Profissão", "text", { ph: "Ex: Médica" }) +
       campo("empresa", "Empresa ou instituição <small>(opcional)</small>", "text") +
       "</div>") +
 
-    secao("05", "Sobre o atendimento", '<div class="grade">' +
-      select("planoContratado", "Plano contratado <small>(opcional)</small>", PLANOS) +
+    secao("05", "Plano escolhido", blocoPlano()) +
+
+    secao("06", "Sobre o atendimento", '<div class="grade">' +
       select("comoConheceu", "Como conheceu o meu trabalho? <small>(opcional)</small>", COMO_CONHECEU) +
       (data.comoConheceu === "Indicação" ? campo("indicadoPor", "Quem indicou?", "text", { classe: "inteiro" }) : "") +
       '<div class="inteiro">' + rot("Algo que eu deva saber antes de começarmos? <small>(opcional)</small>") +
@@ -253,19 +272,63 @@ function renderForm() {
   return html;
 }
 
+function blocoPlano() {
+  var opcoes = Object.keys(PL).map(function (k) {
+    return '<button type="button" class="' + (data.plano === k ? "on" : "") + '" data-set-texto="plano" data-val="' + k + '">' + PL[k].nome.replace("Planejamento ", "") + "</button>";
+  }).join("");
+  var html = '<div class="grade"><div class="inteiro">' + rot("Plano que deseja contratar", "seg-rot") + '<div class="seg largo">' + opcoes + "</div></div>";
+  var p = PL[data.plano];
+  if (p) {
+    html += '<div class="inteiro"><div class="nota"><p><b>' + p.rotulo + "</b></p><p>" + p.servicos.join(" · ") + "</p></div></div>";
+    if (p.pagamentos.length > 1) {
+      html += '<div class="inteiro">' + rot("Forma de pagamento", "seg-rot") + '<div class="seg vertical">' +
+        p.pagamentos.map(function (f) {
+          return '<button type="button" class="' + (data.formaPagamento === f[0] ? "on" : "") + '" data-set-texto="formaPagamento" data-val="' + f[0] + '">' + f[1].charAt(0).toUpperCase() + f[1].slice(1) + "</button>";
+        }).join("") + "</div></div>";
+    }
+    if (data.plano === "patrimonial") {
+      var faixa = VHG_PLANOS.faixaDoPatrimonio(data.patrimonioEstimado);
+      html += '<div class="inteiro estreito">' + rot("Patrimônio a ser acompanhado (aproximado)") +
+        '<input type="text" inputmode="numeric" class="d-input num" data-dinheiro="patrimonioEstimado" value="' + esc(VHGDiag.fmt(data.patrimonioEstimado)) + '">' +
+        '<div class="dica" id="faixa-taxa">' + textoFaixa(faixa) + "</div></div>";
+    }
+  }
+  return html + "</div>";
+}
+function textoFaixa(faixa) {
+  if (!(data.patrimonioEstimado > 0)) return "Define a faixa da taxa de administração anual.";
+  if (!faixa) return "O Planejamento Patrimonial é para patrimônio a partir de R$ 300 mil.";
+  return "Faixa " + faixa.rotulo + ": taxa de " + faixa.taxa.toFixed(2).replace(".", ",") + "% ao ano.";
+}
+function formaPagamentoTexto() {
+  var p = PL[data.plano];
+  if (!p) return "";
+  if (p.pagamentos.length === 1) return p.pagamentos[0][1];
+  var f = p.pagamentos.filter(function (x) { return x[0] === data.formaPagamento; })[0];
+  return f ? f[1] : "";
+}
+
+function enderecoCompleto(d) {
+  var rua = [d.logradouro, d.numero].filter(Boolean).join(", ");
+  return [rua + (d.complemento ? " – " + d.complemento : ""), d.bairro, [d.cidade, d.estado].filter(Boolean).join("/"), d.cep ? "CEP " + d.cep : ""]
+    .filter(function (x) { return x && x.trim(); }).join(", ");
+}
+
 function linhasResumo() {
   var ou = function (v) { return v === "" || v === undefined || v === null ? "—" : String(v); };
   var dt = function (v) { return VHGDiag.formatarData(v) || "—"; };
   var idade = VHGDiag.idadeEm(data.dataNascimento);
   return [
-    ["Dados pessoais", [["Nome", ou(data.nome)], ["CPF", ou(data.cpf)], ["Nascimento", dt(data.dataNascimento) + (idade !== null ? " (" + idade + " anos)" : "")],
+    ["Dados pessoais", [["Nome", ou(data.nome)], ["CPF", ou(data.cpf)], ["RG", ou(data.rg)], ["Nacionalidade", ou(data.nacionalidade)],
+      ["Profissão", ou(data.profissao)], ["Nascimento", dt(data.dataNascimento) + (idade !== null ? " (" + idade + " anos)" : "")],
       ["Estado civil", ou(data.estadoCivil) + (data.regimeBens ? " · " + data.regimeBens : "")]]],
-    ["Contatos", [["E-mail", ou(data.email)], ["WhatsApp", ou(data.whatsapp)], ["Cidade / UF", ou(data.cidade) + (data.estado ? ", " + data.estado : "")],
-      ["Endereço", ou([data.endereco, data.cep].filter(Boolean).join(" · "))], ["Melhor horário", ou(data.melhorHorario)]]],
+    ["Contatos e endereço", [["E-mail", ou(data.email)], ["WhatsApp", ou(data.whatsapp)], ["Endereço", ou(enderecoCompleto(data))], ["Melhor horário", ou(data.melhorHorario)]]],
     ["Família", [["Cônjuge", data.temConjuge === true ? ou(data.conjugeNome) + (data.conjugeNascimento ? " · " + dt(data.conjugeNascimento) : "") + (data.conjugeProfissao ? " · " + data.conjugeProfissao : "") : "Não"]]
       .concat(data.dependentes.length ? data.dependentes.map(function (d, i) { return ["Dependente " + (i + 1), ou(d.nome) + (d.parentesco ? " · " + d.parentesco : "") + (d.nascimento ? " · " + dt(d.nascimento) : "")]; }) : [["Dependentes", "Nenhum"]])],
     ["Profissão", [["Ocupação", ou(data.ocupacao)], ["Regime", ou(data.regimeTrabalho)], ["Profissão / cargo", ou(data.profissao)], ["Empresa", ou(data.empresa)]]],
-    ["Sobre o atendimento", [["Plano", ou(data.planoContratado)], ["Como conheceu", ou(data.comoConheceu) + (data.indicadoPor ? " · " + data.indicadoPor : "")], ["Observações", ou(data.observacoes)]]]
+    ["Plano escolhido", [["Plano", PL[data.plano] ? PL[data.plano].rotulo : "—"], ["Pagamento", ou(formaPagamentoTexto())]]
+      .concat(data.plano === "patrimonial" ? [["Patrimônio a acompanhar", VHGDiag.fmt(data.patrimonioEstimado)], ["Taxa", textoFaixa(VHG_PLANOS.faixaDoPatrimonio(data.patrimonioEstimado))]] : [])],
+    ["Sobre o atendimento", [["Como conheceu", ou(data.comoConheceu) + (data.indicadoPor ? " · " + data.indicadoPor : "")], ["Observações", ou(data.observacoes)]]]
   ];
 }
 function renderResumo(admin) {
@@ -277,13 +340,13 @@ function renderResumo(admin) {
         s[1].map(function (i) { return '<div><div class="r">' + i[0] + '</div><div class="v">' + esc(i[1]) + "</div></div>"; }).join("") + "</div></div>";
     }).join("") +
     '<div class="nav-etapas"><a href="' + (admin ? "admin.html" : "area.html") + '" class="btn-voltar">Voltar</a>' +
-    (admin ? "" : '<a href="diagnostico.html" class="btn btn-petroleo">IR PARA O DIAGNÓSTICO</a>') + "</div>";
+    (admin ? "" : '<a href="contrato.html" class="btn btn-petroleo">IR PARA O CONTRATO</a>') + "</div>";
 }
 function renderFim() {
   var nome = (data.nome || "").trim().split(/\s+/)[0];
   return '<div class="fim"><div class="tit">Ficha recebida' + (nome ? ", " + esc(nome) : "") + ".</div>" +
-    "<p>Obrigado. O próximo passo é o diagnóstico financeiro: renda, gastos, patrimônio, dívidas e objetivos. Os seus dados de identificação já vão preenchidos.</p>" +
-    '<div class="fio"></div><a href="diagnostico.html" class="btn btn-cobre btn-d">IR PARA O DIAGNÓSTICO</a>' +
+    "<p>Obrigado. O próximo passo é ler e assinar o contrato do plano escolhido, já preenchido com os seus dados. Depois dele vem o diagnóstico financeiro.</p>" +
+    '<div class="fio"></div><a href="contrato.html" class="btn btn-cobre btn-d">IR PARA O CONTRATO</a>' +
     '<div style="margin-top:20px"><a href="area.html" style="color:rgba(242,237,228,.6); font-size:13px; text-decoration:underline">Fazer depois</a></div></div>';
 }
 
@@ -317,6 +380,24 @@ function mascaraCep(v) { var d = v.replace(/\D/g, "").slice(0, 8); return d.leng
 // Campos que mudam o que aparece na tela pedem um novo render.
 var REDESENHA = { estadoCivil: 1, comoConheceu: 1 };
 
+// Preenche o endereço pelo CEP (ViaCEP, serviço público e gratuito).
+function buscarCep(cep) {
+  var d = cep.replace(/\D/g, "");
+  if (d.length !== 8) return;
+  var st = document.getElementById("cep-status");
+  if (st) st.textContent = "Buscando endereço…";
+  fetch("https://viacep.com.br/ws/" + d + "/json/").then(function (r) { return r.json(); }).then(function (e) {
+    if (e.erro) { if (st) st.textContent = "CEP não encontrado. Preencha o endereço à mão."; return; }
+    if (e.logradouro) data.logradouro = e.logradouro;
+    if (e.bairro) data.bairro = e.bairro;
+    if (e.localidade) data.cidade = e.localidade;
+    if (e.uf) data.estado = e.uf;
+    persist(); render();
+    var num = document.querySelector('[data-field="numero"]');
+    if (num && !data.numero) num.focus();
+  }).catch(function () { if (st) st.textContent = "Não foi possível buscar o CEP. Preencha o endereço à mão."; });
+}
+
 function ligar(raiz) {
   raiz.querySelectorAll("[data-field]").forEach(function (el) {
     el.addEventListener(el.tagName === "SELECT" ? "change" : "input", function () {
@@ -329,7 +410,7 @@ function ligar(raiz) {
       }
       if (f === "cpf") v = el.value = mascaraCpf(v);
       if (f === "whatsapp") v = el.value = mascaraFone(v);
-      if (f === "cep") v = el.value = mascaraCep(v);
+      if (f === "cep") { v = el.value = mascaraCep(v); if (v.length === 9 && v !== data.cep) { data.cep = v; buscarCep(v); } }
       data[f] = v;
       persist();
       if (REDESENHA[f]) render(); else atualizarErro();
@@ -344,6 +425,23 @@ function ligar(raiz) {
   });
   raiz.querySelectorAll("[data-set]").forEach(function (el) {
     el.addEventListener("click", function () { data[el.dataset.set] = el.dataset.val === "true"; persist(); render(); });
+  });
+  raiz.querySelectorAll("[data-set-texto]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var f = el.dataset.setTexto;
+      if (f === "plano" && data.plano !== el.dataset.val) data.formaPagamento = "";
+      data[f] = el.dataset.val; persist(); render();
+    });
+  });
+  raiz.querySelectorAll("[data-dinheiro]").forEach(function (el) {
+    el.addEventListener("input", function () {
+      var dig = el.value.replace(/\D/g, "");
+      var v = dig ? parseInt(dig, 10) / 100 : 0;
+      data[el.dataset.dinheiro] = v; el.value = VHGDiag.fmt(v);
+      var t = document.getElementById("faixa-taxa");
+      if (t) t.textContent = textoFaixa(VHG_PLANOS.faixaDoPatrimonio(v));
+      persist(); atualizarErro();
+    });
   });
   raiz.querySelectorAll("[data-add]").forEach(function (el) {
     el.addEventListener("click", function () { data.dependentes.push({ nome: "", nascimento: "", parentesco: "" }); persist(); render(); });
@@ -398,6 +496,17 @@ function vigiarCarregamento(oque) {
 }
 
 vigiarCarregamento("a ficha cadastral");
+// Fichas salvas antes desta versão: endereço em campo único e plano como texto.
+function migrar(d) {
+  if (d.endereco && !d.logradouro) d.logradouro = d.endereco;
+  if (d.planoContratado && !d.plano) {
+    if (/Pontual/.test(d.planoContratado)) d.plano = "pontual";
+    else if (/Recorrente/.test(d.planoContratado)) d.plano = "recorrente";
+    else if (/Patrimonial/.test(d.planoContratado)) d.plano = "patrimonial";
+  }
+  delete d.endereco; delete d.planoContratado;
+}
+
 (async function iniciar() {
   var s = await VHG.sessao();
   if (!s) { document.getElementById("portao").hidden = false; return; }
@@ -410,7 +519,7 @@ vigiarCarregamento("a ficha cadastral");
     var ra = await c.from("fichas").select("respostas").eq("id", id).maybeSingle();
     if (!ra.data) { render('<div class="msg-erro">Ficha não encontrada ou sem permissão.</div>'); return; }
     somenteLeitura = true;
-    data = Object.assign(defaultData(), ra.data.respostas);
+    data = Object.assign(defaultData(), ra.data.respostas); migrar(data);
     render(renderResumo(true));
     return;
   }
@@ -419,7 +528,7 @@ vigiarCarregamento("a ficha cadastral");
   if (r.error) { falhaAoAbrir(r.error, "a ficha cadastral"); return; }
   if (r.data && r.data.status === "enviado") {
     somenteLeitura = true;
-    data = Object.assign(defaultData(), r.data.respostas);
+    data = Object.assign(defaultData(), r.data.respostas); migrar(data);
     render(renderResumo(false));
     return;
   }
@@ -433,6 +542,7 @@ vigiarCarregamento("a ficha cadastral");
     data.nome = (p && p.nome) || "";
   }
   if (!Array.isArray(data.dependentes)) data.dependentes = [];
+  migrar(data);
   render();
 })().catch(function (e) { falhaAoAbrir(e, "a ficha cadastral"); });
 </script>

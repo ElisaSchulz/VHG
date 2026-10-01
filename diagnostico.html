@@ -865,16 +865,25 @@ vigiarCarregamento("o diagnóstico");
   var c = VHG.sb();
   var resp = await Promise.all([
     c.from("diagnosticos").select("status, etapa, respostas").eq("user_id", usuario.id).maybeSingle(),
-    c.from("fichas").select("status, respostas").eq("user_id", usuario.id).maybeSingle()
+    c.from("fichas").select("status, respostas").eq("user_id", usuario.id).maybeSingle(),
+    c.from("contratos").select("id").eq("user_id", usuario.id).maybeSingle()
   ]);
-  var r = resp[0], ficha = resp[1].data;
+  var r = resp[0], ficha = resp[1].data, contrato = resp[2].data;
   if (resp[1].error) { falhaAoAbrir(resp[1].error, "o diagnóstico"); return; }
+  if (resp[2].error) { falhaAoAbrir(resp[2].error, "o diagnóstico"); return; }
   // A ordem é ficha → diagnóstico. Quem ainda não enviou a ficha (e não
   // começou o diagnóstico antes dessa regra existir) volta para ela.
   if ((!ficha || ficha.status !== "enviado") && !r.data) {
     document.getElementById("app").innerHTML = '<div class="fim"><div class="tit">Antes, a ficha cadastral.</div>' +
-      "<p>O diagnóstico é o passo 2. Comece pela ficha cadastral: leva cerca de 10 minutos e os seus dados já entram preenchidos aqui.</p>" +
+      "<p>O diagnóstico é o passo 3. Comece pela ficha cadastral: leva cerca de 10 minutos e os seus dados já entram preenchidos aqui.</p>" +
       '<div class="fio"></div><a href="ficha.html" class="btn btn-cobre btn-d">PREENCHER A FICHA</a></div>';
+    return;
+  }
+  // Depois da ficha, o contrato precisa estar assinado.
+  if (!contrato && !r.data) {
+    document.getElementById("app").innerHTML = '<div class="fim"><div class="tit">Antes, o contrato.</div>' +
+      "<p>O diagnóstico é o passo 3. Leia e assine o contrato do plano escolhido; ele já está preenchido com os dados da sua ficha.</p>" +
+      '<div class="fio"></div><a href="contrato.html" class="btn btn-cobre btn-d">LER E ASSINAR O CONTRATO</a></div>';
     return;
   }
   if (r.error) { falhaAoAbrir(r.error, "o diagnóstico"); return; }
