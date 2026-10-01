@@ -338,6 +338,7 @@ function renderResumo(admin) {
     (admin ? "" : contratoAssinado
       ? '<p class="etapa-desc">A ficha já está comigo e o contrato foi assinado com estes dados. Se precisar alterar algo, me chame que eu reabro para você.</p>'
       : '<p class="etapa-desc">Precisa corrigir ou completar algo? Você pode editar a ficha enquanto o contrato ainda não foi assinado.</p>' +
+        '<div style="margin:-12px 0 24px"><button type="button" class="btn btn-' + (faltando().length ? "cobre" : "linha") + '" data-reabrir>EDITAR FICHA</button></div>' +
         (faltando().length ? '<div class="msg-erro" style="margin:0 0 24px">Faltam dados para gerar o contrato: ' + esc(faltando().join(", ")) + ". Clique em “Editar ficha” para completar.</div>" : "")) +
     linhasResumo().map(function (s) {
       return '<div class="revisao"><div class="topo"><div class="tit">' + s[0] + '</div></div><div class="itens">' +

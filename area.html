@@ -59,6 +59,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/vhg.js"></script>
+<script src="assets/js/planos.js"></script>
+<script src="assets/js/contrato-modelo.js"></script>
 <script>
 (async function () {
   var esc = VHG.esc;
@@ -70,7 +72,7 @@
   var resp = await Promise.all([
     VHG.perfil(s.user.id),
     c.from("diagnosticos").select("status, progresso, relatorio_liberado, enviado_em").eq("user_id", s.user.id).maybeSingle(),
-    c.from("fichas").select("status, progresso").eq("user_id", s.user.id).maybeSingle(),
+    c.from("fichas").select("status, progresso, respostas").eq("user_id", s.user.id).maybeSingle(),
     c.from("contratos").select("id, assinado_em").eq("user_id", s.user.id).maybeSingle()
   ]);
   var p = resp[0], d = resp[1].data, fi = resp[2].data, ct = resp[3].data;
@@ -98,10 +100,19 @@
   // começado o diagnóstico antes dessa regra continua liberado.
   var contratoBloqueado = ficha.status !== "enviado";
   var diagBloqueado = !ct && !d;
+  // Ficha enviada e contrato ainda não assinado: o cliente pode reabrir a
+  // ficha, e é avisado se faltar algo que o contrato precisa.
+  var fichaEditavel = fi && fi.status === "enviado" && !ct;
+  var faltaFicha = fichaEditavel ? VHG_CONTRATO.faltandoNaFicha(fi.respostas || {}) : [];
+  if (faltaFicha.length) {
+    STATUS.ficha_incompleta = { label: "FALTAM DADOS PARA O CONTRATO", cor: "#C08A4E", acao: "VER RESPOSTAS" };
+    ficha.status = "ficha_incompleta";
+    contratoBloqueado = true;
+  }
 
   var FORMS = [
-    { num: "01", titulo: "Ficha cadastral", desc: "Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos.", href: "ficha.html", estado: ficha },
-    { num: "02", titulo: "Contrato", desc: "O contrato do plano escolhido, já preenchido com os dados da ficha. Assinatura eletrônica, aqui mesmo.", href: "contrato.html", estado: contrato, bloqueado: contratoBloqueado, aviso: "DEPOIS DA FICHA" },
+    { num: "01", titulo: "Ficha cadastral", desc: "Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos.", href: "ficha.html", estado: ficha, editavel: fichaEditavel, incompleta: faltaFicha.length > 0 },
+    { num: "02", titulo: "Contrato", desc: "O contrato do plano escolhido, já preenchido com os dados da ficha. Assinatura eletrônica, aqui mesmo.", href: "contrato.html", estado: contrato, bloqueado: contratoBloqueado, aviso: faltaFicha.length ? "COMPLETE A FICHA" : "DEPOIS DA FICHA" },
     { num: "03", titulo: "Diagnóstico financeiro", desc: "Renda, gastos, patrimônio, dívidas e objetivos, em 10 etapas. Pode pausar e continuar depois.", href: "diagnostico.html", estado: diag, bloqueado: diagBloqueado, aviso: "DEPOIS DO CONTRATO",
       relatorio: d && d.status === "enviado" ? (d.relatorio_liberado ? "liberado" : "analise") : null }
   ];
@@ -115,9 +126,15 @@
     } else {
       acoes = '<div class="acoes">' +
         (f.relatorio === "liberado" ? '<a href="relatorio.html" class="btn btn-cobre">VER RELATÓRIO</a>' : "") +
-        '<a href="' + f.href + '" class="btn btn-petroleo">' + st.acao + '</a></div>';
+        (f.incompleta ? '<button type="button" class="btn btn-cobre" data-editar-ficha>COMPLETAR FICHA</button>' : "") +
+        '<a href="' + f.href + '" class="btn btn-petroleo">' + st.acao + "</a>" +
+        (f.editavel && !f.incompleta ? '<button type="button" class="btn btn-linha" data-editar-ficha>EDITAR FICHA</button>' : "") +
+        "</div>";
     }
-    var notaRelatorio = f.relatorio === "analise"
+    if (f.incompleta) rotulo = st.label;
+    var notaRelatorio = f.incompleta
+      ? '<div style="margin-top:12px; font-size:13px; color:#6B6358">Falta: ' + esc(faltaFicha.join(", ")) + ".</div>"
+      : f.relatorio === "analise"
       ? '<div style="margin-top:12px; font-size:13px; color:#6B6358">Relatório em análise. Aviso por e-mail quando estiver pronto.</div>'
       : f.relatorio === "liberado" ? '<div style="margin-top:12px; font-size:13px; color:#123B47">Seu relatório está disponível.</div>' : "";
     return '<div class="card form-card">' +
@@ -127,6 +144,22 @@
         '<span class="status" style="color:' + st.cor + '">' + rotulo + '</span></div>' + notaRelatorio + '</div>' +
       acoes + '</div>';
   }).join("");
+
+  document.querySelectorAll("[data-editar-ficha]").forEach(function (b) {
+    b.addEventListener("click", async function () {
+      var texto = b.textContent;
+      b.disabled = true; b.textContent = "ABRINDO…";
+      var r = await c.rpc("reabrir_minha_ficha");
+      if (r.error) {
+        b.disabled = false; b.textContent = texto;
+        alert(/could not find the function|schema cache/i.test(r.error.message)
+          ? "A edição ainda não está disponível: falta rodar o arquivo supabase/6-contratos.sql no Supabase."
+          : r.error.message);
+        return;
+      }
+      location.href = "ficha.html";
+    });
+  });
 
   document.getElementById("sair").addEventListener("click", async function () {
     await c.auth.signOut();
