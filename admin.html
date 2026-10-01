@@ -75,7 +75,7 @@
           <div class="texto-apoio">
             <p style="margin:0 0 10px"><b>Ver relatório</b> abre o relatório completo, com o design do site, a qualquer momento — mesmo antes do envio.</p>
             <p style="margin:0 0 10px"><b>Liberar</b> deixa o relatório visível para o cliente na área dele. <b>Ocultar</b> desfaz.</p>
-            <p style="margin:0"><b>Reabrir</b> devolve o diagnóstico para edição, caso o cliente precise corrigir algo.</p>
+            <p style="margin:0"><b>Reabrir</b> devolve a ficha ou o diagnóstico para edição, caso o cliente precise corrigir algo.</p>
           </div>
         </div>
       </aside>
@@ -120,11 +120,13 @@
   async function carregarClientes() {
     var r = await Promise.all([
       c.from("perfis").select("id, nome, email, papel, criado_em").order("criado_em", { ascending: false }),
-      c.from("diagnosticos").select("id, user_id, status, progresso, relatorio_liberado, atualizado_em, enviado_em, respostas->>nome")
+      c.from("diagnosticos").select("id, user_id, status, progresso, relatorio_liberado, atualizado_em, enviado_em, respostas->>nome"),
+      c.from("fichas").select("id, user_id, status, progresso, atualizado_em, enviado_em, respostas->>nome")
     ]);
-    if (r[0].error || r[1].error) { erro("Não foi possível carregar os clientes."); console.error(r[0].error || r[1].error); return; }
-    var porUsuario = {};
+    if (r[0].error || r[1].error || r[2].error) { erro("Não foi possível carregar os clientes."); console.error(r[0].error || r[1].error || r[2].error); return; }
+    var porUsuario = {}, fichaDe = {};
     r[1].data.forEach(function (d) { porUsuario[d.user_id] = d; });
+    r[2].data.forEach(function (f) { fichaDe[f.user_id] = f; });
     var clientes = r[0].data.filter(function (p) { return p.papel !== "admin"; });
     document.getElementById("n-clientes").textContent = clientes.length;
 
@@ -133,8 +135,13 @@
       return;
     }
     var linhas = clientes.map(function (p) {
-      var d = porUsuario[p.id];
-      var nome = p.nome || (d && d.nome) || "—";
+      var d = porUsuario[p.id], fi = fichaDe[p.id];
+      var nome = p.nome || (fi && fi.nome) || (d && d.nome) || "—";
+      var stFicha = !fi ? '<span class="selo" style="color:#6B6358">NÃO INICIADA</span>'
+        : fi.status === "andamento" ? '<span class="selo" style="color:#C08A4E">EM ANDAMENTO · ' + fi.progresso + "%</span>"
+        : '<span class="selo" style="color:#123B47">ENVIADA ✓</span><div class="pequeno">' + VHG.dataBR(fi.enviado_em) + "</div>";
+      if (fi) stFicha += '<div style="margin-top:6px"><a class="acao-tabela" href="ficha.html?id=' + fi.id + '">VER FICHA</a></div>';
+      if (fi && fi.status === "enviado") stFicha += '<div style="margin-top:6px"><button type="button" class="acao-tabela" data-reabrir-ficha="' + fi.id + '">REABRIR</button></div>';
       var status, acoes = "";
       if (!d) status = '<span class="selo" style="color:#6B6358">NÃO INICIADO</span>';
       else if (d.status === "andamento") status = '<span class="selo" style="color:#C08A4E">EM ANDAMENTO · ' + d.progresso + "%</span>";
@@ -148,12 +155,23 @@
         acoes += '<button type="button" class="acao-tabela" data-acao="reabrir" data-id="' + d.id + '">REABRIR</button>';
       }
       return "<tr><td><strong>" + esc(nome) + '</strong><div class="pequeno">' + esc(p.email) + "</div></td>" +
+        "<td>" + stFicha + "</td>" +
         "<td>" + status + "</td>" +
-        '<td class="pequeno">' + (d ? VHG.dataBR(d.atualizado_em, true) : "—") + "</td>" +
+        '<td class="pequeno">' + VHG.dataBR([d && d.atualizado_em, fi && fi.atualizado_em].filter(Boolean).sort().pop(), true) + "</td>" +
         '<td><div class="acoes-linha">' + acoes + "</div></td></tr>";
     }).join("");
     var el = document.getElementById("aba-clientes");
-    el.innerHTML = '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>CLIENTE</th><th>DIAGNÓSTICO</th><th>ÚLTIMA ATUALIZAÇÃO</th><th></th></tr></thead><tbody>' + linhas + "</tbody></table></div>";
+    el.innerHTML = '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>CLIENTE</th><th>FICHA</th><th>DIAGNÓSTICO</th><th>ÚLTIMA ATUALIZAÇÃO</th><th></th></tr></thead><tbody>' + linhas + "</tbody></table></div>";
+    el.querySelectorAll("[data-reabrir-ficha]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        if (!confirm("Reabrir a ficha cadastral para o cliente editar?")) return;
+        b.disabled = true;
+        var u = await c.from("fichas").update({ status: "andamento" }).eq("id", b.dataset.reabrirFicha);
+        if (u.error) { erro("Não foi possível reabrir a ficha."); console.error(u.error); b.disabled = false; return; }
+        erro("");
+        carregarClientes();
+      });
+    });
     el.querySelectorAll("[data-acao]").forEach(function (b) {
       b.addEventListener("click", async function () {
         var acao = b.dataset.acao, mudanca;

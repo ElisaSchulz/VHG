@@ -3,15 +3,15 @@
 //
 //  Painel do Supabase > Project Settings > API:
 //    · Project URL      → SUPABASE_URL
-//    · anon / public    → SUPABASE_ANON_KEY
+//    · Publishable key (ou a antiga "anon public") → SUPABASE_ANON_KEY
 //
-//  A chave "anon" é pública por definição: quem protege os dados
+//  Essa chave é pública por definição: quem protege os dados
 //  são as regras (RLS) criadas pelo arquivo supabase/schema.sql.
-//  Nunca coloque aqui a chave "service_role".
+//  Nunca coloque aqui a "secret key" nem a antiga "service_role".
 // ─────────────────────────────────────────────────────────────
 window.VHG_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "https://ibowjbojkymccflpjipp.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_igXSPJj7LWvEkm5KSa3pBw_oXXg1TBL",
 
   // Contato usado em todo o site
   EMAIL: "germanovitorhugo@gmail.com",

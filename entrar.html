@@ -91,7 +91,13 @@
     var destino = destinoSeguro();
     if (!destino) {
       var p = await VHG.perfil(session.user.id);
-      destino = p && p.papel === "admin" ? "admin.html" : "area.html";
+      if (p && p.papel === "admin") destino = "admin.html";
+      else {
+        // Primeiro passo do cliente é a ficha cadastral: enquanto ela não
+        // foi enviada, o login leva direto para ela.
+        var f = await c.from("fichas").select("status").eq("user_id", session.user.id).maybeSingle();
+        destino = f.data && f.data.status === "enviado" ? "area.html" : "ficha.html";
+      }
     }
     location.replace(destino);
   }

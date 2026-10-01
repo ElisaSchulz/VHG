@@ -7,8 +7,8 @@
 --  Pode rodar quantas vezes quiser: não duplica nada e não apaga
 --  dados já gravados.
 --
---  O que fica guardado aqui são só DADOS: respostas do diagnóstico
---  e pedidos de conversa. O relatório não é armazenado — ele é
+--  O que fica guardado aqui são só DADOS: ficha cadastral, respostas
+--  do diagnóstico e pedidos de conversa. O relatório não é armazenado — ele é
 --  montado na hora, a partir das respostas, sempre com o design
 --  atual do site.
 --
@@ -32,11 +32,20 @@ create table if not exists public.perfis (
   criado_em  timestamptz not null default now()
 );
 
+-- E-mails que entram como admin. Para trocar a lista, edite aqui e
+-- rode o script de novo.
+create or replace function public.emails_admin()
+returns text[] language sql immutable as $$
+  select array['elisacmazzo@gmail.com', 'germanovitorhugo@gmail.com'];
+$$;
+
 create or replace function public.criar_perfil()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.perfis (id, email, nome)
-  values (new.id, new.email, nullif(coalesce(new.raw_user_meta_data ->> 'nome', new.raw_user_meta_data ->> 'full_name'), ''))
+  insert into public.perfis (id, email, nome, papel)
+  values (new.id, new.email,
+          nullif(coalesce(new.raw_user_meta_data ->> 'nome', new.raw_user_meta_data ->> 'full_name'), ''),
+          case when lower(new.email) = any (public.emails_admin()) then 'admin' else 'cliente' end)
   on conflict (id) do nothing;
   return new;
 end $$;
@@ -191,12 +200,73 @@ create policy "lead: admin apaga" on public.leads
   for delete to authenticated using (public.is_admin());
 
 
--- ── 4) Conferência ───────────────────────────────────────────
--- Deve listar as três tabelas.
+-- ── 4) Ficha cadastral ───────────────────────────────────────
+-- Primeiro formulário do cliente (dados pessoais, família, profissão
+-- e contatos). Mesmas regras do diagnóstico: o cliente edita até
+-- enviar; depois só o admin reabre.
+create table if not exists public.fichas (
+  id             uuid primary key default gen_random_uuid(),
+  user_id        uuid not null unique references auth.users (id) on delete cascade,
+  status         text not null default 'andamento' check (status in ('andamento', 'enviado')),
+  progresso      integer not null default 0 check (progresso between 0 and 100),
+  respostas      jsonb not null default '{}'::jsonb,
+  criado_em      timestamptz not null default now(),
+  atualizado_em  timestamptz not null default now(),
+  enviado_em     timestamptz
+);
+
+create or replace function public.antes_de_salvar_ficha()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  new.atualizado_em := now();
+  if tg_op = 'UPDATE' and not public.is_admin() then
+    new.user_id := old.user_id;
+  end if;
+  if new.status = 'enviado' and (tg_op = 'INSERT' or old.status is distinct from 'enviado') then
+    new.enviado_em := now();
+    new.progresso := 100;
+  end if;
+  if new.status = 'andamento' then
+    new.enviado_em := null;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists antes_de_salvar_ficha on public.fichas;
+create trigger antes_de_salvar_ficha
+  before insert or update on public.fichas
+  for each row execute function public.antes_de_salvar_ficha();
+
+alter table public.fichas enable row level security;
+
+drop policy if exists "ficha: dono ou admin lê" on public.fichas;
+create policy "ficha: dono ou admin lê" on public.fichas
+  for select to authenticated using (user_id = auth.uid() or public.is_admin());
+
+drop policy if exists "ficha: dono cria" on public.fichas;
+create policy "ficha: dono cria" on public.fichas
+  for insert to authenticated with check (user_id = auth.uid() or public.is_admin());
+
+drop policy if exists "ficha: dono edita em andamento" on public.fichas;
+create policy "ficha: dono edita em andamento" on public.fichas
+  for update to authenticated
+  using ((user_id = auth.uid() and status = 'andamento') or public.is_admin())
+  with check (user_id = auth.uid() or public.is_admin());
+
+drop policy if exists "ficha: admin apaga" on public.fichas;
+create policy "ficha: admin apaga" on public.fichas
+  for delete to authenticated using (public.is_admin());
+
+
+-- ── 5) Admins ────────────────────────────────────────────────
+-- Contas que já existem com esses e-mails viram admin agora; as
+-- que forem criadas depois já nascem admin (veja criar_perfil).
+update public.perfis set papel = 'admin'
+ where lower(email) = any (public.emails_admin()) and papel <> 'admin';
+
+
+-- ── 6) Conferência ───────────────────────────────────────────
+-- Deve listar as quatro tabelas.
 select table_name from information_schema.tables
- where table_schema = 'public' and table_name in ('perfis', 'diagnosticos', 'leads')
+ where table_schema = 'public' and table_name in ('perfis', 'diagnosticos', 'fichas', 'leads')
  order by table_name;
-
-
--- ── 5) Tornar o Vitor admin (rode DEPOIS de criar a conta dele) ──
--- update public.perfis set papel = 'admin' where email = 'germanovitorhugo@gmail.com';

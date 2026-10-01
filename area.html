@@ -69,9 +69,10 @@
 
   var resp = await Promise.all([
     VHG.perfil(s.user.id),
-    c.from("diagnosticos").select("status, progresso, relatorio_liberado, enviado_em").eq("user_id", s.user.id).maybeSingle()
+    c.from("diagnosticos").select("status, progresso, relatorio_liberado, enviado_em").eq("user_id", s.user.id).maybeSingle(),
+    c.from("fichas").select("status, progresso").eq("user_id", s.user.id).maybeSingle()
   ]);
-  var p = resp[0], d = resp[1].data;
+  var p = resp[0], d = resp[1].data, fi = resp[2].data;
 
   document.getElementById("ola").textContent = "Olá, " + (VHG.primeiroNome(p, s.user) || "") + ".";
   document.getElementById("email").textContent = s.user.email;
@@ -83,12 +84,19 @@
     enviado: { label: "ENVIADO ✓", cor: "#123B47", acao: "VER RESPOSTAS" }
   };
 
-  var diag = d ? { status: d.status, progresso: d.progresso || 0 } : { status: "nao_iniciado", progresso: 0 };
-  if (diag.status === "enviado") diag.progresso = 100;
+  function estado(linha) {
+    var e = linha ? { status: linha.status, progresso: linha.progresso || 0 } : { status: "nao_iniciado", progresso: 0 };
+    if (e.status === "enviado") e.progresso = 100;
+    return e;
+  }
+  var ficha = estado(fi), diag = estado(d);
+  // Ordem do fluxo: ficha primeiro. O diagnóstico só abre depois dela
+  // (quem já tinha começado o diagnóstico antes continua liberado).
+  var diagBloqueado = ficha.status !== "enviado" && !d;
 
   var FORMS = [
-    { num: "01", titulo: "Ficha cadastral", desc: "Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos.", href: "", estado: { status: "nao_iniciado", progresso: 0 } },
-    { num: "02", titulo: "Diagnóstico financeiro", desc: "Renda, gastos, patrimônio, dívidas e objetivos, em 10 etapas. Pode pausar e continuar depois.", href: "diagnostico.html", estado: diag,
+    { num: "01", titulo: "Ficha cadastral", desc: "Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos.", href: "ficha.html", estado: ficha },
+    { num: "02", titulo: "Diagnóstico financeiro", desc: "Renda, gastos, patrimônio, dívidas e objetivos, em 10 etapas. Pode pausar e continuar depois.", href: "diagnostico.html", estado: diag, bloqueado: diagBloqueado,
       relatorio: d && d.status === "enviado" ? (d.relatorio_liberado ? "liberado" : "analise") : null }
   ];
 
@@ -96,8 +104,8 @@
     var st = STATUS[f.estado.status] || STATUS.nao_iniciado;
     var rotulo = f.estado.status === "andamento" ? st.label + " · " + f.estado.progresso + "%" : st.label;
     var acoes;
-    if (!f.href) {
-      acoes = '<span class="em-breve">EM BREVE</span>';
+    if (f.bloqueado) {
+      acoes = '<span class="em-breve">DEPOIS DA FICHA</span>';
     } else {
       acoes = '<div class="acoes">' +
         (f.relatorio === "liberado" ? '<a href="relatorio.html" class="btn btn-cobre">VER RELATÓRIO</a>' : "") +
