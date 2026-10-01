@@ -33,7 +33,14 @@ No banco ficam guardados **só os dados das respostas**. O relatório não é sa
 ## Configurar o Supabase (uma vez só)
 
 1. **Crie o projeto** em [supabase.com](https://supabase.com). A região São Paulo (`sa-east-1`) é a mais próxima.
-2. **Crie as tabelas:** no painel, abra *SQL Editor › New query*, cole todo o conteúdo de `supabase/schema.sql` e clique em *Run*. Esse script pode ser rodado de novo sem perder dados.
+2. **Crie as tabelas:** rode os cinco arquivos da pasta `supabase/`, **um por vez e na ordem**. Para cada um, abra *SQL Editor › New query*, cole o conteúdo do arquivo inteiro e clique em *Run*:
+   1. `1-perfis.sql`
+   2. `2-diagnosticos.sql`
+   3. `3-leads.sql`
+   4. `4-fichas.sql`
+   5. `5-admins-e-conferencia.sql`, que no final lista as quatro tabelas criadas.
+
+   Todos podem ser rodados de novo sem perder dados.
 3. **Copie as chaves** em *Project Settings › API* para o arquivo `assets/js/config.js` (já preenchido para o projeto atual):
    - *Project URL* vai em `SUPABASE_URL`
    - *Publishable key* vai em `SUPABASE_ANON_KEY`
@@ -43,7 +50,7 @@ No banco ficam guardados **só os dados das respostas**. O relatório não é sa
    - *Site URL*: o endereço principal do site, por exemplo `https://vitorhugogermano.com.br`. Os links de convite e de nova senha chegam nesse endereço, e o site leva a pessoa sozinho para a tela de criar senha.
    - *Redirect URLs*: adicione o mesmo endereço com `/**` no fim (por exemplo `https://vitorhugogermano.com.br/**`). Pode haver mais de um: durante os testes, deixe também o endereço de teste.
    - Ao trocar de endereço (do teste para o definitivo), só estas duas configurações mudam. Nenhum arquivo do site precisa ser alterado.
-6. **Crie as contas de admin:** em *Authentication › Users › Add user › Send invitation*, convide `elisacmazzo@gmail.com` e `germanovitorhugo@gmail.com`. Esses dois e-mails já nascem como admin. A lista fica na função `emails_admin()` do `schema.sql`: para mudar, edite e rode o script de novo.
+6. **Crie as contas de admin:** em *Authentication › Users › Add user › Send invitation*, convide `elisacmazzo@gmail.com` e `germanovitorhugo@gmail.com`. Esses dois e-mails já nascem como admin. A lista fica na função `emails_admin()`, em `supabase/1-perfis.sql`: para mudar, edite a lista e rode o arquivo 1 e depois o 5.
 7. *(Recomendado)* Em *Authentication › Emails*, traduza os modelos de e-mail ("Invite user" e "Reset password"). Antes de começar a convidar clientes, configure um **SMTP próprio** em *Authentication › Emails › SMTP Settings*: o e-mail padrão do Supabase tem um limite baixo de envios por hora.
 
 ### Liberar um novo cliente
@@ -68,7 +75,7 @@ assets/js/vhg.js                cabeçalho, rodapé, cliente do Supabase e funç
 assets/js/diagnostico-core.js   regras de cálculo do diagnóstico (score, arquétipo, projeções)
 assets/js/exemplo-diagnostico.js respostas fictícias usadas em relatorio.html?demo
 assets/css/formulario.css       visual da ficha cadastral e do diagnóstico
-supabase/schema.sql             tabelas e regras de segurança (RLS)
+supabase/1…5-*.sql              tabelas e regras de segurança (RLS), em cinco partes
 design/                         protótipos originais do Claude Design (referência, não publicar)
 ```
 
@@ -76,7 +83,7 @@ design/                         protótipos originais do Claude Design (referên
 
 ## Segurança
 
-As regras ficam no próprio banco (RLS), em `supabase/schema.sql`:
+As regras ficam no próprio banco (RLS), criadas pelos arquivos da pasta `supabase/`:
 
 - **Visitante** (sem login): só consegue *enviar* um pedido de conversa. Não lê nada.
 - **Cliente:** lê e edita só a própria ficha e o próprio diagnóstico, e só enquanto não foram enviados. Não consegue liberar o próprio relatório nem se tornar admin.

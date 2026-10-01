@@ -6,7 +6,7 @@
 //    · Publishable key (ou a antiga "anon public") → SUPABASE_ANON_KEY
 //
 //  Essa chave é pública por definição: quem protege os dados
-//  são as regras (RLS) criadas pelo arquivo supabase/schema.sql.
+//  são as regras (RLS) criadas pelos arquivos da pasta supabase/.
 //  Nunca coloque aqui a "secret key" nem a antiga "service_role".
 // ─────────────────────────────────────────────────────────────
 window.VHG_CONFIG = {

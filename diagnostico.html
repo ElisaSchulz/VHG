@@ -839,7 +839,7 @@ function falhaAoAbrir(erro, oque) {
   var tabelaFalta = cod === "PGRST205" || cod === "42P01" || /schema cache|does not exist/i.test(msg);
   document.getElementById("app").innerHTML = '<div class="fim"><div class="tit">Não foi possível abrir ' + oque + ".</div>" +
     "<p>" + (tabelaFalta
-      ? "O banco de dados ainda não tem a tabela necessária. Rode de novo o arquivo <b>supabase/schema.sql</b> no SQL Editor do Supabase."
+      ? "O banco de dados ainda não tem a tabela necessária. Rode no SQL Editor do Supabase os arquivos da pasta <b>supabase/</b>, na ordem (1 a 5)."
       : "Recarregue a página em instantes. Se continuar, me envie o detalhe abaixo.") + "</p>" +
     '<div class="fio"></div><p style="font-size:12.5px; color:rgba(242,237,228,.6)">Detalhe técnico: ' + VHG.esc((cod ? cod + " · " : "") + msg) + "</p></div>";
 }
