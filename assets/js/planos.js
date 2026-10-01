@@ -44,7 +44,7 @@
       rotulo: "Planejamento Patrimonial · patrimônio a partir de R$ 300 mil · taxa anual por faixa",
       servicos: [
         "Tudo do Planejamento Recorrente",
-        "Gestão de investimentos financeiros",
+        "Elaboração da política de investimentos e acompanhamento da sua aplicação",
         "Análise econômica dos consultores",
         "Acompanhamento quinzenal da carteira"
       ],

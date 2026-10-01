@@ -85,6 +85,7 @@ function defaultData() {
 var data = defaultData();
 var usuario = null;
 var somenteLeitura = false;
+var contratoAssinado = false;   // com contrato assinado, a ficha só é reaberta pelo admin
 var tentou = false;
 var esc = VHGDiag.esc;
 
@@ -334,13 +335,20 @@ function linhasResumo() {
 function renderResumo(admin) {
   return '<div class="linha-eyebrow"><div class="fio"></div><div class="txt">' + (admin ? "FICHA DO CLIENTE" : "FICHA ENVIADA") + "</div></div>" +
     '<h1 class="etapa-titulo">' + (admin ? esc(data.nome || "Ficha cadastral") : "Sua ficha cadastral") + "</h1>" +
-    (admin ? "" : '<p class="etapa-desc">A ficha já está comigo. Se precisar corrigir algo, me chame que eu reabro para você.</p>') +
+    (admin ? "" : contratoAssinado
+      ? '<p class="etapa-desc">A ficha já está comigo e o contrato foi assinado com estes dados. Se precisar alterar algo, me chame que eu reabro para você.</p>'
+      : '<p class="etapa-desc">Precisa corrigir ou completar algo? Você pode editar a ficha enquanto o contrato ainda não foi assinado.</p>' +
+        (faltando().length ? '<div class="msg-erro" style="margin:0 0 24px">Faltam dados para gerar o contrato: ' + esc(faltando().join(", ")) + ". Clique em “Editar ficha” para completar.</div>" : "")) +
     linhasResumo().map(function (s) {
       return '<div class="revisao"><div class="topo"><div class="tit">' + s[0] + '</div></div><div class="itens">' +
         s[1].map(function (i) { return '<div><div class="r">' + i[0] + '</div><div class="v">' + esc(i[1]) + "</div></div>"; }).join("") + "</div></div>";
     }).join("") +
     '<div class="nav-etapas"><a href="' + (admin ? "admin.html" : "area.html") + '" class="btn-voltar">Voltar</a>' +
-    (admin ? "" : '<a href="contrato.html" class="btn btn-petroleo">IR PARA O CONTRATO</a>') + "</div>";
+    (admin ? "" : '<div class="botoes">' +
+      (contratoAssinado ? "" : '<button type="button" class="btn btn-linha" data-reabrir>EDITAR FICHA</button>') +
+      (faltando().length && !contratoAssinado ? "" : '<a href="contrato.html" class="btn btn-petroleo">' + (contratoAssinado ? "VER CONTRATO" : "IR PARA O CONTRATO") + "</a>") +
+      "</div>") + "</div>" +
+    '<div class="msg-erro" id="erro-reabrir" role="alert" hidden></div>';
 }
 function renderFim() {
   var nome = (data.nome || "").trim().split(/\s+/)[0];
@@ -443,6 +451,21 @@ function ligar(raiz) {
       persist(); atualizarErro();
     });
   });
+  raiz.querySelectorAll("[data-reabrir]").forEach(function (el) {
+    el.addEventListener("click", async function () {
+      el.disabled = true; el.textContent = "ABRINDO…";
+      var r = await VHG.sb().rpc("reabrir_minha_ficha");
+      if (r.error) {
+        el.disabled = false; el.textContent = "EDITAR FICHA";
+        var e = document.getElementById("erro-reabrir");
+        e.textContent = /could not find the function|schema cache/i.test(r.error.message)
+          ? "Edição ainda não disponível: falta rodar o arquivo supabase/6-contratos.sql no Supabase."
+          : r.error.message;
+        e.hidden = false; return;
+      }
+      location.reload();
+    });
+  });
   raiz.querySelectorAll("[data-add]").forEach(function (el) {
     el.addEventListener("click", function () { data.dependentes.push({ nome: "", nascimento: "", parentesco: "" }); persist(); render(); });
   });
@@ -528,6 +551,8 @@ function migrar(d) {
   if (r.error) { falhaAoAbrir(r.error, "a ficha cadastral"); return; }
   if (r.data && r.data.status === "enviado") {
     somenteLeitura = true;
+    var k = await c.from("contratos").select("id").eq("user_id", usuario.id).maybeSingle();
+    contratoAssinado = !!k.data;
     data = Object.assign(defaultData(), r.data.respostas); migrar(data);
     render(renderResumo(false));
     return;

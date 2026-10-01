@@ -195,8 +195,17 @@ function falha(e) {
   var f = ficha.respostas || {};
   var falta = VHG_CONTRATO.faltandoNaFicha(f);
   if (falta.length) {
-    return telaAviso("Faltam dados na ficha.", "Para gerar o contrato, a ficha precisa de: " + esc(falta.join(", ")) +
-      ". Me chame no WhatsApp que eu reabro a ficha para você completar.", "FALAR NO WHATSAPP", VHG.waLink());
+    telaAviso("Faltam dados na ficha.", "Para gerar o contrato, a ficha precisa de: " + esc(falta.join(", ")) +
+      ". Complete a ficha e volte aqui.", "COMPLETAR A FICHA", "#");
+    var botao = app.querySelector(".btn-cobre");
+    botao.addEventListener("click", async function (e) {
+      e.preventDefault();
+      botao.textContent = "ABRINDO…";
+      var r = await c.rpc("reabrir_minha_ficha");
+      if (r.error) { botao.textContent = "COMPLETAR A FICHA"; alert(r.error.message); return; }
+      location.href = "ficha.html";
+    });
+    return;
   }
   mostrarParaAssinar(c, s.user, f);
 })().catch(falha);

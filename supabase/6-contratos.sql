@@ -64,6 +64,25 @@ drop policy if exists "contrato: admin cancela" on public.contratos;
 create policy "contrato: admin cancela" on public.contratos
   for delete to authenticated using (public.is_admin());
 
+-- O cliente pode reabrir a própria ficha para corrigir ou completar,
+-- desde que ainda não tenha assinado o contrato (o contrato é feito com
+-- os dados da ficha). Depois de assinado, só o admin reabre.
+create or replace function public.reabrir_minha_ficha()
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then
+    raise exception 'É preciso estar logado.';
+  end if;
+  if exists (select 1 from public.contratos where user_id = auth.uid()) then
+    raise exception 'O contrato já foi assinado. Para alterar a ficha, fale com o Vitor.';
+  end if;
+  update public.fichas set status = 'andamento'
+   where user_id = auth.uid() and status = 'enviado';
+end $$;
+
+revoke all on function public.reabrir_minha_ficha() from public, anon;
+grant execute on function public.reabrir_minha_ficha() to authenticated;
+
 -- Conferência: deve mostrar a tabela contratos.
 select table_name from information_schema.tables
  where table_schema = 'public' and table_name = 'contratos';

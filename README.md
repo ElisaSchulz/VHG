@@ -26,7 +26,7 @@ Para ver um relatório de exemplo sem precisar de banco: `relatorio.html?demo`.
 1. A pessoa envia o **pedido de conversa**. O pedido aparece no painel do admin, na aba "Pedidos de conversa".
 2. Depois da contratação, o Vitor **convida o cliente** pelo Supabase. O cliente recebe um e-mail, cria a senha e entra.
 3. No primeiro login, o cliente cai direto na **ficha cadastral**, com tudo o que o contrato precisa (inclusive o plano e a forma de pagamento). Ao enviá-la, o nome informado vira o nome do perfil (e o "Display name" no Supabase).
-4. Em seguida vem o **contrato**, já preenchido com os dados da ficha. O cliente confirma a leitura e digita o nome completo para assinar. O banco registra data, hora, IP e um código de verificação do texto. O admin vê o contrato assinado no painel e pode cancelá-lo, se o cliente precisar assinar de novo.
+4. Em seguida vem o **contrato**, já preenchido com os dados da ficha. O cliente confirma a leitura e digita o nome completo para assinar. O banco registra data, hora, IP e um código de verificação do texto. O admin vê o contrato assinado no painel e pode cancelá-lo, se o cliente precisar assinar de novo. Enquanto o contrato não é assinado, o próprio cliente pode reabrir e corrigir a ficha (botão "Editar ficha"); depois, só o admin reabre.
 5. O diagnóstico só abre depois do contrato assinado, e já vem com os dados de identificação preenchidos a partir da ficha.
 6. O cliente responde o **diagnóstico**. Cada alteração é salva automaticamente, então dá para parar e continuar depois. Ao final, ele clica em "Enviar diagnóstico".
 7. No painel, o Vitor abre o **relatório** (com o design do site) e, quando quiser, clica em **Liberar**. A partir daí o cliente vê o relatório na área dele e pode baixar o PDF.

@@ -17,7 +17,7 @@
   "use strict";
 
   var CONFIG = {
-    VERSAO: "2026-10-v0",
+    VERSAO: "2026-10-v1",
     REVISADO: false,
     CONTRATADO: {
       nome: "Vitor Hugo Germano",
@@ -64,7 +64,7 @@
     var taxa = faixa ? faixa.taxa.toFixed(2).replace(".", ",") + "% ao ano" : "";
 
     var preco = f.plano === "patrimonial"
-      ? "Pelos serviços, o CONTRATANTE pagará ao CONTRATADO taxa de administração de " + taxa + " sobre o patrimônio acompanhado, " +
+      ? "Pelos serviços, o CONTRATANTE pagará ao CONTRATADO remuneração de " + taxa + " sobre o patrimônio acompanhado, " +
         "estimado na data de assinatura em " + br(f.patrimonioEstimado) + " (faixa " + faixa.rotulo + "). A taxa será recalculada se o patrimônio mudar de faixa, " +
         "conforme a tabela vigente no site do CONTRATADO."
       : "Pelos serviços, o CONTRATANTE pagará ao CONTRATADO o valor de " + pagamento + ".";
@@ -84,7 +84,10 @@
 
     C.push("CLÁUSULA 2 – DA NATUREZA DOS SERVIÇOS");
     C.push("2.1. O CONTRATADO atua de forma independente, sem vínculo com bancos ou instituições financeiras.");
-    C.push("2.2. As análises, projeções e recomendações têm caráter orientativo e baseiam-se nas informações fornecidas pelo CONTRATANTE. Não constituem garantia ou promessa de rentabilidade, e as decisões finais sobre o próprio patrimônio cabem ao CONTRATANTE.");
+    if (f.plano === "patrimonial") {
+      C.push("2.2. No Planejamento Patrimonial, o CONTRATADO elabora a política de investimentos do CONTRATANTE e acompanha a sua aplicação. O CONTRATADO não executa ordens de compra ou venda de ativos nem movimenta recursos do CONTRATANTE: a execução das ordens é realizada por escritório terceiro, por profissionais devidamente certificados para essa atividade.");
+    }
+    C.push((f.plano === "patrimonial" ? "2.3. " : "2.2. ") + "As análises, projeções e recomendações têm caráter orientativo e baseiam-se nas informações fornecidas pelo CONTRATANTE. Não constituem garantia ou promessa de rentabilidade, e as decisões finais sobre o próprio patrimônio cabem ao CONTRATANTE.");
 
     C.push("CLÁUSULA 3 – DO PRAZO");
     C.push("3.1. O contrato vigora por " + p.prazoMeses + " (" + (p.prazoMeses === 3 ? "três" : "doze") + ") meses a contar da data de assinatura, podendo ser renovado por acordo entre as partes.");
