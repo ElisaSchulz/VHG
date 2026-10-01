@@ -37,7 +37,7 @@
 .entregaveis div { display: flex; gap: 10px; align-items: baseline; font-size: 14.5px; line-height: 1.55; color: rgba(242,237,228,.92); }
 .entregaveis div::before { content: "—"; font-family: var(--serif); font-style: italic; color: var(--cobre); font-size: 15px; }
 .abertura .cta { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; margin-top: 44px; }
-.abertura .cta .nota { font-size: 12.5px; line-height: 1.6; color: rgba(242,237,228,.6); }
+.abertura .cta .cta-nota { font-size: 12.5px; line-height: 1.6; color: rgba(242,237,228,.72); }
 .btn-d { padding: 17px 30px; }
 
 .d-card { background: var(--papel-claro); border: 1px solid var(--linha-suave); padding: clamp(24px,4vw,40px); }
