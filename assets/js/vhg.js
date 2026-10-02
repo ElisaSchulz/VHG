@@ -28,11 +28,13 @@
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
-  function waLink() {
-    return "https://wa.me/" + C.WHATSAPP + "?text=" + encodeURIComponent(C.WHATSAPP_MENSAGEM);
+  function waLink(mensagem) {
+    return "https://wa.me/" + C.WHATSAPP + "?text=" + encodeURIComponent(mensagem || C.WHATSAPP_MENSAGEM);
   }
 
   var ICONE_WHATSAPP = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2c.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"></path></svg>';
+
+  var ICONE_INSTAGRAM = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"></circle></svg>';
 
   /* ── Cabeçalho ──────────────────────────────────────────── */
   var LINKS = [
@@ -54,12 +56,12 @@
             '<span class="marca-vhg">VHG</span><span class="marca-sub">PLANEJAMENTO FINANCEIRO</span></a>' +
           '<nav class="nav-desktop" aria-label="Principal">' + desk +
             '<a href="area.html" class="nav-cliente">ÁREA DO CLIENTE</a>' +
-            '<a href="formularios.html" class="nav-diag">DIAGNÓSTICO</a></nav>' +
+            '<a href="' + waLink() + '" target="_blank" rel="noopener" class="nav-diag">AGENDAR CONVERSA</a></nav>' +
           '<button type="button" class="menu-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile"><span></span><span></span><span></span></button>' +
         '</div>' +
         '<nav class="nav-mobile" id="nav-mobile" aria-label="Menu">' + mob +
           '<a href="area.html">ÁREA DO CLIENTE</a>' +
-          '<a href="formularios.html" class="nav-diag">FAZER O DIAGNÓSTICO</a></nav>' +
+          '<a href="' + waLink() + '" target="_blank" rel="noopener" class="nav-diag">AGENDAR UMA CONVERSA</a></nav>' +
       '</header>';
 
     var header = document.getElementById("site-header");
@@ -103,7 +105,7 @@
         '<div><div class="logo">VHG</div><div class="fio"></div><div class="sub">PLANEJAMENTO FINANCEIRO</div></div>' +
         '<div class="lista"><div>Vitor Hugo Germano</div><div><a href="mailto:' + esc(C.EMAIL) + '">' + esc(C.EMAIL) + '</a></div>' +
           '<div><a href="' + waLink() + '" target="_blank" rel="noopener">' + esc(C.WHATSAPP_EXIBICAO) + '</a></div><div>Botucatu, SP · atendimento online</div></div>' +
-        '<div class="lista"><div><a href="index.html#servicos">Serviços</a></div><div><a href="formularios.html">Diagnóstico</a></div>' +
+        '<div class="lista"><div><a href="index.html#servicos">Serviços</a></div>' +
           '<div><a href="area.html">Área do cliente</a></div>' +
           '<div><a href="https://instagram.com/' + esc(C.INSTAGRAM) + '" target="_blank" rel="noopener">@' + esc(C.INSTAGRAM) + '</a></div></div>' +
         '<div class="aviso">Este site tem caráter informativo e não constitui recomendação de investimento. Nenhum conteúdo aqui garante rentabilidade. <a href="politica-privacidade.html" style="border-bottom:1px solid rgba(242,237,228,.35)">Política de Privacidade</a>.</div>' +
@@ -192,7 +194,7 @@
 
   window.VHG = {
     mascaraData: mascaraData, dataISO: dataISO, dataBRdeISO: dataBRdeISO, attrsData: attrsData,
-    config: C, configurado: configurado, sb: sb, esc: esc, waLink: waLink, ICONE_WHATSAPP: ICONE_WHATSAPP,
+    config: C, configurado: configurado, sb: sb, esc: esc, waLink: waLink, ICONE_WHATSAPP: ICONE_WHATSAPP, ICONE_INSTAGRAM: ICONE_INSTAGRAM,
     sessao: sessao, perfil: perfil, exigirLogin: exigirLogin, primeiroNome: primeiroNome, dataBR: dataBR, rolarAte: rolarAte
   };
 
@@ -207,7 +209,8 @@
     montarCabecalho();
     montarRodape();
     avisarSeNaoConfigurado();
-    document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = waLink(); });
+    document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = waLink(a.getAttribute("data-wa")); });
+    document.querySelectorAll("[data-instagram]").forEach(function (a) { a.href = "https://instagram.com/" + C.INSTAGRAM; });
     document.querySelectorAll("[data-email]").forEach(function (a) { a.href = "mailto:" + C.EMAIL; });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);

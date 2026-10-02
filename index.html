@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/vhg.css?v=3">
+<link rel="stylesheet" href="assets/css/vhg.css?v=4">
 </head>
 <body>
 <div id="vhg-header"></div>
@@ -21,7 +21,7 @@
       <div class="eyebrow cobre">PLANEJAMENTO FINANCEIRO PESSOAL 360º</div>
       <h1>Seu Plano de Vida Merece um Plano Financeiro</h1>
       <div class="botoes">
-        <a href="formularios.html" class="btn btn-cobre">FAZER O DIAGNÓSTICO</a>
+        <a href="#" data-wa target="_blank" rel="noopener" class="btn btn-cobre">AGENDAR UMA CONVERSA</a>
         <a href="#servicos" class="btn btn-contorno-papel" data-ancora>VER SERVIÇOS</a>
       </div>
     </div>
@@ -109,7 +109,7 @@
           <div class="item">Ajuda operacional com a Instituição Financeira</div>
           <div class="item">Execução do plano</div>
         </div>
-        <a href="formularios.html" class="btn btn-contorno">COMEÇAR PELO DIAGNÓSTICO</a>
+        <a href="#" data-wa="Olá, Vitor! Vim pelo site e tenho interesse no Planejamento Pontual." target="_blank" rel="noopener" class="btn btn-contorno">QUERO ESTE PLANO</a>
       </div>
 
       <div class="plano destaque">
@@ -127,7 +127,7 @@
           <div class="item">Reuniões mensais de alinhamento</div>
           <div class="item">Contato ilimitado ao consultor financeiro</div>
         </div>
-        <a href="formularios.html" class="btn btn-cobre">COMEÇAR PELO DIAGNÓSTICO</a>
+        <a href="#" data-wa="Olá, Vitor! Vim pelo site e tenho interesse no Planejamento Recorrente." target="_blank" rel="noopener" class="btn btn-cobre">QUERO ESTE PLANO</a>
       </div>
 
       <div class="plano">
@@ -150,7 +150,7 @@
           <div class="item">Análise econômica dos consultores</div>
           <div class="item">Acompanhamento quinzenal da carteira</div>
         </div>
-        <a href="formularios.html" class="btn btn-contorno">COMEÇAR PELO DIAGNÓSTICO</a>
+        <a href="#" data-wa="Olá, Vitor! Vim pelo site e tenho interesse no Planejamento Patrimonial." target="_blank" rel="noopener" class="btn btn-contorno">QUERO ESTE PLANO</a>
       </div>
 
     </div>
@@ -161,8 +161,8 @@
       <div class="eyebrow cobre">FALE COMIGO</div>
       <h2>Vamos conversar sobre o seu plano?</h2>
       <div class="botoes">
-        <a href="formularios.html" class="btn btn-cobre">FAZER O DIAGNÓSTICO</a>
-        <a href="#" data-wa target="_blank" rel="noopener" class="btn btn-contorno-papel" id="btn-wa">CHAMAR NO WHATSAPP</a>
+        <a href="#" data-wa target="_blank" rel="noopener" class="btn btn-cobre" id="btn-wa">CHAMAR NO WHATSAPP</a>
+        <a href="#" data-instagram target="_blank" rel="noopener" class="btn btn-contorno-papel" id="btn-insta">SEGUIR NO INSTAGRAM</a>
       </div>
     </div>
   </section>
@@ -172,9 +172,10 @@
 <div id="vhg-footer"></div>
 
 <script src="assets/js/config.js"></script>
-<script src="assets/js/vhg.js"></script>
+<script src="assets/js/vhg.js?v=4"></script>
 <script>
   document.getElementById("btn-wa").insertAdjacentHTML("afterbegin", VHG.ICONE_WHATSAPP);
+  document.getElementById("btn-insta").insertAdjacentHTML("afterbegin", VHG.ICONE_INSTAGRAM);
   document.querySelectorAll("[data-ancora]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       var el = document.querySelector(a.getAttribute("href"));

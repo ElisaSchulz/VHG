@@ -96,6 +96,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cobre); outline
 .nav-mobile a.nav-diag { margin-top: 20px; background: var(--petroleo); color: var(--papel); letter-spacing: .16em; padding: 16px; border: none; justify-content: center; }
 .nav-mobile a.nav-diag:hover { background: var(--petroleo-escuro); color: var(--papel); }
 .marca { flex-shrink: 0; }
+/* Entre 1000 e 1120px o menu completo fica apertado ao lado da marca. */
+@media (min-width: 1000px) and (max-width: 1120px) { .nav-desktop { gap: 14px; } .nav-desktop a { letter-spacing: .1em; } .nav-desktop a.nav-cliente, .nav-desktop a.nav-diag { padding-left: 12px; padding-right: 12px; } }
 @media (max-width: 999px) {
   .nav-desktop { display: none; }
   .menu-btn { display: flex; }
