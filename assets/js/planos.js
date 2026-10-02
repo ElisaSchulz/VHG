@@ -14,7 +14,7 @@
       rotulo: "Planejamento Pontual · 3 meses · 3x de R$ 340,00",
       servicos: [
         "Diagnóstico inicial da situação financeira",
-        "Relatório de análise do consultor",
+        "Relatório de análise do planejador",
         "Primeira proposta de possíveis melhorias",
         "Passagem por todas as etapas de planejamento",
         "Ajuda operacional com a Instituição Financeira",
@@ -32,7 +32,7 @@
       servicos: [
         "Tudo do Planejamento Pontual",
         "Reuniões mensais de alinhamento",
-        "Contato ilimitado ao consultor financeiro"
+        "Contato ilimitado ao planejador financeiro"
       ],
       pagamentos: [
         ["12x", "12 parcelas mensais de R$ 250,00, totalizando R$ 3.000,00"]
@@ -45,7 +45,7 @@
       servicos: [
         "Tudo do Planejamento Recorrente",
         "Elaboração da política de investimentos e acompanhamento da sua aplicação",
-        "Análise econômica dos consultores",
+        "Análise econômica dos planejadores",
         "Acompanhamento quinzenal da carteira"
       ],
       pagamentos: [
