@@ -74,9 +74,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cobre); outline
 /* ── Cabeçalho ─────────────────────────────────────────────── */
 .site-header { position: sticky; top: 0; z-index: 20; background: var(--branco); border-bottom: 1px solid var(--linha); }
 .site-header .barra { max-width: 1120px; margin: 0 auto; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: clamp(12px, 3vw, 20px); }
-.marca { display: flex; align-items: baseline; gap: clamp(8px, 2vw, 12px); min-width: 0; flex: 0 1 auto; }
+.marca { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; flex: 0 1 auto; line-height: 1; }
 .marca-vhg { font-family: var(--serif); font-weight: 400; font-size: 26px; letter-spacing: .08em; color: var(--petroleo); padding-left: .08em; }
-.marca-sub { font-size: clamp(9.5px, 2.6vw, 11px); font-weight: 500; letter-spacing: clamp(1px, .5vw, 2.4px); color: var(--texto-3); white-space: nowrap; }
+.marca-sub { font-size: 8.5px; font-weight: 500; letter-spacing: .24em; color: var(--texto-3); white-space: nowrap; padding-left: .1em; }
 .nav-desktop { display: flex; align-items: center; flex-wrap: nowrap; gap: clamp(12px, 1.8vw, 26px); white-space: nowrap; }
 .nav-desktop a { font-size: 12px; font-weight: 500; letter-spacing: .14em; color: var(--texto-2); min-height: 44px; display: flex; align-items: center; }
 .nav-desktop a:hover { color: var(--cobre); }
@@ -94,8 +94,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cobre); outline
 .nav-mobile a:hover { color: var(--cobre); }
 .nav-mobile a.nav-diag { margin-top: 20px; background: var(--petroleo); color: var(--papel); letter-spacing: .16em; padding: 16px; border: none; justify-content: center; }
 .nav-mobile a.nav-diag:hover { background: var(--petroleo-escuro); color: var(--papel); }
-/* Entre 1000 e 1160px o menu completo não cabe ao lado do subtítulo da marca. */
-@media (min-width: 1000px) and (max-width: 1160px) { .site-header .marca-sub { display: none; } }
 .marca { flex-shrink: 0; }
 @media (max-width: 999px) {
   .nav-desktop { display: none; }
