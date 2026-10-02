@@ -7,7 +7,7 @@
 //  assinados; só os próximos.
 //
 //  ⚠ MODELO PROVISÓRIO. Antes de usar com clientes:
-//    1. preencha os dados do CONTRATADO abaixo;
+//    1. confira os dados do CONTRATADO e da gestora abaixo;
 //    2. revise as cláusulas (de preferência com um advogado);
 //    3. mude REVISADO para true e suba a VERSAO.
 //  Enquanto REVISADO for false, a página do contrato mostra um aviso
@@ -17,15 +17,17 @@
   "use strict";
 
   var CONFIG = {
-    VERSAO: "2026-10-v1",
+    VERSAO: "2026-10-v2",
     REVISADO: false,
     CONTRATADO: {
       nome: "Vitor Hugo Germano",
       qualificacao: "brasileiro, economista",
-      documento: "CPF nº [preencher]",
-      endereco: "[endereço profissional — preencher]",
+      documento: "microempreendedor individual (MEI) inscrito no CNPJ sob o nº 55.823.708/0001-34",
+      endereco: "Avenida Vital Brasil, 1410, Jardim Bom Pastor, Botucatu/SP",
       email: "germanovitorhugo@gmail.com"
     },
+    // Quem executa as ordens no Planejamento Patrimonial.
+    EXECUTORA: "Mont Capital Gestão e Administração de Recursos S.A. (“Mont Asset”), inscrita no CNPJ/MF sob o nº 22.598.618/0001-38",
     // Prazo para pagar e onde a cobrança chega.
     COBRANCA: "As datas de vencimento e os dados para pagamento serão enviados pelo CONTRATADO ao e-mail do CONTRATANTE informado neste contrato."
   };
@@ -85,7 +87,7 @@
     C.push("CLÁUSULA 2 – DA NATUREZA DOS SERVIÇOS");
     C.push("2.1. O CONTRATADO atua de forma independente, sem vínculo com bancos ou instituições financeiras.");
     if (f.plano === "patrimonial") {
-      C.push("2.2. No Planejamento Patrimonial, o CONTRATADO elabora a política de investimentos do CONTRATANTE e acompanha a sua aplicação. O CONTRATADO não executa ordens de compra ou venda de ativos nem movimenta recursos do CONTRATANTE: a execução das ordens é realizada por escritório terceiro, por profissionais devidamente certificados para essa atividade.");
+      C.push("2.2. No Planejamento Patrimonial, o CONTRATADO elabora a política de investimentos do CONTRATANTE e acompanha a sua aplicação. O CONTRATADO não executa ordens de compra ou venda de ativos nem movimenta recursos do CONTRATANTE: a execução das ordens é realizada pela " + CONFIG.EXECUTORA + ", por profissionais devidamente certificados para essa atividade.");
     }
     C.push((f.plano === "patrimonial" ? "2.3. " : "2.2. ") + "As análises, projeções e recomendações têm caráter orientativo e baseiam-se nas informações fornecidas pelo CONTRATANTE. Não constituem garantia ou promessa de rentabilidade, e as decisões finais sobre o próprio patrimônio cabem ao CONTRATANTE.");
 
