@@ -20,10 +20,11 @@
     VERSAO: "2026-10-v2",
     REVISADO: false,
     CONTRATADO: {
-      nome: "Vitor Hugo Germano",
-      qualificacao: "brasileiro, economista",
+      empresa: "55.823.708 VITOR HUGO GERMANO",
       documento: "microempreendedor individual (MEI) inscrito no CNPJ sob o nº 55.823.708/0001-34",
-      endereco: "Avenida Vital Brasil, 1410, Jardim Bom Pastor, Botucatu/SP",
+      endereco: "Avenida Doutor Vital Brasil, 1410, Jardim Bom Pastor, Botucatu/SP, CEP 18607-660",
+      titular: "Vitor Hugo Germano",
+      qualificacao: "brasileiro, graduado em Economia",
       email: "germanovitorhugo@gmail.com"
     },
     // Quem executa as ordens no Planejamento Patrimonial.
@@ -76,7 +77,7 @@
     C.push("CONTRATANTE: " + f.nome.trim() + ", " + f.nacionalidade.trim().toLowerCase() + ", " + String(f.estadoCivil).toLowerCase() + ", " + f.profissao.trim().toLowerCase() +
       ", portador(a) do RG nº " + f.rg.trim() + ", inscrito(a) no CPF sob o nº " + cpfMascara(f.cpf) + ", residente e domiciliado(a) em " + endereco(f) +
       ", e-mail " + f.email.trim() + ".");
-    C.push("CONTRATADO: " + K.nome + ", " + K.qualificacao + ", " + K.documento + ", com endereço em " + K.endereco + ", e-mail " + K.email + ".");
+    C.push("CONTRATADO: " + K.empresa + ", " + K.documento + ", com sede em " + K.endereco + ", neste ato representado por seu titular, " + K.titular + ", " + K.qualificacao + ", e-mail " + K.email + ".");
     C.push("As partes acima identificadas celebram o presente contrato, que se regerá pelas cláusulas a seguir.");
 
     C.push("CLÁUSULA 1 – DO OBJETO");
