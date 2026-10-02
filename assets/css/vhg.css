@@ -73,10 +73,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cobre); outline
 
 /* ── Cabeçalho ─────────────────────────────────────────────── */
 .site-header { position: sticky; top: 0; z-index: 20; background: var(--branco); border-bottom: 1px solid var(--linha); }
-.site-header .barra { max-width: 1120px; margin: 0 auto; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: clamp(12px, 3vw, 20px); }
-.marca { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 0; flex: 0 1 auto; line-height: 1; }
-.marca-vhg { font-family: var(--serif); font-weight: 400; font-size: 26px; letter-spacing: .08em; color: var(--petroleo); padding-left: .08em; }
-.marca-sub { font-size: 8.5px; font-weight: 500; letter-spacing: .24em; color: var(--texto-3); white-space: nowrap; padding-left: .1em; }
+.site-header .barra { max-width: 1120px; margin: 0 auto; padding: 12px var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: clamp(12px, 3vw, 20px); }
+.marca { display: flex; flex-direction: column; align-items: center; min-width: 0; flex: 0 1 auto; line-height: 1; }
+.marca-vhg { font-family: var(--serif); font-weight: 300; font-size: 38px; letter-spacing: .08em; color: var(--petroleo); padding-left: .08em; }
+.marca-sub { font-size: 7px; font-weight: 500; letter-spacing: .26em; color: var(--petroleo); white-space: nowrap; padding-left: .26em; text-align: center; }
+.marca-sub::before { content: ""; display: block; width: 50%; height: 1px; background: var(--cobre); margin: 5px auto 6px; }
 .nav-desktop { display: flex; align-items: center; flex-wrap: nowrap; gap: clamp(12px, 1.8vw, 26px); white-space: nowrap; }
 .nav-desktop a { font-size: 12px; font-weight: 500; letter-spacing: .14em; color: var(--texto-2); min-height: 44px; display: flex; align-items: center; }
 .nav-desktop a:hover { color: var(--cobre); }

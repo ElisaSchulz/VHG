@@ -5,8 +5,8 @@
    ───────────────────────────────────────────────────────────── */
 ::placeholder { color: var(--texto-5); }
 .d-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px clamp(20px,5vw,56px); border-bottom: 1px solid var(--linha); background: var(--papel); }
-.d-header .marca-vhg { font-weight: 300; font-size: 24px; }
-.d-header .marca-sub { font-size: 9px; letter-spacing: .22em; color: var(--texto-4); }
+.d-header .marca-vhg { font-size: 32px; }
+.d-header .marca-sub { font-size: 6.5px; }
 .d-header .lado { font-size: 10px; font-weight: 500; letter-spacing: .22em; color: var(--texto-4); text-align: right; line-height: 1.8; }
 .d-header .salvo { display: block; letter-spacing: .16em; color: var(--texto-6); min-height: 18px; }
 .d-header .salvo.erro { color: var(--erro); }
