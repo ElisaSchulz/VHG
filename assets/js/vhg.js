@@ -40,8 +40,7 @@
   var LINKS = [
     ["QUEM SOU", "index.html#quem-sou"],
     ["O QUE FAÇO", "index.html#o-que-faco"],
-    ["SERVIÇOS", "index.html#servicos"],
-    ["FALE COMIGO", "index.html#fale-comigo"]
+    ["SERVIÇOS", "index.html#servicos"]
   ];
 
   function montarCabecalho() {
@@ -56,12 +55,12 @@
             '<span class="marca-vhg">VHG</span><span class="marca-sub">PLANEJAMENTO FINANCEIRO</span></a>' +
           '<nav class="nav-desktop" aria-label="Principal">' + desk +
             '<a href="area.html" class="nav-cliente">ÁREA DO CLIENTE</a>' +
-            '<a href="' + waLink() + '" target="_blank" rel="noopener" class="nav-diag">AGENDAR CONVERSA</a></nav>' +
+            '<a href="' + waLink() + '" target="_blank" rel="noopener" class="nav-diag nav-wa">' + ICONE_WHATSAPP + 'WHATSAPP</a></nav>' +
           '<button type="button" class="menu-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile"><span></span><span></span><span></span></button>' +
         '</div>' +
         '<nav class="nav-mobile" id="nav-mobile" aria-label="Menu">' + mob +
           '<a href="area.html">ÁREA DO CLIENTE</a>' +
-          '<a href="' + waLink() + '" target="_blank" rel="noopener" class="nav-diag">AGENDAR UMA CONVERSA</a></nav>' +
+          '<a href="' + waLink() + '" target="_blank" rel="noopener" class="nav-diag nav-wa">' + ICONE_WHATSAPP + 'WHATSAPP</a></nav>' +
       '</header>';
 
     var header = document.getElementById("site-header");
