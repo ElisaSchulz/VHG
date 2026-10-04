@@ -119,12 +119,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cobre); outline
 
 /* ── Home ──────────────────────────────────────────────────── */
 .hero { background: var(--petroleo); color: var(--papel); }
-.hero .wrap { padding-top: clamp(72px,12vw,140px); padding-bottom: clamp(72px,12vw,140px); }
+.hero .wrap { padding-top: clamp(56px,8vw,96px); padding-bottom: clamp(56px,8vw,96px); }
 .hero h1 { margin: 0 0 clamp(36px,5vw,48px); max-width: 760px; font-family: var(--serif); font-weight: 300; font-size: clamp(40px,6.6vw,72px); line-height: 1.1; letter-spacing: -.01em; color: var(--papel); text-wrap: balance; }
 .botoes { display: flex; gap: 14px; flex-wrap: wrap; }
 
 .provocacao { background: var(--papel-claro); border-bottom: 1px solid var(--linha-suave); }
-.provocacao .wrap { padding-top: clamp(64px,10vw,120px); padding-bottom: clamp(64px,10vw,120px); display: flex; flex-direction: column; gap: clamp(48px,7vw,80px); }
+.provocacao .wrap { padding-top: clamp(52px,7vw,88px); padding-bottom: clamp(52px,7vw,88px); display: flex; flex-direction: column; gap: clamp(48px,7vw,80px); }
 .profissionais { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%,240px),1fr)); gap: clamp(20px,3vw,36px); }
 .profissionais > div { border-top: 1px solid var(--linha); padding-top: 22px; }
 .profissionais .quem { font-family: var(--serif); font-weight: 400; font-size: clamp(26px,2.8vw,32px); line-height: 1.15; color: var(--petroleo); }
