@@ -434,7 +434,7 @@ function mostrar(respostas, geradoEm, previa) {
   var p = await VHG.perfil(s.user.id);
   var admin = p && p.papel === "admin";
 
-  var q = c.from("diagnosticos").select("status, respostas, enviado_em, atualizado_em, relatorio_liberado");
+  var q = c.from("diagnosticos").select("status, respostas, enviado_em, atualizado_em");
   q = id && admin ? q.eq("id", id) : q.eq("user_id", s.user.id);
   var r = await q.maybeSingle();
   var d = r.data;
@@ -445,15 +445,13 @@ function mostrar(respostas, geradoEm, previa) {
     alvo.innerHTML = telaVazia("Nenhum diagnóstico encontrado", "Ainda não há respostas suficientes para montar o relatório.", admin ? "VOLTAR AO PAINEL" : "IR PARA O DIAGNÓSTICO", admin ? "admin.html" : "diagnostico.html");
     return;
   }
-  if (!admin && (d.status !== "enviado" || !d.relatorio_liberado)) {
-    alvo.innerHTML = telaVazia("Relatório em análise", "Recebi suas respostas e estou preparando a análise. Assim que o relatório estiver pronto, ele aparece na sua área do cliente e eu aviso por e-mail.", "VOLTAR PARA A ÁREA DO CLIENTE", "area.html");
+  // O relatório fica disponível para o cliente assim que ele envia o diagnóstico.
+  if (!admin && d.status !== "enviado") {
+    alvo.innerHTML = telaVazia("Diagnóstico ainda não enviado", "Seu relatório aparece aqui assim que você terminar e enviar o diagnóstico.", "CONTINUAR O DIAGNÓSTICO", "diagnostico.html");
     return;
   }
   var previa = null;
-  if (admin) {
-    if (d.status !== "enviado") previa = "PRÉVIA · DIAGNÓSTICO AINDA EM ANDAMENTO";
-    else if (!d.relatorio_liberado) previa = "PRÉVIA DO ADMIN · AINDA NÃO LIBERADO PARA O CLIENTE";
-  }
+  if (admin && d.status !== "enviado") previa = "PRÉVIA · DIAGNÓSTICO AINDA EM ANDAMENTO";
   mostrar(d.respostas, d.enviado_em || d.atualizado_em, previa);
 })();
 </script>

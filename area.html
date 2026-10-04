@@ -71,7 +71,7 @@
 
   var resp = await Promise.all([
     VHG.perfil(s.user.id),
-    c.from("diagnosticos").select("status, progresso, relatorio_liberado, enviado_em").eq("user_id", s.user.id).maybeSingle(),
+    c.from("diagnosticos").select("status, progresso, enviado_em").eq("user_id", s.user.id).maybeSingle(),
     c.from("fichas").select("status, progresso, respostas").eq("user_id", s.user.id).maybeSingle(),
     c.from("contratos").select("id, assinado_em").eq("user_id", s.user.id).maybeSingle()
   ]);
@@ -114,7 +114,7 @@
     { num: "01", titulo: "Ficha cadastral", desc: "Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos.", href: "ficha.html", estado: ficha, editavel: fichaEditavel, incompleta: faltaFicha.length > 0 },
     { num: "02", titulo: "Contrato", desc: "O contrato do plano escolhido, já preenchido com os dados da ficha. Assinatura eletrônica, aqui mesmo.", href: "contrato.html", estado: contrato, bloqueado: contratoBloqueado, aviso: faltaFicha.length ? "COMPLETE A FICHA" : "DEPOIS DA FICHA" },
     { num: "03", titulo: "Diagnóstico financeiro", desc: "Renda, gastos, patrimônio, dívidas e objetivos, em 10 etapas. Pode pausar e continuar depois.", href: "diagnostico.html", estado: diag, bloqueado: diagBloqueado, aviso: "DEPOIS DO CONTRATO",
-      relatorio: d && d.status === "enviado" ? (d.relatorio_liberado ? "liberado" : "analise") : null }
+      relatorio: d && d.status === "enviado" ? "liberado" : null }
   ];
 
   document.getElementById("forms").innerHTML = FORMS.map(function (f) {
@@ -134,8 +134,6 @@
     if (f.incompleta) rotulo = st.label;
     var notaRelatorio = f.incompleta
       ? '<div style="margin-top:12px; font-size:13px; color:#6B6358">Falta: ' + esc(faltaFicha.join(", ")) + ".</div>"
-      : f.relatorio === "analise"
-      ? '<div style="margin-top:12px; font-size:13px; color:#6B6358">Relatório em análise. Aviso por e-mail quando estiver pronto.</div>'
       : f.relatorio === "liberado" ? '<div style="margin-top:12px; font-size:13px; color:#123B47">Seu relatório está disponível.</div>' : "";
     return '<div class="card form-card">' +
       '<div class="num">' + f.num + '</div>' +
