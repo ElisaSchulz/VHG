@@ -83,7 +83,7 @@
           <div class="eyebrow" style="letter-spacing:.22em">COMO FUNCIONA</div>
           <div class="texto-apoio">
             <p style="margin:0 0 10px"><b>Ver relatório</b> abre o relatório completo, com o design do site, a qualquer momento — mesmo antes do envio.</p>
-            <p style="margin:0 0 10px"><b>Liberar</b> deixa o relatório visível para o cliente na área dele. <b>Ocultar</b> desfaz.</p>
+            <p style="margin:0 0 10px">O relatório fica disponível para o cliente na área dele <b>assim que ele envia o diagnóstico</b>.</p>
             <p style="margin:0 0 10px"><b>Reabrir</b> devolve a ficha ou o diagnóstico para edição, caso o cliente precise corrigir algo.</p>
             <p style="margin:0"><b>Cancelar</b> apaga o contrato assinado, para o cliente assinar de novo (por exemplo, depois de corrigir a ficha).</p>
           </div>
@@ -146,7 +146,7 @@
   async function carregarClientes() {
     var r = await Promise.all([
       c.from("perfis").select("id, nome, email, papel, criado_em").order("criado_em", { ascending: false }),
-      c.from("diagnosticos").select("id, user_id, status, progresso, relatorio_liberado, atualizado_em, enviado_em, respostas->>nome"),
+      c.from("diagnosticos").select("id, user_id, status, progresso, atualizado_em, enviado_em, respostas->>nome"),
       c.from("fichas").select("id, user_id, status, progresso, atualizado_em, enviado_em, respostas->>nome"),
       c.from("contratos").select("id, user_id, plano, assinado_em")
     ]);
@@ -180,12 +180,9 @@
       if (!d) status = '<span class="selo" style="color:#6B6358">NÃO INICIADO</span>';
       else if (d.status === "andamento") status = '<span class="selo" style="color:#C08A4E">EM ANDAMENTO · ' + d.progresso + "%</span>";
       else status = '<span class="selo" style="color:#123B47">ENVIADO ✓</span><div class="pequeno">' + VHG.dataBR(d.enviado_em) + "</div>" +
-        (d.relatorio_liberado ? '<div class="pequeno" style="color:#123B47">Relatório liberado</div>' : '<div class="pequeno">Relatório não liberado</div>');
+        '<div class="pequeno" style="color:#123B47">Relatório disponível para o cliente</div>';
       if (d && d.nome) acoes += '<a class="acao-tabela" href="relatorio.html?id=' + d.id + '">VER RELATÓRIO</a>';
       if (d && d.status === "enviado") {
-        acoes += d.relatorio_liberado
-          ? '<button type="button" class="acao-tabela" data-acao="ocultar" data-id="' + d.id + '">OCULTAR</button>'
-          : '<button type="button" class="acao-tabela" data-acao="liberar" data-id="' + d.id + '">LIBERAR</button>';
         acoes += '<button type="button" class="acao-tabela" data-acao="reabrir" data-id="' + d.id + '">REABRIR</button>';
       }
       return "<tr><td><strong>" + esc(nome) + '</strong><div class="pequeno">' + esc(p.email) + "</div>" +
@@ -231,8 +228,6 @@
     el.querySelectorAll("[data-acao]").forEach(function (b) {
       b.addEventListener("click", async function () {
         var acao = b.dataset.acao, mudanca;
-        if (acao === "liberar") mudanca = { relatorio_liberado: true };
-        if (acao === "ocultar") mudanca = { relatorio_liberado: false };
         if (acao === "reabrir") {
           if (!confirm("Reabrir o diagnóstico para edição? O relatório deixa de ficar visível para o cliente até ele enviar de novo.")) return;
           mudanca = { status: "andamento", relatorio_liberado: false };

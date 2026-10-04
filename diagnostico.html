@@ -660,8 +660,9 @@ function renderStep10() {
 function renderFim() {
   var nome = (data.nome || "").trim().split(/\s+/)[0];
   return '<div class="fim"><div class="tit">Recebido' + (nome ? ", " + esc(nome) : "") + ".</div>" +
-    "<p>Suas respostas chegaram. Vou analisar caso a caso e te enviar o relatório completo em até 3 dias úteis.</p>" +
-    '<div class="fio"></div><a href="area.html" class="btn btn-cobre btn-d">VOLTAR PARA A ÁREA DO CLIENTE</a></div>';
+    "<p>Suas respostas chegaram e o seu relatório já está pronto. Ele também fica disponível na sua área do cliente.</p>" +
+    '<div class="fio"></div><a href="relatorio.html" class="btn btn-cobre btn-d">VER MEU RELATÓRIO</a>' +
+    '<div style="margin-top:16px"><a href="area.html" class="btn-voltar">Voltar para a área do cliente</a></div></div>';
 }
 
 function renderSomenteLeitura() {
@@ -670,7 +671,8 @@ function renderSomenteLeitura() {
     '<p class="etapa-desc">O diagnóstico já foi enviado e está comigo. Se precisar corrigir alguma informação, me chame que eu reabro o formulário para você.</p>' +
     renderRevisao(false) +
     '<div class="nav-etapas"><a href="area.html" class="btn-voltar">Voltar para a área do cliente</a>' +
-    '<a href="#" data-wa target="_blank" rel="noopener" class="btn btn-petroleo">PEDIR CORREÇÃO</a></div>';
+    '<a href="#" data-wa target="_blank" rel="noopener" class="btn btn-linha">PEDIR CORREÇÃO</a>' +
+    '<a href="relatorio.html" class="btn btn-cobre">VER MEU RELATÓRIO</a></div>';
 }
 
 /* ===================== Render principal ===================== */
