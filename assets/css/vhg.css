@@ -119,7 +119,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cobre); outline
 
 /* ── Home ──────────────────────────────────────────────────── */
 .hero { background: var(--petroleo); color: var(--papel); }
-.hero .wrap { padding-top: clamp(56px,8vw,96px); padding-bottom: clamp(56px,8vw,96px); }
+.hero .wrap { padding-top: clamp(40px,5vw,64px); padding-bottom: clamp(44px,5.5vw,72px); }
 .hero h1 { margin: 0 0 clamp(36px,5vw,48px); max-width: 760px; font-family: var(--serif); font-weight: 300; font-size: clamp(40px,6.6vw,72px); line-height: 1.1; letter-spacing: -.01em; color: var(--papel); text-wrap: balance; }
 .botoes { display: flex; gap: 14px; flex-wrap: wrap; }
 
