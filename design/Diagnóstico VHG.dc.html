@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200;6..72,300;6..72,400&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#F2EDE4; font-family:'Archivo',sans-serif; color:#0B2530; }
+  a { color:#123B47; text-decoration:none; }
+  a:hover { color:#C08A4E; }
+  input, select, textarea, button { font-family:'Archivo',sans-serif; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:#123B47; }
+  ::placeholder { color:#9A9184; }
+  select { -webkit-appearance:none; appearance:none; }
+  textarea { resize:vertical; }
+  ::selection { background:rgba(192,138,78,.35); }
+</style>
+</helmet>
+
+<div style="font-family:'Archivo',sans-serif; color:#0B2530; background:#F2EDE4; min-height:100vh; display:flex; flex-direction:column">
+
+  <header style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px clamp(20px,5vw,56px); border-bottom:1px solid #DCD4C6; background:#F2EDE4">
+    <a href="#" style="display:flex; align-items:baseline; gap:12px">
+      <span style="font-family:'Newsreader',serif; font-weight:300; font-size:24px; letter-spacing:.08em; color:#123B47; padding-left:.08em">VHG</span>
+      <span style="font-size:9px; font-weight:500; letter-spacing:.22em; color:#8A8175">PLANEJAMENTO FINANCEIRO</span>
+    </a>
+    <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; text-align:right">DIAGNÓSTICO FINANCEIRO</div>
+  </header>
+
+  <sc-if value="{{ mostrarStepper }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; align-items:center; justify-content:center; gap:4px; padding:14px 12px; border-bottom:1px solid #DCD4C6; flex-wrap:wrap">
+      <sc-for list="{{ passos }}" as="p" hint-placeholder-count="10">
+        <div style="display:flex; align-items:center; gap:4px">
+          <button type="button" onClick="{{ p.ir }}" style="{{ p.estilo }}">{{ p.n }}</button>
+          <div style="width:14px; height:1px; background:#DCD4C6; display:{{ p.conector }}"></div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <main style="flex:1; display:flex; justify-content:center; padding:clamp(28px,5vw,56px) clamp(18px,4vw,24px) 80px">
+    <div style="width:100%; max-width:760px">
+
+      <sc-if value="{{ isAbertura }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#123B47; color:#F2EDE4; padding:clamp(36px,6vw,68px) clamp(24px,5vw,60px)">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px">
+            <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.26em; color:#C08A4E">DIAGNÓSTICO FINANCEIRO VHG</div>
+          </div>
+          <h1 style="margin:0; font-family:'Newsreader',serif; font-weight:200; font-size:clamp(30px,5.2vw,46px); line-height:1.14; max-width:560px; text-wrap:balance">Um raio-x completo da sua vida financeira, em cerca de 25 minutos.</h1>
+          <p style="margin:26px 0 0; font-size:15.5px; line-height:1.75; color:rgba(242,237,228,.82); max-width:520px; text-wrap:pretty">Você responde sobre renda, gastos, patrimônio, dívidas e objetivos. Com essas respostas eu monto um relatório escrito com o retrato da sua situação e as decisões que vêm a seguir.</p>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px 32px; margin-top:40px; max-width:560px">
+            <div style="display:flex; gap:10px; align-items:baseline">
+              <span style="font-family:'Newsreader',serif; font-style:italic; color:#C08A4E; font-size:15px">—</span>
+              <span style="font-size:14.5px; line-height:1.55; color:rgba(242,237,228,.92)">Diagnóstico completo das suas finanças</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:baseline">
+              <span style="font-family:'Newsreader',serif; font-style:italic; color:#C08A4E; font-size:15px">—</span>
+              <span style="font-size:14.5px; line-height:1.55; color:rgba(242,237,228,.92)">Seu arquétipo financeiro</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:baseline">
+              <span style="font-family:'Newsreader',serif; font-style:italic; color:#C08A4E; font-size:15px">—</span>
+              <span style="font-size:14.5px; line-height:1.55; color:rgba(242,237,228,.92)">Plano de ação com prazo e valor</span>
+            </div>
+            <div style="display:flex; gap:10px; align-items:baseline">
+              <span style="font-family:'Newsreader',serif; font-style:italic; color:#C08A4E; font-size:15px">—</span>
+              <span style="font-size:14.5px; line-height:1.55; color:rgba(242,237,228,.92)">Projeção da aposentadoria: quanto ter, quanto guardar por mês</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:28px; align-items:center; flex-wrap:wrap; margin-top:44px">
+            <button type="button" onClick="{{ avancar }}" style="background:#C08A4E; color:#0B2530; border:none; padding:17px 30px; font-size:12px; font-weight:600; letter-spacing:.16em; cursor:pointer; min-height:44px" style-hover="background:#D49B5C">COMEÇAR DIAGNÓSTICO</button>
+            <div style="font-size:12.5px; line-height:1.6; color:rgba(242,237,228,.6)">20 a 30 minutos · dá para salvar e continuar depois</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEtapa }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px">
+            <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.26em; color:#8A8175">{{ etapaRotulo }}</div>
+          </div>
+          <h2 style="margin:0 0 12px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,36px); line-height:1.16; letter-spacing:-.01em">{{ etapaTitulo }}</h2>
+          <p style="margin:0 0 30px; font-size:14.5px; line-height:1.7; color:#48534F; max-width:580px; text-wrap:pretty">{{ etapaDescricao }}</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is1 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:22px">
+            <div style="grid-column:1/-1">
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">NOME COMPLETO</label>
+              <input type="text" placeholder="Seu nome" defaultValue="Mariana Castilho" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+            </div>
+            <div style="grid-column:1/-1">
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">E-MAIL</label>
+              <input type="email" placeholder="voce@email.com" defaultValue="mariana.castilho@email.com" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">ESTADO</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>São Paulo</option>
+                <option>Minas Gerais</option>
+                <option>Paraná</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">CIDADE</label>
+              <input type="text" placeholder="Digite sua cidade" defaultValue="Botucatu" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">DATA DE NASCIMENTO</label>
+              <input type="date" defaultValue="1985-04-12" style="width:100%; box-sizing:border-box; padding:12px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+              <div style="font-size:12px; color:#8A8175; margin-top:8px">Idade: 41 anos</div>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">ESTADO CIVIL</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Casado(a)</option>
+                <option>Solteiro(a)</option>
+                <option>União estável</option>
+                <option>Divorciado(a)</option>
+                <option>Viúvo(a)</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1; height:1px; background:#E6DFD2; margin:4px 0"></div>
+            <div style="grid-column:1/-1">
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">TEM CÔNJUGE COM RENDA PRÓPRIA?</label>
+              <div style="display:inline-flex; border:1px solid #DCD4C6">
+                <button type="button" style="padding:12px 26px; border:none; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Sim</button>
+                <button type="button" style="padding:12px 26px; border:none; border-left:1px solid #DCD4C6; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Não</button>
+              </div>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">NASCIMENTO DO CÔNJUGE (OPCIONAL)</label>
+              <input type="date" defaultValue="1983-09-30" style="width:100%; box-sizing:border-box; padding:12px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+            </div>
+            <div style="display:flex; align-items:flex-end">
+              <div style="font-size:12px; line-height:1.6; color:#8A8175">A data do cônjuge fica só como informação. A projeção de aposentadoria usa a sua idade.</div>
+            </div>
+            <div style="grid-column:1/-1; height:1px; background:#E6DFD2; margin:4px 0"></div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">FILHOS / DEPENDENTES</label>
+              <input type="number" defaultValue="2" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">OCUPAÇÃO</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Saúde</option>
+                <option>Tecnologia</option>
+                <option>Direito</option>
+                <option>Autônomo(a) / Empreendedor(a)</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1; height:1px; background:#E6DFD2; margin:4px 0"></div>
+            <label style="grid-column:1/-1; display:flex; align-items:flex-start; gap:10px; font-size:13.5px; line-height:1.65; color:#48534F; cursor:pointer">
+              <input type="checkbox" defaultChecked="{{ true }}" style="margin-top:3px; flex-shrink:0; accent-color:#123B47">
+              <span>Li e concordo com a <a href="#" style="color:#123B47; font-weight:500; text-decoration:underline">Política de Privacidade</a> e autorizo o uso das minhas respostas para gerar o diagnóstico e para contato do Vitor Hugo Germano.</span>
+            </label>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is2 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <sc-if value="{{ totaisVisiveis }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#123B47; color:#F2EDE4; padding:24px 28px; margin-bottom:24px">
+              <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#C08A4E; margin-bottom:10px">RENDA TOTAL MENSAL</div>
+              <div style="font-family:'Newsreader',serif; font-weight:300; font-size:30px; font-feature-settings:'tnum'">R$ 24.700,00</div>
+            </div>
+          </sc-if>
+          <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:22px">
+              <div>
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">RENDA LÍQUIDA PRÓPRIA</label>
+                <input type="text" defaultValue="R$ 15.200,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+              </div>
+              <div>
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">RENDA LÍQUIDA DO CÔNJUGE</label>
+                <input type="text" defaultValue="R$ 8.300,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+              </div>
+            </div>
+            <div style="height:1px; background:#E6DFD2; margin:28px 0"></div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:14px">OUTRAS RENDAS (ALUGUEL, FREELANCE, ETC.)</div>
+            <div style="border:1px solid #E6DFD2; padding:20px; margin-bottom:14px">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px">
+                <div style="font-size:12.5px; font-weight:600; color:#123B47">Renda 1</div>
+                <button type="button" style="background:none; border:none; color:#8A8175; font-size:12.5px; font-weight:500; cursor:pointer; text-decoration:underline">Remover</button>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:18px">
+                <div>
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">DESCRIÇÃO</label>
+                  <input type="text" defaultValue="Aluguel da sala comercial" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                </div>
+                <div>
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">VALOR</label>
+                  <input type="text" defaultValue="R$ 1.200,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+                </div>
+              </div>
+            </div>
+            <button type="button" style="background:none; border:none; color:#123B47; font-size:13.5px; font-weight:600; cursor:pointer; padding:0">+ Adicionar outra renda</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is3 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <sc-if value="{{ totaisVisiveis }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#123B47; color:#F2EDE4; padding:24px 28px; margin-bottom:24px">
+              <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#C08A4E; margin-bottom:10px">TOTAL DE DESPESAS MENSAIS</div>
+              <div style="font-family:'Newsreader',serif; font-weight:300; font-size:30px; font-feature-settings:'tnum'">R$ 19.040,00</div>
+            </div>
+          </sc-if>
+          <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:22px">
+              <sc-for list="{{ despesas }}" as="d" hint-placeholder-count="12">
+                <div>
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">{{ d.rotulo }}</label>
+                  <input type="text" defaultValue="{{ d.valor }}" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is4 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <sc-if value="{{ totaisVisiveis }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; margin-bottom:24px">
+              <div style="background:#123B47; color:#F2EDE4; padding:24px 28px">
+                <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#C08A4E; margin-bottom:10px">PATRIMÔNIO TOTAL</div>
+                <div style="font-family:'Newsreader',serif; font-weight:300; font-size:30px; font-feature-settings:'tnum'">R$ 1.284.000,00</div>
+              </div>
+              <div style="background:#123B47; color:#F2EDE4; padding:24px 28px">
+                <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#C08A4E; margin-bottom:10px">PATRIMÔNIO LÍQUIDO</div>
+                <div style="font-family:'Newsreader',serif; font-weight:300; font-size:30px; font-feature-settings:'tnum'">R$ 962.400,00</div>
+              </div>
+            </div>
+          </sc-if>
+          <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+            <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:14px">IMÓVEIS</div>
+            <div style="border:1px solid #E6DFD2; padding:20px; margin-bottom:14px">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px">
+                <div style="font-size:12.5px; font-weight:600; color:#123B47">Imóvel 1</div>
+                <button type="button" style="background:none; border:none; color:#8A8175; font-size:12.5px; font-weight:500; cursor:pointer; text-decoration:underline">Remover</button>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:18px">
+                <div style="grid-column:1/-1">
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">DESCRIÇÃO</label>
+                  <input type="text" defaultValue="Apartamento onde moramos" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                </div>
+                <div>
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">VALOR DE MERCADO</label>
+                  <input type="text" defaultValue="R$ 780.000,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+                </div>
+                <div>
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">SITUAÇÃO</label>
+                  <div style="display:flex; border:1px solid #DCD4C6">
+                    <button type="button" style="flex:1; padding:13px 10px; border:none; background:transparent; color:#8A8175; font-size:13px; font-weight:500; cursor:pointer; min-height:44px">Quitado</button>
+                    <button type="button" style="flex:1; padding:13px 10px; border:none; border-left:1px solid #DCD4C6; background:#123B47; color:#F2EDE4; font-size:13px; font-weight:500; cursor:pointer; min-height:44px">Financiado</button>
+                  </div>
+                </div>
+                <div style="grid-column:1/-1">
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">SALDO DEVEDOR</label>
+                  <input type="text" defaultValue="R$ 268.000,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+                </div>
+              </div>
+            </div>
+            <button type="button" style="background:none; border:none; color:#123B47; font-size:13.5px; font-weight:600; cursor:pointer; padding:0">+ Adicionar imóvel</button>
+
+            <div style="height:1px; background:#E6DFD2; margin:28px 0"></div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:14px">VEÍCULOS</div>
+            <button type="button" style="background:none; border:none; color:#123B47; font-size:13.5px; font-weight:600; cursor:pointer; padding:0">+ Adicionar veículo</button>
+
+            <div style="height:1px; background:#E6DFD2; margin:28px 0"></div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:14px">INVESTIMENTOS</div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:18px">
+              <sc-for list="{{ investimentos }}" as="i" hint-placeholder-count="6">
+                <div>
+                  <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">{{ i.rotulo }}</label>
+                  <input type="text" defaultValue="{{ i.valor }}" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="height:1px; background:#E6DFD2; margin:28px 0"></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:22px">
+              <div style="grid-column:1/-1">
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">PERFIL DE RISCO AUTODECLARADO</label>
+                <div style="display:inline-flex; border:1px solid #DCD4C6; flex-wrap:wrap">
+                  <button type="button" style="padding:12px 22px; border:none; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Conservador</button>
+                  <button type="button" style="padding:12px 22px; border:none; border-left:1px solid #DCD4C6; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Moderado</button>
+                  <button type="button" style="padding:12px 22px; border:none; border-left:1px solid #DCD4C6; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Arrojado</button>
+                </div>
+              </div>
+              <div>
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">SABE A RENTABILIDADE DO ÚLTIMO ANO?</label>
+                <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                  <option>Ideia vaga</option>
+                  <option>Não sei</option>
+                  <option>Sei aproximado</option>
+                  <option>Sei exato</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">INVESTE AUTOMÁTICO OU SÓ O QUE SOBRA?</label>
+                <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                  <option>Às vezes automático</option>
+                  <option>Só o que sobra</option>
+                  <option>Quase sempre</option>
+                  <option>Sempre automático</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is5 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+          <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">VOCÊ TEM DÍVIDAS EM CARTÃO, CHEQUE ESPECIAL OU EMPRÉSTIMO HOJE?</div>
+          <div style="display:inline-flex; border:1px solid #DCD4C6">
+            <button type="button" style="padding:12px 26px; border:none; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Sim</button>
+            <button type="button" style="padding:12px 26px; border:none; border-left:1px solid #DCD4C6; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Não</button>
+          </div>
+          <sc-if value="{{ totaisVisiveis }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#123B47; color:#F2EDE4; padding:24px 28px; margin:28px 0 24px">
+              <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#C08A4E; margin-bottom:10px">TOTAL DE DÍVIDAS</div>
+              <div style="font-family:'Newsreader',serif; font-weight:300; font-size:30px; font-feature-settings:'tnum'">R$ 53.600,00</div>
+            </div>
+          </sc-if>
+          <div style="display:grid; grid-template-columns:1fr; gap:20px">
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">CARTÃO DE CRÉDITO (FATURA/ROTATIVO EM ABERTO)</label>
+              <input type="text" defaultValue="R$ 7.400,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">CHEQUE ESPECIAL (VALOR UTILIZADO)</label>
+              <input type="text" defaultValue="R$ 0,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">EMPRÉSTIMO PESSOAL (SALDO DEVEDOR)</label>
+              <input type="text" defaultValue="R$ 46.200,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">TOTAL DAS PARCELAS MENSAIS DESSAS DÍVIDAS</label>
+              <input type="text" defaultValue="R$ 1.950,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+            </div>
+          </div>
+          <div style="height:1px; background:#E6DFD2; margin:28px 0"></div>
+          <div style="display:grid; grid-template-columns:1fr; gap:20px">
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">SABE A TAXA DE JUROS DA DÍVIDA MAIS CARA?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Ideia vaga</option>
+                <option>Não sei</option>
+                <option>Sei aproximado</option>
+                <option>Sei exato</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">NOS ÚLTIMOS 12 MESES, PEGOU EMPRÉSTIMO OU USOU ROTATIVO PRA COBRIR OUTRA DÍVIDA?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Já aconteceu 1-2 vezes</option>
+                <option>Frequentemente</option>
+                <option>Raramente</option>
+                <option>Nunca</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is6 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:22px">
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">VALOR TOTAL DA RESERVA DE EMERGÊNCIA</label>
+              <input type="text" defaultValue="R$ 38.000,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+              <div style="font-size:12px; color:#8A8175; margin-top:8px">Informe mesmo que já esteja incluído nos investimentos da etapa 4.</div>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">ONDE ESTÁ APLICADA</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>CDB liquidez diária</option>
+                <option>Poupança</option>
+                <option>Conta corrente</option>
+                <option>Tesouro Selic</option>
+                <option>Outro</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1">
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">SE PERDESSE A RENDA HOJE, POR QUANTO TEMPO MANTERIA SEU PADRÃO DE VIDA SEM SE DESESPERAR?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Poucos meses</option>
+                <option>Dias</option>
+                <option>Semanas</option>
+                <option>6+ meses</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is7 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:22px">
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">TEM SEGURO DE VIDA?</label>
+              <div style="display:inline-flex; border:1px solid #DCD4C6">
+                <button type="button" style="padding:12px 26px; border:none; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Sim</button>
+                <button type="button" style="padding:12px 26px; border:none; border-left:1px solid #DCD4C6; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Não</button>
+              </div>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">CAPITAL SEGURADO</label>
+              <input type="text" defaultValue="R$ 300.000,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">TEM PLANO DE SAÚDE?</label>
+              <div style="display:inline-flex; border:1px solid #DCD4C6">
+                <button type="button" style="padding:12px 26px; border:none; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Sim</button>
+                <button type="button" style="padding:12px 26px; border:none; border-left:1px solid #DCD4C6; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Não</button>
+              </div>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">TEM RESERVA PRA EMERGÊNCIAS MÉDICAS?</label>
+              <div style="display:inline-flex; border:1px solid #DCD4C6">
+                <button type="button" style="padding:12px 26px; border:none; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Sim</button>
+                <button type="button" style="padding:12px 26px; border:none; border-left:1px solid #DCD4C6; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Não</button>
+              </div>
+            </div>
+            <div style="grid-column:1/-1">
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">SE FICASSE INCAPACITADA DE TRABALHAR, POR QUANTO TEMPO SUA RENDA ESTARIA GARANTIDA?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Menos de 3 meses</option>
+                <option>Nenhum tempo</option>
+                <option>3-6 meses</option>
+                <option>6+ meses ou tenho seguro invalidez</option>
+              </select>
+            </div>
+            <div style="grid-column:1/-1">
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">REVISOU O SEGURO DE VIDA E O PLANO DE SAÚDE NOS ÚLTIMOS 2 ANOS?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Faz mais de 2 anos</option>
+                <option>Nunca revisei</option>
+                <option>Há 1-2 anos</option>
+                <option>Recentemente</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is8 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:22px">
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">IDADE EM QUE QUER SE APOSENTAR</label>
+              <input type="number" defaultValue="60" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+              <div style="font-size:12px; color:#8A8175; margin-top:8px">Você tem 19 anos pra acumular, dos 41 aos 60.</div>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">RENDA MENSAL DESEJADA NA APOSENTADORIA</label>
+              <input type="text" defaultValue="R$ 14.000,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+            </div>
+            <div style="grid-column:1/-1">
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">O QUE FAZER COM O PATRIMÔNIO NA APOSENTADORIA</label>
+              <div style="display:inline-flex; border:1px solid #DCD4C6; flex-wrap:wrap">
+                <button type="button" style="padding:12px 18px; border:none; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Viver do rendimento</button>
+                <button type="button" style="padding:12px 18px; border:none; border-left:1px solid #DCD4C6; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Consumir o patrimônio</button>
+              </div>
+            </div>
+            <div style="grid-column:1/-1; height:1px; background:#E6DFD2; margin:4px 0"></div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">TEM METAS FINANCEIRAS DEFINIDAS?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Algumas com prazo/valor</option>
+                <option>Não tenho metas</option>
+                <option>Ideias vagas</option>
+                <option>Todas com prazo/valor</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">JÁ CALCULOU QUANTO GUARDAR POR MÊS?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Pensei mas não calculei</option>
+                <option>Não</option>
+                <option>Calculei aproximado</option>
+                <option>Calculei exato</option>
+              </select>
+            </div>
+          </div>
+          <div style="height:1px; background:#E6DFD2; margin:28px 0"></div>
+          <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:14px">OUTRAS METAS</div>
+          <div style="border:1px solid #E6DFD2; padding:20px; margin-bottom:14px">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px">
+              <div style="font-size:12.5px; font-weight:600; color:#123B47">Meta 1</div>
+              <button type="button" style="background:none; border:none; color:#8A8175; font-size:12.5px; font-weight:500; cursor:pointer; text-decoration:underline">Remover</button>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:18px">
+              <div style="grid-column:1/-1">
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">DESCRIÇÃO</label>
+                <input type="text" defaultValue="Intercâmbio dos filhos" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+              </div>
+              <div>
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">VALOR ESTIMADO</label>
+                <input type="text" defaultValue="R$ 120.000,00" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530; font-feature-settings:'tnum'">
+              </div>
+              <div>
+                <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">PRAZO</label>
+                <input type="text" defaultValue="6 anos" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+              </div>
+            </div>
+          </div>
+          <button type="button" style="background:none; border:none; color:#123B47; font-size:13.5px; font-weight:600; cursor:pointer; padding:0">+ Adicionar outra meta</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is9 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px)">
+          <div style="display:grid; grid-template-columns:1fr; gap:22px">
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">A RENDA COBRE TODAS AS DESPESAS?</label>
+              <div style="display:inline-flex; border:1px solid #DCD4C6">
+                <button type="button" style="padding:12px 26px; border:none; background:#123B47; color:#F2EDE4; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Sim</button>
+                <button type="button" style="padding:12px 26px; border:none; border-left:1px solid #DCD4C6; background:transparent; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; min-height:44px">Não</button>
+              </div>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">NO FIM DO MÊS, SOBRA, EMPATA OU FICA NO VERMELHO?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Sobra</option>
+                <option>Empata</option>
+                <option>Fico no vermelho</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">SABE PRA ONDE VAI O DINHEIRO?</label>
+              <select style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; color:#0B2530">
+                <option>Mais ou menos, às vezes me surpreendo</option>
+                <option>Sei bem, sem surpresas</option>
+                <option>Não, tenho surpresas com frequência</option>
+              </select>
+            </div>
+            <div style="height:1px; background:#E6DFD2"></div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">DESCREVA SUA SITUAÇÃO FINANCEIRA HOJE</label>
+              <textarea rows="3" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; line-height:1.6; color:#0B2530" defaultValue="Ganhamos bem, mas nunca sei quanto realmente sobra. Tudo funciona no automático e eu descubro no extrato."></textarea>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">QUAL A SUA MAIOR DOR FINANCEIRA?</label>
+              <textarea rows="2" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; line-height:1.6; color:#0B2530" defaultValue="O empréstimo do carro. Pago há dois anos e parece que não anda."></textarea>
+            </div>
+            <div>
+              <label style="display:block; font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:8px">O QUE VOCÊ QUER PARA OS PRÓXIMOS ANOS?</label>
+              <textarea rows="2" style="width:100%; box-sizing:border-box; padding:13px 14px; border:1px solid #DCD4C6; background:#FFFFFF; font-size:15px; line-height:1.6; color:#0B2530" defaultValue="Reduzir plantões aos 55 e manter o mesmo padrão de vida."></textarea>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is10 }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <sc-for list="{{ revisao }}" as="r" hint-placeholder-count="4">
+            <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:28px clamp(20px,3vw,32px); margin-bottom:16px">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px">
+                <div style="font-family:'Newsreader',serif; font-weight:300; font-size:20px; color:#123B47">{{ r.titulo }}</div>
+                <button type="button" onClick="{{ r.editar }}" style="background:transparent; border:1px solid #DCD4C6; color:#123B47; font-size:11px; font-weight:500; letter-spacing:.12em; padding:9px 16px; cursor:pointer; min-height:44px">EDITAR</button>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px 24px">
+                <sc-for list="{{ r.itens }}" as="it" hint-placeholder-count="4">
+                  <div>
+                    <div style="font-size:10px; font-weight:500; letter-spacing:.14em; color:#9A9184; margin-bottom:4px">{{ it.rotulo }}</div>
+                    <div style="font-size:14.5px; line-height:1.5; color:#0B2530">{{ it.valor }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+          <div style="background:#123B47; color:#F2EDE4; padding:28px 32px; font-size:14.5px; line-height:1.7">
+            Ao enviar, suas respostas vão direto para mim. O relatório fica pronto em até 3 dias úteis e chega no e-mail que você informou, junto com o convite para a conversa de devolutiva.
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isFim }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#123B47; color:#F2EDE4; padding:clamp(40px,7vw,72px) clamp(24px,5vw,56px); text-align:center">
+          <div style="font-family:'Newsreader',serif; font-weight:300; font-style:italic; font-size:26px; color:#C08A4E; margin-bottom:18px">Recebido, Mariana.</div>
+          <p style="margin:0 auto; font-size:15.5px; line-height:1.75; color:rgba(242,237,228,.82); max-width:460px; text-wrap:pretty">Suas respostas chegaram. Vou analisar caso a caso e te enviar o relatório completo em até 3 dias úteis.</p>
+          <div style="width:88px; height:1px; background:#C08A4E; margin:34px auto"></div>
+          <a href="Relatório VHG.dc.html" style="display:inline-block; background:#C08A4E; color:#0B2530; font-size:12px; font-weight:600; letter-spacing:.16em; padding:17px 30px" style-hover="background:#D49B5C">VER UM RELATÓRIO DE EXEMPLO</a>
+          <div style="margin-top:20px">
+            <button type="button" onClick="{{ reiniciar }}" style="background:none; border:none; color:rgba(242,237,228,.55); font-size:12.5px; cursor:pointer; text-decoration:underline">Recomeçar o formulário</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ mostrarNav }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-top:36px; flex-wrap:wrap">
+          <button type="button" onClick="{{ voltar }}" style="background:none; border:none; color:#8A8175; font-size:13.5px; font-weight:500; cursor:pointer; padding:12px 4px; min-height:44px">Voltar</button>
+          <button type="button" onClick="{{ avancar }}" style="background:#123B47; color:#F2EDE4; border:none; padding:17px 34px; font-size:12px; font-weight:600; letter-spacing:.16em; cursor:pointer; min-height:44px" style-hover="background:#0B2530">{{ rotuloAvancar }}</button>
+        </div>
+      </sc-if>
+
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid #DCD4C6; padding:24px clamp(20px,5vw,56px); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:11px; letter-spacing:.14em; color:#8A8175">
+    <span>VITOR HUGO GERMANO · PLANEJAMENTO FINANCEIRO</span>
+    <span>BOTUCATU, SP</span>
+  </footer>
+</div>
+
+<sc-if value="{{ bloqueioAtivo }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed; inset:0; z-index:500; background:#F2EDE4; display:flex; align-items:center; justify-content:center; padding:24px">
+    <div style="max-width:460px; width:100%; background:#FBF9F5; border:1px solid #E6DFD2; padding:44px 36px; text-align:center">
+      <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; letter-spacing:.08em; color:#123B47; padding-left:.08em">VHG</div>
+      <div style="width:66px; height:1px; background:#C08A4E; margin:18px auto"></div>
+      <h2 style="margin:0 0 14px; font-family:'Newsreader',serif; font-weight:300; font-size:24px; color:#123B47">Acesso ao diagnóstico</h2>
+      <p style="margin:0; font-size:14.5px; line-height:1.7; color:#48534F; text-wrap:pretty">Este formulário é liberado depois da contratação. Entre com a conta usada na compra para continuar de onde parou.</p>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:26px">
+        <button type="button" onClick="{{ liberar }}" style="background:#123B47; color:#F2EDE4; border:none; font-size:12px; font-weight:600; letter-spacing:.16em; padding:16px 24px; cursor:pointer; min-height:44px" style-hover="background:#0B2530">ENTRAR NA MINHA CONTA</button>
+        <button type="button" onClick="{{ liberar }}" style="background:transparent; color:#123B47; border:1px solid #DCD4C6; font-size:12px; font-weight:500; letter-spacing:.16em; padding:16px 24px; cursor:pointer; min-height:44px" style-hover="border-color:#C08A4E">QUERO CONTRATAR O DIAGNÓSTICO</button>
+      </div>
+      <div style="font-size:12.5px; line-height:1.7; color:#8A8175; margin-top:22px">Já comprou e caiu aqui? Escreva para <a href="#" style="color:#123B47; text-decoration:underline">germanovitorhugo@gmail.com</a>.</div>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mostrarBloqueio&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;etapaInicial&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:11,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;totaisVisiveis&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamento&quot;}}">
+const META = [
+  null,
+  ["ETAPA 1 DE 10", "Identificação", "Alguns dados básicos para personalizar seu relatório e mantermos contato sobre o diagnóstico."],
+  ["ETAPA 2 DE 10", "Renda mensal", "Sua renda líquida e a do seu cônjuge, se aplicável, além de outras fontes de renda."],
+  ["ETAPA 3 DE 10", "Despesas", "Seus gastos mensais por categoria. O valor em Investimentos / Poupança conta como aporte mensal, não como gasto."],
+  ["ETAPA 4 DE 10", "Patrimônio e investimentos", "Imóveis, veículos, investimentos e seu perfil como investidor. Se você tem cônjuge, informe o patrimônio do casal."],
+  ["ETAPA 5 DE 10", "Dívidas", "Cartão de crédito, cheque especial, empréstimos e outras dívidas em aberto."],
+  ["ETAPA 6 DE 10", "Liquidez e reserva de emergência", "Quanto você tem guardado para imprevistos e onde está aplicado. Aqui o valor serve para avaliar sua liquidez."],
+  ["ETAPA 7 DE 10", "Gestão de risco", "Seguro de vida, plano de saúde e proteção da sua renda."],
+  ["ETAPA 8 DE 10", "Aposentadoria e metas de longo prazo", "Quando você quer parar de depender do trabalho, quanto quer receber por mês e o que fazer com o patrimônio. É com essas respostas que eu monto a projeção do relatório."],
+  ["ETAPA 9 DE 10", "Situação atual", "Como você enxerga a sua própria situação financeira hoje."],
+  ["ETAPA 10 DE 10", "Revisão e finalização", "Confira tudo antes de enviar. Você pode voltar e editar qualquer etapa."]
+];
+
+const DESPESAS = [
+  ["ALIMENTAÇÃO", "R$ 2.600,00"], ["EDUCAÇÃO", "R$ 3.200,00"], ["IMPOSTOS", "R$ 1.450,00"],
+  ["INVESTIMENTOS / POUPANÇA", "R$ 2.000,00"], ["LAZER", "R$ 1.100,00"], ["MORADIA", "R$ 4.300,00"],
+  ["PRESENTES / DOAÇÕES", "R$ 280,00"], ["SAÚDE", "R$ 1.480,00"], ["SEGUROS", "R$ 620,00"],
+  ["SERVIÇOS DIVERSOS", "R$ 540,00"], ["TRANSPORTE", "R$ 1.070,00"], ["VESTUÁRIO / CUIDADOS PESSOAIS", "R$ 400,00"]
+];
+
+const INVESTS = [
+  ["POUPANÇA", "R$ 12.000,00"], ["RENDA FIXA PÚBLICA (TESOURO)", "R$ 96.000,00"],
+  ["RENDA FIXA PRIVADA (CDB/LCI/LCA)", "R$ 148.000,00"], ["RENDA VARIÁVEL (AÇÕES/FIIS/ETFS)", "R$ 74.000,00"],
+  ["CRIPTOMOEDAS", "R$ 8.000,00"], ["OUTROS", "R$ 0,00"]
+];
+
+const REVISAO = [
+  [1, "Identificação", [["NOME", "Mariana Castilho"], ["E-MAIL", "mariana.castilho@email.com"], ["CIDADE / UF", "Botucatu, SP"], ["IDADE", "41 anos"], ["ESTADO CIVIL", "Casada · cônjuge com renda"], ["FILHOS", "2"]]],
+  [2, "Renda mensal", [["RENDA PRÓPRIA", "R$ 15.200,00"], ["RENDA DO CÔNJUGE", "R$ 8.300,00"], ["OUTRAS RENDAS", "R$ 1.200,00"], ["TOTAL", "R$ 24.700,00"]]],
+  [4, "Patrimônio", [["IMÓVEIS", "R$ 780.000,00"], ["INVESTIMENTOS", "R$ 338.000,00"], ["PATRIMÔNIO LÍQUIDO", "R$ 962.400,00"], ["PERFIL DE RISCO", "Moderado"]]],
+  [8, "Aposentadoria e metas", [["IDADE-ALVO", "60 anos"], ["RENDA DESEJADA", "R$ 14.000,00 / mês"], ["ESTRATÉGIA", "Viver do rendimento"], ["OUTRAS METAS", "1 declarada"]]]
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { step: Number(props.etapaInicial ?? 0), gate: (props.mostrarBloqueio ?? true) };
+  }
+  go(n) { this.setState({ step: n }); window.scrollTo(0, 0); }
+  renderVals() {
+    const s = this.state.step;
+    const meta = META[s] || ["", "", ""];
+    const passos = [];
+    for (let n = 1; n <= 10; n++) {
+      const base = "width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; font-feature-settings:'tnum'; cursor:pointer; flex-shrink:0; ";
+      let est;
+      if (n === s) est = base + "background:#123B47; color:#F2EDE4; border:1px solid #123B47";
+      else if (n < s) est = base + "background:transparent; color:#C08A4E; border:1px solid #C08A4E";
+      else est = base + "background:transparent; color:#9A9184; border:1px solid #DCD4C6";
+      passos.push({ n: String(n), estilo: est, conector: n === 10 ? "none" : "block", ir: () => this.go(n) });
+    }
+    return {
+      passos,
+      isAbertura: s === 0,
+      isEtapa: s >= 1 && s <= 10,
+      is1: s === 1, is2: s === 2, is3: s === 3, is4: s === 4, is5: s === 5,
+      is6: s === 6, is7: s === 7, is8: s === 8, is9: s === 9, is10: s === 10,
+      isFim: s === 11,
+      mostrarNav: s >= 1 && s <= 10,
+      mostrarStepper: s >= 1 && s <= 10,
+      etapaRotulo: meta[0], etapaTitulo: meta[1], etapaDescricao: meta[2],
+      rotuloAvancar: s === 10 ? "ENVIAR DIAGNÓSTICO" : "CONTINUAR",
+      totaisVisiveis: this.props.totaisVisiveis ?? true,
+      bloqueioAtivo: this.state.gate,
+      liberar: () => this.setState({ gate: false }),
+      avancar: () => this.go(Math.min(11, s + 1)),
+      voltar: () => this.go(Math.max(0, s - 1)),
+      reiniciar: () => this.go(0),
+      despesas: DESPESAS.map(d => ({ rotulo: d[0], valor: d[1] })),
+      investimentos: INVESTS.map(d => ({ rotulo: d[0], valor: d[1] })),
+      revisao: REVISAO.map(r => ({
+        titulo: r[1],
+        editar: () => this.go(r[0]),
+        itens: r[2].map(i => ({ rotulo: i[0], valor: i[1] }))
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

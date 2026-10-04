@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha cadastral · VHG</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,ital,wght@6..72,0,200;6..72,0,300;6..72,0,400;6..72,1,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/vhg.css?v=5">
+<link rel="stylesheet" href="assets/css/formulario.css?v=3">
+<style>
+  .secao-ficha { margin-bottom: 40px; }
+  .secao-ficha .linha-eyebrow { margin-bottom: 10px; }
+  .secao-ficha h2 { margin: 0 0 18px; font-family: var(--serif); font-weight: 300; font-size: 24px; color: var(--petroleo); }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a href="area.html" class="marca" aria-label="Voltar para a área do cliente">
+    <span class="marca-vhg">VHG</span><span class="marca-sub">PLANEJAMENTO FINANCEIRO</span>
+  </a>
+  <div class="lado">FICHA CADASTRAL<span class="salvo" id="salvo" aria-live="polite"></span></div>
+</header>
+
+<main class="d-main"><div id="app"><div class="carregando">CARREGANDO…</div></div></main>
+
+<footer class="d-footer">
+  <span>VITOR HUGO GERMANO · PLANEJAMENTO FINANCEIRO</span>
+  <span>BOTUCATU, SP</span>
+</footer>
+
+<div class="portao" id="portao" hidden>
+  <div class="caixa">
+    <div class="logo">VHG</div>
+    <div class="fio"></div>
+    <h2>Ficha cadastral</h2>
+    <p>A ficha fica na área do cliente. Entre com a sua conta para preencher ou continuar de onde parou.</p>
+    <div class="acoes">
+      <a href="entrar.html?volta=ficha.html" class="btn btn-petroleo">ENTRAR NA MINHA CONTA</a>
+      <a href="formularios.html" class="btn btn-contorno">AINDA NÃO SOU CLIENTE</a>
+    </div>
+    <div class="rodape">Dúvidas? Escreva para <a href="#" data-email>germanovitorhugo@gmail.com</a>.</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/vhg.js?v=5"></script>
+<script src="assets/js/diagnostico-core.js"></script>
+<script src="assets/js/planos.js?v=2"></script>
+<script>
+"use strict";
+/* ─────────────────────────────────────────────────────────────
+   Ficha cadastral: primeiro formulário do cliente. Salva sozinha
+   no Supabase (tabela `fichas`) e, depois de enviada, os dados
+   de identificação já entram preenchidos na etapa 1 do diagnóstico.
+   ───────────────────────────────────────────────────────────── */
+var UF_LIST = [["AC","Acre"],["AL","Alagoas"],["AP","Amapá"],["AM","Amazonas"],["BA","Bahia"],["CE","Ceará"],["DF","Distrito Federal"],["ES","Espírito Santo"],["GO","Goiás"],["MA","Maranhão"],["MT","Mato Grosso"],["MS","Mato Grosso do Sul"],["MG","Minas Gerais"],["PA","Pará"],["PB","Paraíba"],["PR","Paraná"],["PE","Pernambuco"],["PI","Piauí"],["RJ","Rio de Janeiro"],["RN","Rio Grande do Norte"],["RS","Rio Grande do Sul"],["RO","Rondônia"],["RR","Roraima"],["SC","Santa Catarina"],["SP","São Paulo"],["SE","Sergipe"],["TO","Tocantins"]];
+var ESTADO_CIVIL = ["Solteiro(a)", "Casado(a)", "União estável", "Divorciado(a)", "Viúvo(a)"];
+var REGIME_BENS = ["Comunhão parcial de bens", "Comunhão universal de bens", "Separação total de bens", "Participação final nos aquestos", "Não sei"];
+var OCUPACOES = ["Tecnologia", "Saúde", "Educação", "Direito", "Finanças / Contabilidade", "Comércio / Varejo", "Indústria", "Serviços", "Setor Público", "Autônomo(a) / Empreendedor(a)", "Aposentado(a)", "Outro"];
+var REGIME_TRABALHO = ["CLT", "Servidor(a) público(a)", "Autônomo(a) / Profissional liberal", "PJ", "Empresário(a)", "Aposentado(a)", "Outro"];
+var PARENTESCO = ["Filho(a)", "Enteado(a)", "Pai / Mãe", "Outro"];
+var COMO_CONHECEU = ["Indicação", "Instagram", "Google", "Outro"];
+var HORARIOS = ["Manhã", "Tarde", "Noite", "Qualquer horário"];
+
+function defaultData() {
+  return {
+    nome: "", cpf: "", rg: "", nacionalidade: "Brasileira", dataNascimento: "", estadoCivil: "", regimeBens: "",
+    email: "", whatsapp: "",
+    cep: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", estado: "",
+    temConjuge: "", conjugeNome: "", conjugeNascimento: "", conjugeProfissao: "",
+    dependentes: [],
+    ocupacao: "", profissao: "", empresa: "", regimeTrabalho: "",
+    plano: "", formaPagamento: "", patrimonioEstimado: 0,
+    comoConheceu: "", indicadoPor: "", melhorHorario: "", observacoes: "",
+    consentimento: false, consentimentoEm: ""
+  };
+}
+
+var data = defaultData();
+var usuario = null;
+var somenteLeitura = false;
+var contratoAssinado = false;   // com contrato assinado, a ficha só é reaberta pelo admin
+var tentou = false;
+var esc = VHGDiag.esc;
+
+/* ── Salvamento ─────────────────────────────────────────── */
+var timer = null, fila = Promise.resolve();
+var elSalvo = document.getElementById("salvo");
+function statusSalvo(t, erro) { elSalvo.textContent = t; elSalvo.classList.toggle("erro", !!erro); }
+function chaveLocal() { return "vhg_ficha_" + (usuario ? usuario.id : "anon"); }
+
+function progresso() {
+  var ok = obrigatorios().filter(function (r) { return r[1]; }).length;
+  return Math.min(99, Math.round(ok / obrigatorios().length * 100));
+}
+function persist() {
+  if (somenteLeitura) return;
+  try { localStorage.setItem(chaveLocal(), JSON.stringify(data)); } catch (e) {}
+  statusSalvo("ALTERAÇÕES NÃO SALVAS");
+  clearTimeout(timer);
+  timer = setTimeout(function () { gravar("andamento"); }, 900);
+}
+function gravar(status) {
+  clearTimeout(timer); timer = null;
+  var c = VHG.sb();
+  if (!c || !usuario) return Promise.resolve(false);
+  statusSalvo("SALVANDO…");
+  fila = fila.then(function () {
+    return c.from("fichas").upsert({ user_id: usuario.id, status: status, progresso: status === "enviado" ? 100 : progresso(), respostas: data }, { onConflict: "user_id" })
+      .then(function (r) {
+        if (r.error) { console.error(r.error); statusSalvo("ERRO AO SALVAR · TENTE DE NOVO", true); return false; }
+        statusSalvo("SALVO ✓"); return true;
+      });
+  });
+  return fila;
+}
+window.addEventListener("beforeunload", function (e) { if (timer && !somenteLeitura) { gravar("andamento"); e.preventDefault(); } });
+
+/* ── Validação ──────────────────────────────────────────── */
+function cpfValido(v) {
+  var d = String(v).replace(/\D/g, "");
+  if (d.length !== 11 || /^(\d)\1+$/.test(d)) return false;
+  for (var t = 9; t < 11; t++) {
+    var s = 0;
+    for (var i = 0; i < t; i++) s += +d[i] * (t + 1 - i);
+    if (((s * 10) % 11) % 10 !== +d[t]) return false;
+  }
+  return true;
+}
+function casado() { return data.estadoCivil === "Casado(a)" || data.estadoCivil === "União estável"; }
+function obrigatorios() {
+  return [
+    ["Nome completo", data.nome.trim() !== ""],
+    ["CPF válido", cpfValido(data.cpf)],
+    ["RG", data.rg.trim() !== ""],
+    ["Nacionalidade", data.nacionalidade.trim() !== ""],
+    ["Data de nascimento", VHGDiag.idadeEm(data.dataNascimento) !== null],
+    ["Estado civil", data.estadoCivil !== ""],
+    ["Profissão", data.profissao.trim() !== ""],
+    ["E-mail", /\S+@\S+\.\S+/.test(data.email)],
+    ["WhatsApp", data.whatsapp.replace(/\D/g, "").length >= 10],
+    ["CEP", data.cep.replace(/\D/g, "").length === 8],
+    ["Endereço (rua)", data.logradouro.trim() !== ""],
+    ["Número", data.numero.trim() !== ""],
+    ["Bairro", data.bairro.trim() !== ""],
+    ["Cidade", data.cidade.trim() !== ""],
+    ["Estado", data.estado !== ""],
+    ["Tem cônjuge ou companheiro(a)?", data.temConjuge === true || data.temConjuge === false],
+    ["Nome do cônjuge", data.temConjuge !== true || data.conjugeNome.trim() !== ""],
+    ["Ocupação", data.ocupacao !== ""],
+    ["Regime de trabalho", data.regimeTrabalho !== ""],
+    ["Plano que deseja contratar", !!PL[data.plano]],
+    ["Forma de pagamento", !PL[data.plano] || PL[data.plano].pagamentos.length === 1 || data.formaPagamento !== ""],
+    ["Patrimônio a ser acompanhado (a partir de R$ 300 mil)", data.plano !== "patrimonial" || (data.patrimonioEstimado || 0) >= PL.patrimonial.patrimonioMinimo],
+    ["Aceite da Política de Privacidade", data.consentimento === true]
+  ];
+}
+var PL = VHG_PLANOS.PLANOS;
+function faltando() { return obrigatorios().filter(function (r) { return !r[1]; }).map(function (r) { return r[0]; }); }
+
+/* ── Interface ──────────────────────────────────────────── */
+function rot(t, extra) { return '<label class="d-rot' + (extra ? " " + extra : "") + '">' + t + "</label>"; }
+function campo(f, label, tipo, extra) {
+  extra = extra || {};
+  if (tipo === "date") {
+    return '<div' + (extra.classe ? ' class="' + extra.classe + '"' : "") + ">" + rot(label) +
+      '<input ' + VHG.attrsData() + ' class="d-input num" data-field="' + f + '" value="' + esc(VHG.dataBRdeISO(data[f])) + '">' +
+      '<div class="dica erro" data-erro-data="' + f + '" hidden>Data inválida.</div></div>';
+  }
+  return '<div' + (extra.classe ? ' class="' + extra.classe + '"' : "") + ">" + rot(label) +
+    '<input type="' + (tipo || "text") + '" class="d-input" data-field="' + f + '"' +
+    (extra.ph ? ' placeholder="' + esc(extra.ph) + '"' : "") + (extra.auto ? ' autocomplete="' + extra.auto + '"' : "") +
+    (extra.modo ? ' inputmode="' + extra.modo + '"' : "") + (tipo === "date" ? ' max="' + new Date().toISOString().slice(0, 10) + '"' : "") +
+    ' value="' + esc(data[f]) + '">' + (extra.dica ? '<div class="dica">' + extra.dica + "</div>" : "") + "</div>";
+}
+function select(f, label, opcoes, classe) {
+  return '<div' + (classe ? ' class="' + classe + '"' : "") + ">" + rot(label) +
+    '<select class="d-input" data-field="' + f + '"><option value="">Selecione</option>' +
+    opcoes.map(function (o) {
+      var v = Array.isArray(o) ? o[0] : o, l = Array.isArray(o) ? o[1] : o;
+      return '<option value="' + esc(v) + '"' + (data[f] === v ? " selected" : "") + ">" + esc(l) + "</option>";
+    }).join("") + "</select></div>";
+}
+function simNao(f) {
+  return '<div class="seg">' +
+    '<button type="button" class="' + (data[f] === true ? "on" : "") + '" data-set="' + f + '" data-val="true">Sim</button>' +
+    '<button type="button" class="' + (data[f] === false ? "on" : "") + '" data-set="' + f + '" data-val="false">Não</button></div>';
+}
+function secao(num, titulo, corpo) {
+  return '<section class="secao-ficha"><div class="linha-eyebrow"><div class="fio"></div><div class="txt">' + num + "</div></div>" +
+    "<h2>" + titulo + '</h2><div class="d-card">' + corpo + "</div></section>";
+}
+
+function renderForm() {
+  var dep = data.dependentes.map(function (d, i) {
+    var a = 'data-list="dependentes" data-index="' + i + '"';
+    return '<div class="item-lista"><div class="topo"><div class="nome">Dependente ' + (i + 1) + '</div>' +
+      '<button type="button" class="link-remover" data-remover="' + i + '">Remover</button></div><div class="grade justa">' +
+      '<div class="inteiro">' + rot("Nome") + '<input type="text" class="d-input" data-ltext="nome" ' + a + ' value="' + esc(d.nome) + '"></div>' +
+      "<div>" + rot("Data de nascimento") + '<input ' + VHG.attrsData() + ' class="d-input num" data-ltext="nascimento" ' + a + ' value="' + esc(VHG.dataBRdeISO(d.nascimento)) + '"></div>' +
+      "<div>" + rot("Parentesco") + '<select class="d-input" data-ltext="parentesco" ' + a + '><option value="">Selecione</option>' +
+        PARENTESCO.map(function (p) { return "<option" + (d.parentesco === p ? " selected" : "") + ">" + p + "</option>"; }).join("") + "</select></div>" +
+      "</div></div>";
+  }).join("");
+
+  var html = '<div class="linha-eyebrow"><div class="fio"></div><div class="txt">ÁREA DO CLIENTE · PASSO 1 DE 3</div></div>' +
+    '<h1 class="etapa-titulo">Ficha cadastral</h1>' +
+    '<p class="etapa-desc">Dados pessoais, endereço, família, profissão e o plano escolhido. São esses dados que entram no seu contrato, por isso quase todos são obrigatórios. Leva cerca de 10 minutos e fica salva enquanto você preenche.</p>' +
+
+    secao("01", "Dados pessoais", '<div class="grade">' +
+      campo("nome", "Nome completo", "text", { classe: "inteiro", auto: "name", ph: "Seu nome" }) +
+      campo("cpf", "CPF", "text", { modo: "numeric", ph: "000.000.000-00" }) +
+      campo("rg", "RG e órgão emissor", "text", { ph: "Ex: 12.345.678-9 SSP/SP" }) +
+      campo("nacionalidade", "Nacionalidade", "text", { ph: "Brasileira" }) +
+      campo("dataNascimento", "Data de nascimento", "date") +
+      select("estadoCivil", "Estado civil", ESTADO_CIVIL) +
+      (casado() ? select("regimeBens", "Regime de bens <small>(se souber)</small>", REGIME_BENS) : "") +
+      "</div>") +
+
+    secao("02", "Contatos e endereço", '<div class="grade">' +
+      campo("email", "E-mail", "email", { auto: "email", ph: "voce@email.com" }) +
+      campo("whatsapp", "WhatsApp", "tel", { auto: "tel", ph: "(00) 00000-0000" }) +
+      campo("cep", "CEP", "text", { modo: "numeric", auto: "postal-code", ph: "00000-000", dica: '<span id="cep-status">Ao digitar o CEP, o endereço é preenchido sozinho.</span>' }) +
+      select("melhorHorario", "Melhor horário para contato <small>(opcional)</small>", HORARIOS) +
+      campo("logradouro", "Rua / avenida", "text", { classe: "inteiro", auto: "address-line1" }) +
+      campo("numero", "Número", "text", { auto: "off" }) +
+      campo("complemento", "Complemento <small>(opcional)</small>", "text", { auto: "address-line2", ph: "Apto, bloco, sala" }) +
+      campo("bairro", "Bairro", "text") +
+      campo("cidade", "Cidade", "text", { auto: "address-level2" }) +
+      select("estado", "Estado", UF_LIST) +
+      "</div>") +
+
+    secao("03", "Família", '<div class="grade">' +
+      '<div class="inteiro">' + rot("Tem cônjuge ou companheiro(a)?", "seg-rot") + simNao("temConjuge") + "</div>" +
+      (data.temConjuge === true
+        ? campo("conjugeNome", "Nome do cônjuge", "text", { classe: "inteiro" }) +
+          campo("conjugeNascimento", "Data de nascimento do cônjuge <small>(opcional)</small>", "date") +
+          campo("conjugeProfissao", "Profissão do cônjuge <small>(opcional)</small>", "text")
+        : "") +
+      "</div>" + '<div class="fio-card"></div>' +
+      rot("Filhos e outros dependentes") + '<div class="dica" style="margin:-2px 0 14px">Quem depende financeiramente de você. Se não houver, deixe em branco.</div>' + dep +
+      '<button type="button" class="link-add" data-add>+ Adicionar dependente</button>') +
+
+    secao("04", "Profissão", '<div class="grade">' +
+      select("ocupacao", "Ocupação", OCUPACOES) +
+      select("regimeTrabalho", "Regime de trabalho", REGIME_TRABALHO) +
+      campo("profissao", "Profissão", "text", { ph: "Ex: Médica" }) +
+      campo("empresa", "Empresa ou instituição <small>(opcional)</small>", "text") +
+      "</div>") +
+
+    secao("05", "Plano escolhido", blocoPlano()) +
+
+    secao("06", "Sobre o atendimento", '<div class="grade">' +
+      select("comoConheceu", "Como conheceu o meu trabalho? <small>(opcional)</small>", COMO_CONHECEU) +
+      (data.comoConheceu === "Indicação" ? campo("indicadoPor", "Quem indicou?", "text", { classe: "inteiro" }) : "") +
+      '<div class="inteiro">' + rot("Algo que eu deva saber antes de começarmos? <small>(opcional)</small>") +
+        '<textarea rows="3" class="d-input" data-field="observacoes">' + esc(data.observacoes) + "</textarea></div>" +
+      '<label class="marcar inteiro"><input type="checkbox" data-consent' + (data.consentimento ? " checked" : "") + ">" +
+      '<span>Li e concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> e autorizo o uso destes dados para o meu planejamento financeiro e para contato do Vitor Hugo Germano.</span></label>' +
+      "</div>");
+
+  var falta = faltando();
+  html += '<div class="msg-erro" id="erro" role="alert"' + (tentou && falta.length ? "" : " hidden") + ">" +
+    (tentou && falta.length ? "Preencha para continuar: " + esc(falta.join(", ")) : "") + "</div>" +
+    '<div class="nav-etapas"><a href="area.html" class="btn-voltar">Salvar e sair</a>' +
+    '<button type="button" class="btn btn-petroleo" id="enviar">ENVIAR FICHA</button></div>';
+  return html;
+}
+
+function blocoPlano() {
+  var opcoes = Object.keys(PL).map(function (k) {
+    return '<button type="button" class="' + (data.plano === k ? "on" : "") + '" data-set-texto="plano" data-val="' + k + '">' + PL[k].nome.replace("Planejamento ", "") + "</button>";
+  }).join("");
+  var html = '<div class="grade"><div class="inteiro">' + rot("Plano que deseja contratar", "seg-rot") + '<div class="seg largo">' + opcoes + "</div></div>";
+  var p = PL[data.plano];
+  if (p) {
+    html += '<div class="inteiro"><div class="nota"><p><b>' + p.rotulo + "</b></p><p>" + p.servicos.join(" · ") + "</p></div></div>";
+    if (p.pagamentos.length > 1) {
+      html += '<div class="inteiro">' + rot("Forma de pagamento", "seg-rot") + '<div class="seg vertical">' +
+        p.pagamentos.map(function (f) {
+          return '<button type="button" class="' + (data.formaPagamento === f[0] ? "on" : "") + '" data-set-texto="formaPagamento" data-val="' + f[0] + '">' + f[1].charAt(0).toUpperCase() + f[1].slice(1) + "</button>";
+        }).join("") + "</div></div>";
+    }
+    if (data.plano === "patrimonial") {
+      var faixa = VHG_PLANOS.faixaDoPatrimonio(data.patrimonioEstimado);
+      html += '<div class="inteiro estreito">' + rot("Patrimônio a ser acompanhado (aproximado)") +
+        '<input type="text" inputmode="numeric" class="d-input num" data-dinheiro="patrimonioEstimado" value="' + esc(VHGDiag.fmt(data.patrimonioEstimado)) + '">' +
+        '<div class="dica" id="faixa-taxa">' + textoFaixa(faixa) + "</div></div>";
+    }
+  }
+  return html + "</div>";
+}
+function textoFaixa(faixa) {
+  if (!(data.patrimonioEstimado > 0)) return "Define a faixa da taxa de administração anual.";
+  if (!faixa) return "O Planejamento Patrimonial é para patrimônio a partir de R$ 300 mil.";
+  return "Faixa " + faixa.rotulo + ": taxa de " + faixa.taxa.toFixed(2).replace(".", ",") + "% ao ano.";
+}
+function formaPagamentoTexto() {
+  var p = PL[data.plano];
+  if (!p) return "";
+  if (p.pagamentos.length === 1) return p.pagamentos[0][1];
+  var f = p.pagamentos.filter(function (x) { return x[0] === data.formaPagamento; })[0];
+  return f ? f[1] : "";
+}
+
+function enderecoCompleto(d) {
+  var rua = [d.logradouro, d.numero].filter(Boolean).join(", ");
+  return [rua + (d.complemento ? " – " + d.complemento : ""), d.bairro, [d.cidade, d.estado].filter(Boolean).join("/"), d.cep ? "CEP " + d.cep : ""]
+    .filter(function (x) { return x && x.trim(); }).join(", ");
+}
+
+function linhasResumo() {
+  var ou = function (v) { return v === "" || v === undefined || v === null ? "—" : String(v); };
+  var dt = function (v) { return VHGDiag.formatarData(v) || "—"; };
+  var idade = VHGDiag.idadeEm(data.dataNascimento);
+  return [
+    ["Dados pessoais", [["Nome", ou(data.nome)], ["CPF", ou(data.cpf)], ["RG", ou(data.rg)], ["Nacionalidade", ou(data.nacionalidade)],
+      ["Profissão", ou(data.profissao)], ["Nascimento", dt(data.dataNascimento) + (idade !== null ? " (" + idade + " anos)" : "")],
+      ["Estado civil", ou(data.estadoCivil) + (data.regimeBens ? " · " + data.regimeBens : "")]]],
+    ["Contatos e endereço", [["E-mail", ou(data.email)], ["WhatsApp", ou(data.whatsapp)], ["Endereço", ou(enderecoCompleto(data))], ["Melhor horário", ou(data.melhorHorario)]]],
+    ["Família", [["Cônjuge", data.temConjuge === true ? ou(data.conjugeNome) + (data.conjugeNascimento ? " · " + dt(data.conjugeNascimento) : "") + (data.conjugeProfissao ? " · " + data.conjugeProfissao : "") : "Não"]]
+      .concat(data.dependentes.length ? data.dependentes.map(function (d, i) { return ["Dependente " + (i + 1), ou(d.nome) + (d.parentesco ? " · " + d.parentesco : "") + (d.nascimento ? " · " + dt(d.nascimento) : "")]; }) : [["Dependentes", "Nenhum"]])],
+    ["Profissão", [["Ocupação", ou(data.ocupacao)], ["Regime", ou(data.regimeTrabalho)], ["Profissão / cargo", ou(data.profissao)], ["Empresa", ou(data.empresa)]]],
+    ["Plano escolhido", [["Plano", PL[data.plano] ? PL[data.plano].rotulo : "—"], ["Pagamento", ou(formaPagamentoTexto())]]
+      .concat(data.plano === "patrimonial" ? [["Patrimônio a acompanhar", VHGDiag.fmt(data.patrimonioEstimado)], ["Taxa", textoFaixa(VHG_PLANOS.faixaDoPatrimonio(data.patrimonioEstimado))]] : [])],
+    ["Sobre o atendimento", [["Como conheceu", ou(data.comoConheceu) + (data.indicadoPor ? " · " + data.indicadoPor : "")], ["Observações", ou(data.observacoes)]]]
+  ];
+}
+function renderResumo(admin) {
+  return '<div class="linha-eyebrow"><div class="fio"></div><div class="txt">' + (admin ? "FICHA DO CLIENTE" : "FICHA ENVIADA") + "</div></div>" +
+    '<h1 class="etapa-titulo">' + (admin ? esc(data.nome || "Ficha cadastral") : "Sua ficha cadastral") + "</h1>" +
+    (admin ? "" : contratoAssinado
+      ? '<p class="etapa-desc">A ficha já está comigo e o contrato foi assinado com estes dados. Se precisar alterar algo, me chame que eu reabro para você.</p>'
+      : '<p class="etapa-desc">Precisa corrigir ou completar algo? Você pode editar a ficha enquanto o contrato ainda não foi assinado.</p>' +
+        '<div style="margin:-12px 0 24px"><button type="button" class="btn btn-' + (faltando().length ? "cobre" : "linha") + '" data-reabrir>EDITAR FICHA</button></div>' +
+        (faltando().length ? '<div class="msg-erro" style="margin:0 0 24px">Faltam dados para gerar o contrato: ' + esc(faltando().join(", ")) + ". Clique em “Editar ficha” para completar.</div>" : "")) +
+    linhasResumo().map(function (s) {
+      return '<div class="revisao"><div class="topo"><div class="tit">' + s[0] + '</div></div><div class="itens">' +
+        s[1].map(function (i) { return '<div><div class="r">' + i[0] + '</div><div class="v">' + esc(i[1]) + "</div></div>"; }).join("") + "</div></div>";
+    }).join("") +
+    '<div class="nav-etapas"><a href="' + (admin ? "admin.html" : "area.html") + '" class="btn-voltar">Voltar</a>' +
+    (admin ? "" : '<div class="botoes">' +
+      (contratoAssinado ? "" : '<button type="button" class="btn btn-linha" data-reabrir>EDITAR FICHA</button>') +
+      (faltando().length && !contratoAssinado ? "" : '<a href="contrato.html" class="btn btn-petroleo">' + (contratoAssinado ? "VER CONTRATO" : "IR PARA O CONTRATO") + "</a>") +
+      "</div>") + "</div>" +
+    '<div class="msg-erro" id="erro-reabrir" role="alert" hidden></div>';
+}
+function renderFim() {
+  var nome = (data.nome || "").trim().split(/\s+/)[0];
+  return '<div class="fim"><div class="tit">Ficha recebida' + (nome ? ", " + esc(nome) : "") + ".</div>" +
+    "<p>Obrigado. O próximo passo é ler e assinar o contrato do plano escolhido, já preenchido com os seus dados. Depois dele vem o diagnóstico financeiro.</p>" +
+    '<div class="fio"></div><a href="contrato.html" class="btn btn-cobre btn-d">IR PARA O CONTRATO</a>' +
+    '<div style="margin-top:20px"><a href="area.html" style="color:rgba(242,237,228,.6); font-size:13px; text-decoration:underline">Fazer depois</a></div></div>';
+}
+
+function render(html) {
+  var app = document.getElementById("app");
+  app.innerHTML = html !== undefined ? html : renderForm();
+  ligar(app);
+}
+
+function atualizarErro() {
+  var el = document.getElementById("erro");
+  if (!el) return;
+  var f = faltando();
+  if (tentou && f.length) { el.textContent = "Preencha para continuar: " + f.join(", "); el.hidden = false; }
+  else { el.textContent = ""; el.hidden = true; }
+}
+
+function mascaraCpf(v) {
+  var d = v.replace(/\D/g, "").slice(0, 11);
+  return d.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+function mascaraFone(v) {
+  var d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d ? "(" + d : "";
+  if (d.length <= 6) return "(" + d.slice(0, 2) + ") " + d.slice(2);
+  if (d.length <= 10) return "(" + d.slice(0, 2) + ") " + d.slice(2, 6) + "-" + d.slice(6);
+  return "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7);
+}
+function mascaraCep(v) { var d = v.replace(/\D/g, "").slice(0, 8); return d.length > 5 ? d.slice(0, 5) + "-" + d.slice(5) : d; }
+
+// Campos que mudam o que aparece na tela pedem um novo render.
+var REDESENHA = { estadoCivil: 1, comoConheceu: 1 };
+
+// Preenche o endereço pelo CEP (ViaCEP, serviço público e gratuito).
+function buscarCep(cep) {
+  var d = cep.replace(/\D/g, "");
+  if (d.length !== 8) return;
+  var st = document.getElementById("cep-status");
+  if (st) st.textContent = "Buscando endereço…";
+  fetch("https://viacep.com.br/ws/" + d + "/json/").then(function (r) { return r.json(); }).then(function (e) {
+    if (e.erro) { if (st) st.textContent = "CEP não encontrado. Preencha o endereço à mão."; return; }
+    if (e.logradouro) data.logradouro = e.logradouro;
+    if (e.bairro) data.bairro = e.bairro;
+    if (e.localidade) data.cidade = e.localidade;
+    if (e.uf) data.estado = e.uf;
+    persist(); render();
+    var num = document.querySelector('[data-field="numero"]');
+    if (num && !data.numero) num.focus();
+  }).catch(function () { if (st) st.textContent = "Não foi possível buscar o CEP. Preencha o endereço à mão."; });
+}
+
+function ligar(raiz) {
+  raiz.querySelectorAll("[data-field]").forEach(function (el) {
+    el.addEventListener(el.tagName === "SELECT" ? "change" : "input", function () {
+      var f = el.dataset.field, v = el.value;
+      if (el.hasAttribute("data-data")) {
+        el.value = VHG.mascaraData(v);
+        v = VHG.dataISO(el.value);
+        var aviso = raiz.querySelector('[data-erro-data="' + f + '"]');
+        if (aviso) aviso.hidden = !(el.value.length === 10 && !v);
+      }
+      if (f === "cpf") v = el.value = mascaraCpf(v);
+      if (f === "whatsapp") v = el.value = mascaraFone(v);
+      if (f === "cep") { v = el.value = mascaraCep(v); if (v.length === 9 && v !== data.cep) { data.cep = v; buscarCep(v); } }
+      data[f] = v;
+      persist();
+      if (REDESENHA[f]) render(); else atualizarErro();
+    });
+  });
+  raiz.querySelectorAll("[data-ltext]").forEach(function (el) {
+    el.addEventListener(el.tagName === "SELECT" ? "change" : "input", function () {
+      var v = el.value;
+      if (el.hasAttribute("data-data")) { el.value = VHG.mascaraData(v); v = VHG.dataISO(el.value); }
+      data.dependentes[+el.dataset.index][el.dataset.ltext] = v; persist();
+    });
+  });
+  raiz.querySelectorAll("[data-set]").forEach(function (el) {
+    el.addEventListener("click", function () { data[el.dataset.set] = el.dataset.val === "true"; persist(); render(); });
+  });
+  raiz.querySelectorAll("[data-set-texto]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var f = el.dataset.setTexto;
+      if (f === "plano" && data.plano !== el.dataset.val) data.formaPagamento = "";
+      data[f] = el.dataset.val; persist(); render();
+    });
+  });
+  raiz.querySelectorAll("[data-dinheiro]").forEach(function (el) {
+    el.addEventListener("input", function () {
+      var dig = el.value.replace(/\D/g, "");
+      var v = dig ? parseInt(dig, 10) / 100 : 0;
+      data[el.dataset.dinheiro] = v; el.value = VHGDiag.fmt(v);
+      var t = document.getElementById("faixa-taxa");
+      if (t) t.textContent = textoFaixa(VHG_PLANOS.faixaDoPatrimonio(v));
+      persist(); atualizarErro();
+    });
+  });
+  raiz.querySelectorAll("[data-reabrir]").forEach(function (el) {
+    el.addEventListener("click", async function () {
+      el.disabled = true; el.textContent = "ABRINDO…";
+      var r = await VHG.sb().rpc("reabrir_minha_ficha");
+      if (r.error) {
+        el.disabled = false; el.textContent = "EDITAR FICHA";
+        var e = document.getElementById("erro-reabrir");
+        e.textContent = /could not find the function|schema cache/i.test(r.error.message)
+          ? "Edição ainda não disponível: falta rodar o arquivo supabase/6-contratos.sql no Supabase."
+          : r.error.message;
+        e.hidden = false; return;
+      }
+      location.reload();
+    });
+  });
+  raiz.querySelectorAll("[data-add]").forEach(function (el) {
+    el.addEventListener("click", function () { data.dependentes.push({ nome: "", nascimento: "", parentesco: "" }); persist(); render(); });
+  });
+  raiz.querySelectorAll("[data-remover]").forEach(function (el) {
+    el.addEventListener("click", function () { data.dependentes.splice(+el.dataset.remover, 1); persist(); render(); });
+  });
+  raiz.querySelectorAll("[data-consent]").forEach(function (el) {
+    el.addEventListener("change", function () {
+      data.consentimento = el.checked;
+      data.consentimentoEm = el.checked ? (data.consentimentoEm || new Date().toISOString()) : "";
+      persist(); atualizarErro();
+    });
+  });
+  var enviar = raiz.querySelector("#enviar");
+  if (enviar) enviar.addEventListener("click", async function () {
+    if (faltando().length) { tentou = true; atualizarErro(); document.getElementById("erro").scrollIntoView({ block: "center" }); return; }
+    enviar.disabled = true; enviar.textContent = "ENVIANDO…";
+    var ok = await gravar("enviado");
+    if (!ok) {
+      enviar.disabled = false; enviar.textContent = "ENVIAR FICHA";
+      var e = document.getElementById("erro"); e.textContent = "Não foi possível enviar agora. Confira sua conexão e tente de novo — seus dados continuam salvos."; e.hidden = false;
+      return;
+    }
+    try { localStorage.removeItem(chaveLocal()); } catch (x) {}
+    somenteLeitura = true;
+    window.scrollTo({ top: 0 });
+    render(renderFim());
+  });
+  raiz.querySelectorAll("[data-wa]").forEach(function (a) { a.href = VHG.waLink(); });
+}
+
+
+/* Se algo der errado ao abrir, a página diz o quê, em vez de ficar em
+   branco ou presa no "Carregando". */
+function falhaAoAbrir(erro, oque) {
+  console.error(erro);
+  var cod = erro && (erro.code || "");
+  var msg = String((erro && (erro.message || erro)) || "erro desconhecido");
+  var tabelaFalta = cod === "PGRST205" || cod === "42P01" || /schema cache|does not exist/i.test(msg);
+  document.getElementById("app").innerHTML = '<div class="fim"><div class="tit">Não foi possível abrir ' + oque + ".</div>" +
+    "<p>" + (tabelaFalta
+      ? "O banco de dados ainda não tem a tabela necessária. Rode no SQL Editor do Supabase os arquivos da pasta <b>supabase/</b>, na ordem (1 a 5)."
+      : "Recarregue a página em instantes. Se continuar, me envie o detalhe abaixo.") + "</p>" +
+    '<div class="fio"></div><p style="font-size:12.5px; color:rgba(242,237,228,.6)">Detalhe técnico: ' + VHG.esc((cod ? cod + " · " : "") + msg) + "</p></div>";
+}
+function vigiarCarregamento(oque) {
+  setTimeout(function () {
+    var app = document.getElementById("app");
+    if (app.querySelector(".carregando")) falhaAoAbrir({ message: "o carregamento passou de 12 segundos (conexão lenta ou alguma extensão do navegador bloqueando o Supabase)" }, oque);
+  }, 12000);
+}
+
+vigiarCarregamento("a ficha cadastral");
+// Fichas salvas antes desta versão: endereço em campo único e plano como texto.
+function migrar(d) {
+  if (d.endereco && !d.logradouro) d.logradouro = d.endereco;
+  if (d.planoContratado && !d.plano) {
+    if (/Pontual/.test(d.planoContratado)) d.plano = "pontual";
+    else if (/Recorrente/.test(d.planoContratado)) d.plano = "recorrente";
+    else if (/Patrimonial/.test(d.planoContratado)) d.plano = "patrimonial";
+  }
+  delete d.endereco; delete d.planoContratado;
+}
+
+(async function iniciar() {
+  var s = await VHG.sessao();
+  if (!s) { document.getElementById("portao").hidden = false; return; }
+  usuario = s.user;
+  var c = VHG.sb();
+  var id = new URLSearchParams(location.search).get("id");
+
+  if (id) {
+    // Leitura pelo admin (as regras do banco só devolvem a linha para admin).
+    var ra = await c.from("fichas").select("respostas").eq("id", id).maybeSingle();
+    if (!ra.data) { render('<div class="msg-erro">Ficha não encontrada ou sem permissão.</div>'); return; }
+    somenteLeitura = true;
+    data = Object.assign(defaultData(), ra.data.respostas); migrar(data);
+    render(renderResumo(true));
+    return;
+  }
+
+  var r = await c.from("fichas").select("status, respostas").eq("user_id", usuario.id).maybeSingle();
+  if (r.error) { falhaAoAbrir(r.error, "a ficha cadastral"); return; }
+  if (r.data && r.data.status === "enviado") {
+    somenteLeitura = true;
+    var k = await c.from("contratos").select("id").eq("user_id", usuario.id).maybeSingle();
+    contratoAssinado = !!k.data;
+    data = Object.assign(defaultData(), r.data.respostas); migrar(data);
+    render(renderResumo(false));
+    return;
+  }
+  var local = null;
+  try { local = JSON.parse(localStorage.getItem(chaveLocal()) || "null"); } catch (e) {}
+  if (r.data) { data = Object.assign(defaultData(), r.data.respostas); statusSalvo("SALVO ✓"); }
+  else if (local) data = Object.assign(defaultData(), local);
+  else {
+    var p = await VHG.perfil(usuario.id);
+    data.email = usuario.email || "";
+    data.nome = (p && p.nome) || "";
+  }
+  if (!Array.isArray(data.dependentes)) data.dependentes = [];
+  migrar(data);
+  render();
+})().catch(function (e) { falhaAoAbrir(e, "a ficha cadastral"); });
+</script>
+</body>
+</html>

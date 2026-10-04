@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel do admin · VHG</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/vhg.css?v=5">
+<style>
+  .abas { display: flex; gap: 0; border-bottom: 1px solid var(--linha); margin-bottom: 28px; flex-wrap: wrap; }
+  .abas button { background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 14px 18px 14px 0; margin-right: 18px; font-size: 12px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); cursor: pointer; min-height: 44px; }
+  .abas button.on { color: var(--petroleo); border-bottom-color: var(--cobre); }
+  .abas .cont { font-feature-settings: 'tnum'; color: var(--cobre); margin-left: 6px; }
+  .selo { font-size: 10.5px; font-weight: 600; letter-spacing: .14em; white-space: nowrap; }
+  .acoes-linha { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tabela select { border: 1px solid var(--linha); background: var(--branco); padding: 7px 10px; font-size: 13px; color: var(--petroleo-escuro); border-radius: 0; }
+  .tabela .msg { max-width: 360px; white-space: pre-wrap; font-size: 13px; }
+  .tabela .pequeno { font-size: 12.5px; color: var(--texto-4); }
+  .vazio-tab { padding: 28px 0; font-size: 14px; color: var(--texto-4); }
+  .passo-a-passo { font-size: 14px; line-height: 1.75; color: rgba(242,237,228,.88); margin: 0; padding-left: 18px; }
+  .passo-a-passo a { color: var(--cobre); border-bottom: 1px solid rgba(192,138,78,.5); }
+  .passo-a-passo code { font-size: 12.5px; background: rgba(242,237,228,.1); padding: 1px 5px; }
+  .barra-tab { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+  .anotacao { margin-top: 8px; font-size: 12.5px; color: var(--petroleo); background: var(--papel-claro); border-left: 2px solid var(--cobre); padding: 6px 10px; white-space: pre-wrap; }
+  dialog.editor { border: 1px solid var(--linha-suave); background: var(--papel-claro); padding: 0; width: min(640px, calc(100vw - 32px)); max-height: calc(100vh - 32px); color: var(--petroleo-escuro); }
+  dialog.editor::backdrop { background: rgba(11,37,48,.55); }
+  dialog.editor form { padding: clamp(22px,4vw,34px); display: flex; flex-direction: column; gap: 18px; }
+  dialog.editor h2 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 26px; color: var(--petroleo); }
+  dialog.editor .rodape-dialogo { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-top: 6px; }
+  dialog.editor .rodape-dialogo .botoes { gap: 10px; }
+  .btn-apagar { background: none; border: none; color: var(--erro); font-size: 13px; text-decoration: underline; cursor: pointer; padding: 8px 0; }
+</style>
+</head>
+<body data-precisa-supabase>
+<div id="vhg-header"></div>
+
+<main class="wrap pagina">
+  <div class="carregando" id="carregando">CARREGANDO…</div>
+
+  <div id="negado" hidden>
+    <div class="cabeca-pagina">
+      <div class="eyebrow">ADMIN</div>
+      <h1 class="h1-pagina">Acesso restrito.</h1>
+    </div>
+    <p class="texto-apoio">Esta página é só para o administrador. <a href="area.html" class="sublinhado">Ir para a área do cliente</a>.</p>
+  </div>
+
+  <div id="conteudo" hidden>
+    <div class="cabeca-pagina cabeca-area">
+      <div style="min-width:0">
+        <div class="eyebrow">PAINEL DO ADMIN</div>
+        <h1 class="h1-pagina" id="ola">Olá.</h1>
+        <div class="email" id="email"></div>
+      </div>
+      <button type="button" class="btn btn-linha" id="sair">SAIR</button>
+    </div>
+
+    <div class="duas-colunas">
+      <div class="principal" style="flex-basis:640px">
+        <div class="abas" role="tablist">
+          <button type="button" class="on" data-aba="clientes" role="tab">CLIENTES<span class="cont" id="n-clientes"></span></button>
+          <button type="button" data-aba="leads" role="tab">PEDIDOS DE CONVERSA<span class="cont" id="n-leads"></span></button>
+        </div>
+        <div class="erro" id="erro" role="alert" hidden style="margin-bottom:18px"></div>
+        <div id="aba-clientes"></div>
+        <div id="aba-leads" hidden></div>
+      </div>
+
+      <aside style="flex-basis:300px">
+        <div class="card-escuro">
+          <div class="eyebrow cobre">LIBERAR UM NOVO CLIENTE</div>
+          <ol class="passo-a-passo">
+            <li>Abra <a href="#" id="link-usuarios" target="_blank" rel="noopener">Supabase › Authentication › Users</a>.</li>
+            <li>Clique em <b>Add user › Send invitation</b> e informe o e-mail do cliente.</li>
+            <li>O cliente recebe o convite, cria a senha e já entra na área do cliente.</li>
+          </ol>
+        </div>
+        <div class="card" style="padding:24px 28px">
+          <div class="eyebrow" style="letter-spacing:.22em">COMO FUNCIONA</div>
+          <div class="texto-apoio">
+            <p style="margin:0 0 10px"><b>Ver relatório</b> abre o relatório completo, com o design do site, a qualquer momento — mesmo antes do envio.</p>
+            <p style="margin:0 0 10px"><b>Liberar</b> deixa o relatório visível para o cliente na área dele. <b>Ocultar</b> desfaz.</p>
+            <p style="margin:0 0 10px"><b>Reabrir</b> devolve a ficha ou o diagnóstico para edição, caso o cliente precise corrigir algo.</p>
+            <p style="margin:0"><b>Cancelar</b> apaga o contrato assinado, para o cliente assinar de novo (por exemplo, depois de corrigir a ficha).</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<dialog class="editor" id="editor" aria-labelledby="editor-titulo">
+  <form method="dialog" id="editor-form" novalidate>
+    <h2 id="editor-titulo">Editar</h2>
+    <div id="editor-campos" style="display:flex; flex-direction:column; gap:18px"></div>
+    <div class="erro" id="editor-erro" role="alert" hidden></div>
+    <div class="rodape-dialogo">
+      <button type="button" class="btn-apagar" id="editor-apagar" hidden>Apagar este contato</button>
+      <div class="botoes" style="margin-left:auto">
+        <button type="button" class="btn btn-linha" id="editor-cancelar">CANCELAR</button>
+        <button type="submit" class="btn btn-petroleo" id="editor-salvar">SALVAR</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<div id="vhg-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/vhg.js?v=5"></script>
+<script src="assets/js/planos.js?v=2"></script>
+<script>
+(async function () {
+  var esc = VHG.esc;
+  if (!VHG.configurado()) { document.getElementById("carregando").textContent = "SUPABASE AINDA NÃO CONFIGURADO."; return; }
+  var s = await VHG.exigirLogin();
+  if (!s) return;
+  var c = VHG.sb();
+  var eu = await VHG.perfil(s.user.id);
+  document.getElementById("carregando").hidden = true;
+  if (!eu || eu.papel !== "admin") { document.getElementById("negado").hidden = false; return; }
+  document.getElementById("conteudo").hidden = false;
+  document.getElementById("ola").textContent = "Olá, " + VHG.primeiroNome(eu, s.user) + ".";
+  document.getElementById("email").textContent = s.user.email;
+
+  var ref = (VHG.config.SUPABASE_URL.match(/^https:\/\/([a-z0-9-]+)\.supabase\.co/i) || [])[1];
+  document.getElementById("link-usuarios").href = "https://supabase.com/dashboard/project/" + ref + "/auth/users";
+
+  function erro(msg) { var e = document.getElementById("erro"); e.textContent = msg || ""; e.hidden = !msg; }
+
+  /* ── Abas ─────────────────────────────────────────────── */
+  document.querySelectorAll("[data-aba]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll("[data-aba]").forEach(function (x) { x.classList.toggle("on", x === b); });
+      document.getElementById("aba-clientes").hidden = b.dataset.aba !== "clientes";
+      document.getElementById("aba-leads").hidden = b.dataset.aba !== "leads";
+    });
+  });
+
+  /* ── Clientes ─────────────────────────────────────────── */
+  async function carregarClientes() {
+    var r = await Promise.all([
+      c.from("perfis").select("id, nome, email, papel, criado_em").order("criado_em", { ascending: false }),
+      c.from("diagnosticos").select("id, user_id, status, progresso, relatorio_liberado, atualizado_em, enviado_em, respostas->>nome"),
+      c.from("fichas").select("id, user_id, status, progresso, atualizado_em, enviado_em, respostas->>nome"),
+      c.from("contratos").select("id, user_id, plano, assinado_em")
+    ]);
+    var falhou = r[0].error || r[1].error || r[2].error || r[3].error;
+    if (falhou) { erro("Não foi possível carregar os clientes: " + falhou.message); console.error(falhou); return; }
+    var porUsuario = {}, fichaDe = {}, contratoDe = {};
+    r[3].data.forEach(function (k) { contratoDe[k.user_id] = k; });
+    r[1].data.forEach(function (d) { porUsuario[d.user_id] = d; });
+    r[2].data.forEach(function (f) { fichaDe[f.user_id] = f; });
+    var clientes = r[0].data.filter(function (p) { return p.papel !== "admin"; });
+    document.getElementById("n-clientes").textContent = clientes.length;
+
+    if (!clientes.length) {
+      document.getElementById("aba-clientes").innerHTML = '<div class="vazio-tab">Nenhum cliente ainda. Use o passo a passo ao lado para liberar o primeiro.</div>';
+      return;
+    }
+    var linhas = clientes.map(function (p) {
+      var d = porUsuario[p.id], fi = fichaDe[p.id], ct = contratoDe[p.id];
+      var stContrato = !ct ? '<span class="selo" style="color:#6B6358">NÃO ASSINADO</span>'
+        : '<span class="selo" style="color:#123B47">ASSINADO ✓</span><div class="pequeno">' + VHG.dataBR(ct.assinado_em) +
+          (VHG_PLANOS.PLANOS[ct.plano] ? " · " + VHG_PLANOS.PLANOS[ct.plano].nome.replace("Planejamento ", "") : "") + "</div>" +
+          '<div style="margin-top:6px"><a class="acao-tabela" href="contrato.html?id=' + ct.id + '">VER CONTRATO</a></div>' +
+          '<div style="margin-top:6px"><button type="button" class="acao-tabela" data-cancelar-contrato="' + ct.id + '">CANCELAR</button></div>';
+      var nome = p.nome || (fi && fi.nome) || (d && d.nome) || "—";
+      var stFicha = !fi ? '<span class="selo" style="color:#6B6358">NÃO INICIADA</span>'
+        : fi.status === "andamento" ? '<span class="selo" style="color:#C08A4E">EM ANDAMENTO · ' + fi.progresso + "%</span>"
+        : '<span class="selo" style="color:#123B47">ENVIADA ✓</span><div class="pequeno">' + VHG.dataBR(fi.enviado_em) + "</div>";
+      if (fi) stFicha += '<div style="margin-top:6px"><a class="acao-tabela" href="ficha.html?id=' + fi.id + '">VER FICHA</a></div>';
+      if (fi && fi.status === "enviado") stFicha += '<div style="margin-top:6px"><button type="button" class="acao-tabela" data-reabrir-ficha="' + fi.id + '">REABRIR</button></div>';
+      var status, acoes = "";
+      if (!d) status = '<span class="selo" style="color:#6B6358">NÃO INICIADO</span>';
+      else if (d.status === "andamento") status = '<span class="selo" style="color:#C08A4E">EM ANDAMENTO · ' + d.progresso + "%</span>";
+      else status = '<span class="selo" style="color:#123B47">ENVIADO ✓</span><div class="pequeno">' + VHG.dataBR(d.enviado_em) + "</div>" +
+        (d.relatorio_liberado ? '<div class="pequeno" style="color:#123B47">Relatório liberado</div>' : '<div class="pequeno">Relatório não liberado</div>');
+      if (d && d.nome) acoes += '<a class="acao-tabela" href="relatorio.html?id=' + d.id + '">VER RELATÓRIO</a>';
+      if (d && d.status === "enviado") {
+        acoes += d.relatorio_liberado
+          ? '<button type="button" class="acao-tabela" data-acao="ocultar" data-id="' + d.id + '">OCULTAR</button>'
+          : '<button type="button" class="acao-tabela" data-acao="liberar" data-id="' + d.id + '">LIBERAR</button>';
+        acoes += '<button type="button" class="acao-tabela" data-acao="reabrir" data-id="' + d.id + '">REABRIR</button>';
+      }
+      return "<tr><td><strong>" + esc(nome) + '</strong><div class="pequeno">' + esc(p.email) + "</div>" +
+        '<div style="margin-top:8px"><button type="button" class="acao-tabela" data-editar-cliente="' + p.id + '" data-nome="' + esc(p.nome || "") + '" data-email="' + esc(p.email) + '">EDITAR NOME</button></div></td>' +
+        "<td>" + stFicha + "</td>" +
+        "<td>" + stContrato + "</td>" +
+        "<td>" + status + "</td>" +
+        '<td class="pequeno">' + VHG.dataBR([d && d.atualizado_em, fi && fi.atualizado_em].filter(Boolean).sort().pop(), true) + "</td>" +
+        '<td><div class="acoes-linha">' + acoes + "</div></td></tr>";
+    }).join("");
+    var el = document.getElementById("aba-clientes");
+    el.innerHTML = '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>CLIENTE</th><th>FICHA</th><th>CONTRATO</th><th>DIAGNÓSTICO</th><th>ÚLTIMA ATUALIZAÇÃO</th><th></th></tr></thead><tbody>' + linhas + "</tbody></table></div>";
+    el.querySelectorAll("[data-editar-cliente]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        abrirEditor({
+          titulo: "Nome do cliente",
+          campos: [["nome", "Nome", "text", b.dataset.nome], ["_email", "E-mail (login)", "info", b.dataset.email]],
+          salvar: function (v) { return c.from("perfis").update({ nome: v.nome.trim() || null }).eq("id", b.dataset.editarCliente); },
+          depois: carregarClientes
+        });
+      });
+    });
+    el.querySelectorAll("[data-cancelar-contrato]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        if (!confirm("Cancelar este contrato? Ele é apagado e o cliente precisará assinar de novo (por exemplo, depois de corrigir a ficha ou trocar de plano).")) return;
+        b.disabled = true;
+        var u = await c.from("contratos").delete().eq("id", b.dataset.cancelarContrato);
+        if (u.error) { erro("Não foi possível cancelar o contrato."); console.error(u.error); b.disabled = false; return; }
+        erro("");
+        carregarClientes();
+      });
+    });
+    el.querySelectorAll("[data-reabrir-ficha]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        if (!confirm("Reabrir a ficha cadastral para o cliente editar?")) return;
+        b.disabled = true;
+        var u = await c.from("fichas").update({ status: "andamento" }).eq("id", b.dataset.reabrirFicha);
+        if (u.error) { erro("Não foi possível reabrir a ficha."); console.error(u.error); b.disabled = false; return; }
+        erro("");
+        carregarClientes();
+      });
+    });
+    el.querySelectorAll("[data-acao]").forEach(function (b) {
+      b.addEventListener("click", async function () {
+        var acao = b.dataset.acao, mudanca;
+        if (acao === "liberar") mudanca = { relatorio_liberado: true };
+        if (acao === "ocultar") mudanca = { relatorio_liberado: false };
+        if (acao === "reabrir") {
+          if (!confirm("Reabrir o diagnóstico para edição? O relatório deixa de ficar visível para o cliente até ele enviar de novo.")) return;
+          mudanca = { status: "andamento", relatorio_liberado: false };
+        }
+        b.disabled = true;
+        var u = await c.from("diagnosticos").update(mudanca).eq("id", b.dataset.id);
+        if (u.error) { erro("Não foi possível salvar a alteração."); console.error(u.error); b.disabled = false; return; }
+        erro("");
+        carregarClientes();
+      });
+    });
+  }
+
+  /* ── Pedidos de conversa ──────────────────────────────── */
+  var STATUS_LEAD = [["novo", "Novo"], ["contatado", "Contatado"], ["cliente", "Virou cliente"], ["arquivado", "Arquivado"]];
+  async function carregarLeads() {
+    var r = await c.from("leads").select("*").order("criado_em", { ascending: false }).limit(500);
+    if (r.error) { erro("Não foi possível carregar os pedidos de conversa."); console.error(r.error); return; }
+    var novos = r.data.filter(function (l) { return l.status === "novo"; }).length;
+    document.getElementById("n-leads").textContent = novos ? novos + " novo" + (novos > 1 ? "s" : "") : "";
+    var el = document.getElementById("aba-leads");
+    leadsPorId = {};
+    r.data.forEach(function (l) { leadsPorId[l.id] = l; });
+    var barra = '<div class="barra-tab"><button type="button" class="btn btn-linha" data-novo-lead>+ ADICIONAR CONTATO</button></div>';
+    if (!r.data.length) { el.innerHTML = barra + '<div class="vazio-tab">Nenhum pedido de conversa ainda.</div>'; ligarLeads(el); return; }
+    el.innerHTML = barra + '<div class="tabela-wrap"><table class="tabela"><thead><tr><th>RECEBIDO</th><th>CONTATO</th><th>MOMENTO E PRIORIDADES</th><th>MENSAGEM</th><th>STATUS</th></tr></thead><tbody>' +
+      r.data.map(function (l) {
+        var wa = l.whatsapp ? "https://wa.me/" + (l.whatsapp.replace(/\D/g, "").length <= 11 ? "55" : "") + l.whatsapp.replace(/\D/g, "") : null;
+        return '<tr><td class="pequeno">' + VHG.dataBR(l.criado_em, true) + "</td>" +
+          "<td><strong>" + esc(l.nome) + '</strong><div class="pequeno"><a href="mailto:' + esc(l.email) + '">' + esc(l.email) + "</a></div>" +
+          (l.whatsapp ? '<div class="pequeno"><a href="' + wa + '" target="_blank" rel="noopener">' + esc(l.whatsapp) + "</a></div>" : "") +
+          (l.cidade ? '<div class="pequeno">' + esc(l.cidade) + "</div>" : "") + "</td>" +
+          "<td>" + esc(l.momento || "—") + '<div class="pequeno">' + esc((l.prioridades || []).join(", ")) + "</div></td>" +
+          '<td class="msg">' + esc(l.mensagem || "—") + (l.anotacoes ? '<div class="anotacao">' + esc(l.anotacoes) + "</div>" : "") + "</td>" +
+          '<td><select data-lead="' + l.id + '" aria-label="Status do pedido">' +
+          STATUS_LEAD.map(function (s) { return '<option value="' + s[0] + '"' + (l.status === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") +
+          '</select><div style="margin-top:8px"><button type="button" class="acao-tabela" data-editar-lead="' + l.id + '">EDITAR</button></div></td></tr>';
+      }).join("") + "</tbody></table></div>";
+    ligarLeads(el);
+    el.querySelectorAll("[data-lead]").forEach(function (sel) {
+      sel.addEventListener("change", async function () {
+        var u = await c.from("leads").update({ status: sel.value }).eq("id", sel.dataset.lead);
+        if (u.error) { erro("Não foi possível atualizar o status."); console.error(u.error); return; }
+        erro("");
+        carregarLeads();
+      });
+    });
+  }
+
+  var leadsPorId = {};
+  var MOMENTOS = ["Solteiro, sem dependentes", "Casal sem filhos", "Família com filhos", "Profissional liberal ou autônomo", "Perto da aposentadoria", "Outro"];
+  function editarLead(l) {
+    var novo = !l;
+    l = l || { status: "novo" };
+    abrirEditor({
+      titulo: novo ? "Novo contato" : "Editar contato",
+      campos: [
+        ["nome", "Nome", "text", l.nome], ["email", "E-mail", "email", l.email],
+        ["whatsapp", "WhatsApp", "tel", l.whatsapp], ["cidade", "Cidade", "text", l.cidade],
+        ["momento", "Momento de vida", "select", l.momento, MOMENTOS.map(function (m) { return [m, m]; })],
+        ["status", "Status", "select", l.status, STATUS_LEAD],
+        ["mensagem", "Mensagem", "textarea", l.mensagem],
+        ["anotacoes", "Anotações internas (só o admin vê)", "textarea", l.anotacoes]
+      ],
+      validar: function (v) { if (!v.nome.trim()) return "Informe o nome."; if (!/\S+@\S+\.\S+/.test(v.email)) return "Informe um e-mail válido."; },
+      salvar: function (v) {
+        var dados = { nome: v.nome.trim(), email: v.email.trim(), whatsapp: v.whatsapp.trim() || null, cidade: v.cidade.trim() || null,
+          momento: v.momento || null, status: v.status, mensagem: v.mensagem.trim() || null, anotacoes: v.anotacoes.trim() || null };
+        if (novo) return c.from("leads").insert(Object.assign(dados, { consentimento: true }));
+        return c.from("leads").update(dados).eq("id", l.id);
+      },
+      apagar: novo ? null : function () { return c.from("leads").delete().eq("id", l.id); },
+      depois: carregarLeads
+    });
+  }
+  function ligarLeads(el) {
+    el.querySelectorAll("[data-novo-lead]").forEach(function (b) { b.addEventListener("click", function () { editarLead(null); }); });
+    el.querySelectorAll("[data-editar-lead]").forEach(function (b) { b.addEventListener("click", function () { editarLead(leadsPorId[b.dataset.editarLead]); }); });
+  }
+
+  /* ── Janela de edição (serve para clientes e contatos) ── */
+  var dlg = document.getElementById("editor");
+  var atual = null;
+  function abrirEditor(cfg) {
+    atual = cfg;
+    document.getElementById("editor-titulo").textContent = cfg.titulo;
+    document.getElementById("editor-erro").hidden = true;
+    document.getElementById("editor-apagar").hidden = !cfg.apagar;
+    document.getElementById("editor-campos").innerHTML = cfg.campos.map(function (f) {
+      var nome = f[0], rotulo = f[1], tipo = f[2], valor = f[3] == null ? "" : f[3];
+      var campo;
+      if (tipo === "info") campo = '<div style="font-size:15px; color:var(--texto-2)">' + esc(valor) + "</div>";
+      else if (tipo === "textarea") campo = '<textarea class="input" rows="3" name="' + nome + '">' + esc(valor) + "</textarea>";
+      else if (tipo === "select") campo = '<select class="input" name="' + nome + '"><option value="">—</option>' +
+        f[4].map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === valor ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>";
+      else campo = '<input class="input" type="' + tipo + '" name="' + nome + '" value="' + esc(valor) + '">';
+      return '<label class="campo"><span>' + esc(rotulo) + "</span>" + campo + "</label>";
+    }).join("");
+    dlg.showModal();
+    var primeiro = dlg.querySelector("input, textarea, select");
+    if (primeiro) primeiro.focus();
+  }
+  function valores() {
+    var v = {};
+    dlg.querySelectorAll("[name]").forEach(function (el) { v[el.name] = el.value; });
+    return v;
+  }
+  function erroEditor(msg) { var e = document.getElementById("editor-erro"); e.textContent = msg; e.hidden = !msg; }
+  document.getElementById("editor-cancelar").addEventListener("click", function () { dlg.close(); });
+  document.getElementById("editor-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var v = valores();
+    var problema = atual.validar && atual.validar(v);
+    if (problema) return erroEditor(problema);
+    var b = document.getElementById("editor-salvar");
+    b.disabled = true; b.textContent = "SALVANDO…";
+    var r = await atual.salvar(v);
+    b.disabled = false; b.textContent = "SALVAR";
+    if (r.error) { console.error(r.error); return erroEditor("Não foi possível salvar: " + r.error.message); }
+    dlg.close(); erro(""); atual.depois();
+  });
+  document.getElementById("editor-apagar").addEventListener("click", async function () {
+    if (!confirm("Apagar este contato? Não dá para desfazer.")) return;
+    var r = await atual.apagar();
+    if (r.error) { console.error(r.error); return erroEditor("Não foi possível apagar: " + r.error.message); }
+    dlg.close(); atual.depois();
+  });
+
+  document.getElementById("sair").addEventListener("click", async function () {
+    await c.auth.signOut();
+    location.replace("entrar.html");
+  });
+
+  carregarClientes();
+  carregarLeads();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&amp;family=Archivo:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#F2EDE4; }
+  a { color:#123B47; text-decoration:none; }
+  a:hover { color:#C08A4E; }
+  input, select, textarea, button { font-family:'Archivo',sans-serif; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:#123B47; }
+  ::placeholder { color:#857C70; }
+</style>
+</helmet>
+
+<div style="font-family:'Archivo',sans-serif; color:#0B2530; background:#F2EDE4; min-height:100vh">
+
+  <header style="position:sticky; top:0; z-index:20; background:#FFFFFF; backdrop-filter:blur(8px); border-bottom:1px solid #DCD4C6">
+    <div style="max-width:1120px; margin:0 auto; padding:16px clamp(20px,5vw,40px); display:flex; align-items:center; justify-content:space-between; gap:clamp(12px,3vw,20px); flex-wrap:nowrap">
+      <a href="#" onClick="{{ goHome }}" style="display:flex; align-items:baseline; gap:clamp(8px,2vw,12px); border:none; min-width:0; flex:0 1 auto">
+        <span style="font-family:'Newsreader',serif; font-weight:400; font-size:26px; letter-spacing:.08em; color:#123B47; padding-left:.08em">VHG</span>
+        <span style="font-size:clamp(9.5px,2.6vw,11px); font-weight:500; letter-spacing:clamp(1px,0.5vw,2.4px); color:#6B6358; display:inline-block; white-space:nowrap">PLANEJAMENTO FINANCEIRO</span>
+      </a>
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex; align-items:center; flex-wrap:wrap; gap:clamp(12px,2.6vw,26px)">
+        <a href="#" onClick="{{ goQuem }}" style="font-size:12px; font-weight:500; letter-spacing:.14em; color:#48534F; border:none; min-height:44px; display:flex; align-items:center" style-hover="color:#C08A4E">QUEM SOU</a>
+        <a href="#" onClick="{{ goFaco }}" style="font-size:12px; font-weight:500; letter-spacing:.14em; color:#48534F; border:none; min-height:44px; display:flex; align-items:center" style-hover="color:#C08A4E">O QUE FAÇO</a>
+        <a href="#" onClick="{{ goServicos }}" style="font-size:12px; font-weight:500; letter-spacing:.14em; color:#48534F; border:none; min-height:44px; display:flex; align-items:center" style-hover="color:#C08A4E">SERVIÇOS</a>
+        <a href="#" onClick="{{ goFale }}" style="font-size:12px; font-weight:500; letter-spacing:.14em; color:#48534F; border:none; min-height:44px; display:flex; align-items:center" style-hover="color:#C08A4E">FALE COMIGO</a>
+        <a href="#" onClick="{{ goCliente }}" style="font-size:12px; font-weight:500; letter-spacing:.14em; color:#123B47; border:1px solid #123B47; padding:0 14px; min-height:44px; display:flex; align-items:center; box-sizing:border-box" style-hover="color:#C08A4E; border-color:#C08A4E">ÁREA DO CLIENTE</a>
+        <a href="#" onClick="{{ goForms }}" style="background:#123B47; color:#F2EDE4; font-size:12px; font-weight:500; letter-spacing:.16em; padding:11px 16px; border:none; min-height:44px; display:flex; align-items:center; box-sizing:border-box" style-hover="background:#0B2530">DIAGNÓSTICO</a>
+      </nav>
+      </sc-if>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ toggleMenu }}" aria-label="Abrir menu" aria-expanded="{{ menuOpen }}" style="margin-left:auto; flex:0 0 auto; width:44px; height:44px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:6px; background:transparent; border:1px solid #DCD4C6; cursor:pointer; padding:0">
+          <span style="display:block; width:20px; height:1.5px; background:#0B2530; transition:transform .2s; transform:{{ bar1 }}"></span>
+          <span style="display:block; width:20px; height:1.5px; background:#0B2530; transition:opacity .2s; opacity:{{ bar2 }}"></span>
+          <span style="display:block; width:20px; height:1.5px; background:#0B2530; transition:transform .2s; transform:{{ bar3 }}"></span>
+        </button>
+      </sc-if>
+    </div>
+    <sc-if value="{{ showMenu }}" hint-placeholder-val="{{ false }}">
+      <nav style="border-top:1px solid #DCD4C6; background:#F2EDE4; padding:8px clamp(20px,5vw,40px) 24px; display:flex; flex-direction:column">
+        <a href="#" onClick="{{ goQuem }}" style="font-size:13px; font-weight:500; letter-spacing:.14em; color:#0B2530; border:none; border-bottom:1px solid #DCD4C6; min-height:52px; display:flex; align-items:center" style-hover="color:#C08A4E">QUEM SOU</a>
+        <a href="#" onClick="{{ goFaco }}" style="font-size:13px; font-weight:500; letter-spacing:.14em; color:#0B2530; border:none; border-bottom:1px solid #DCD4C6; min-height:52px; display:flex; align-items:center" style-hover="color:#C08A4E">O QUE FAÇO</a>
+        <a href="#" onClick="{{ goServicos }}" style="font-size:13px; font-weight:500; letter-spacing:.14em; color:#0B2530; border:none; border-bottom:1px solid #DCD4C6; min-height:52px; display:flex; align-items:center" style-hover="color:#C08A4E">SERVIÇOS</a>
+        <a href="#" onClick="{{ goFale }}" style="font-size:13px; font-weight:500; letter-spacing:.14em; color:#0B2530; border:none; border-bottom:1px solid #DCD4C6; min-height:52px; display:flex; align-items:center" style-hover="color:#C08A4E">FALE COMIGO</a>
+        <a href="#" onClick="{{ goCliente }}" style="font-size:13px; font-weight:500; letter-spacing:.14em; color:#0B2530; border:none; border-bottom:1px solid #DCD4C6; min-height:52px; display:flex; align-items:center" style-hover="color:#C08A4E">ÁREA DO CLIENTE</a>
+        <a href="#" onClick="{{ goForms }}" style="margin-top:20px; background:#123B47; color:#F2EDE4; font-size:13px; font-weight:500; letter-spacing:.16em; padding:16px; border:none; min-height:52px; display:flex; align-items:center; justify-content:center; box-sizing:border-box" style-hover="background:#0B2530">FAZER O DIAGNÓSTICO</a>
+      </nav>
+    </sc-if>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <main>
+
+      <section style="background:#123B47; color:#F2EDE4">
+        <div style="max-width:1120px; margin:0 auto; padding:clamp(72px,12vw,140px) clamp(20px,5vw,40px)">
+          <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:16px">PLANEJAMENTO FINANCEIRO PESSOAL 360º</div>
+          <h1 style="margin:0 0 clamp(36px,5vw,48px); max-width:760px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(40px,6.6vw,72px); line-height:1.1; letter-spacing:-.01em; color:#F2EDE4; text-wrap:balance">Seu Plano de Vida Merece um Plano Financeiro</h1>
+          <div style="display:flex; gap:14px; flex-wrap:wrap">
+            <a href="#" onClick="{{ goForms }}" style="background:#C08A4E; color:#0B2530; font-size:12px; font-weight:600; letter-spacing:.16em; padding:16px 26px; border:none" style-hover="background:#D49B5C; color:#0B2530">FAZER O DIAGNÓSTICO</a>
+            <a href="#" onClick="{{ goServicos }}" style="border:1px solid rgba(242,237,228,.6); color:#F2EDE4; font-size:12px; font-weight:600; letter-spacing:.16em; padding:16px 26px" style-hover="border-color:#C08A4E; color:#C08A4E">VER SERVIÇOS</a>
+          </div>
+        </div>
+      </section>
+
+      <section style="background:#FBF9F5; color:#0B2530; border-bottom:1px solid #E6DFD2">
+        <div style="max-width:1120px; margin:0 auto; padding:clamp(64px,10vw,120px) clamp(20px,5vw,40px); display:flex; flex-direction:column; gap:clamp(48px,7vw,80px)">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:clamp(20px,3vw,36px)">
+            <div style="border-top:1px solid #DCD4C6; padding-top:22px">
+              <div style="font-family:'Newsreader',serif; font-weight:400; font-size:clamp(26px,2.8vw,32px); line-height:1.15; color:#123B47">O médico</div>
+              <div style="margin-top:6px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(20px,2vw,24px); line-height:1.3; color:#48534F">cuida da sua saúde.</div>
+            </div>
+            <div style="border-top:1px solid #DCD4C6; padding-top:22px">
+              <div style="font-family:'Newsreader',serif; font-weight:400; font-size:clamp(26px,2.8vw,32px); line-height:1.15; color:#123B47">O dentista</div>
+              <div style="margin-top:6px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(20px,2vw,24px); line-height:1.3; color:#48534F">do seu sorriso.</div>
+            </div>
+            <div style="border-top:1px solid #DCD4C6; padding-top:22px">
+              <div style="font-family:'Newsreader',serif; font-weight:400; font-size:clamp(26px,2.8vw,32px); line-height:1.15; color:#123B47">O nutricionista</div>
+              <div style="margin-top:6px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(20px,2vw,24px); line-height:1.3; color:#48534F">da sua alimentação.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:clamp(28px,6vw,80px); flex-wrap:wrap; align-items:flex-end">
+            <p style="flex:1 1 440px; min-width:0; margin:0; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(38px,6vw,68px); line-height:1.06; letter-spacing:-.01em; color:#123B47; text-wrap:balance">Mas quem está cuidando da sua <em style="color:#C08A4E">vida financeira?</em></p>
+            <div style="flex:0 1 380px; min-width:0">
+              <div style="width:52px; height:1px; background:#C08A4E; margin-bottom:20px"></div>
+              <p style="margin:0; font-size:clamp(15px,1.5vw,17px); line-height:1.75; color:#48534F; text-wrap:pretty">Se a resposta for bancos ou grandes instituições financeiras, <strong style="font-weight:600; color:#0B2530">sinto lhe informar:</strong> as metas que eles precisam bater não são as mesmas que as suas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="quem-sou" style="max-width:1120px; margin:0 auto; padding:clamp(56px,9vw,100px) clamp(20px,5vw,40px); display:flex; gap:clamp(36px,7vw,88px); flex-wrap:wrap; align-items:center">
+        <div style="flex:0 1 300px; min-width:0; margin:0 auto">
+          <img src="assets/vitor.png" alt="Vitor Hugo Germano" style="width:100%; max-width:300px; aspect-ratio:1; display:block; border-radius:50%; background:#E6DFD2">
+        </div>
+        <div style="flex:1 1 420px; min-width:0">
+          <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:16px">QUEM SOU</div>
+          <h2 style="margin:0 0 10px; font-family:'Newsreader',serif; font-weight:400; font-size:clamp(32px,4.6vw,48px); line-height:1.1; color:#123B47">Vitor Hugo Germano</h2>
+          <div style="margin:0 0 22px; font-family:'Newsreader',serif; font-weight:300; font-style:italic; font-size:clamp(19px,2vw,22px); line-height:1.3; color:#C08A4E">Planejador financeiro</div>
+          <p style="margin:0 0 32px; max-width:520px; font-size:clamp(15px,1.5vw,17px); line-height:1.75; color:#48534F; text-wrap:pretty">Sem vínculo com bancos ou instituições financeiras. <br>A única meta que eu preciso bater é a sua.</p>
+          <div style="display:flex; flex-direction:column; border-top:1px solid #DCD4C6">
+            <div style="padding:18px 0; border-bottom:1px solid #DCD4C6; font-size:clamp(15px,1.5vw,17px); line-height:1.5">Economista formado pela PUC-Campinas</div>
+            <div style="padding:18px 0; border-bottom:1px solid #DCD4C6; font-size:clamp(15px,1.5vw,17px); line-height:1.5">Experiência em Consultoria Tributária na Deloitte</div>
+            <div style="padding:18px 0; border-bottom:1px solid #DCD4C6; font-size:clamp(15px,1.5vw,17px); line-height:1.5">6 anos atuando como planejador financeiro independente</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="o-que-faco" style="background:#FBF9F5; border-top:1px solid #E6DFD2; border-bottom:1px solid #E6DFD2">
+        <div style="max-width:1120px; margin:0 auto; padding:clamp(56px,9vw,100px) clamp(20px,5vw,40px)">
+          <div style="display:flex; gap:clamp(24px,5vw,56px); flex-wrap:wrap; align-items:flex-end; margin-bottom:clamp(40px,6vw,64px)">
+            <div style="flex:1 1 380px; min-width:0">
+              <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#6B6358; margin-bottom:16px">O QUE FAÇO</div>
+              <h2 style="margin:0; font-family:'Newsreader',serif; font-weight:400; font-size:clamp(30px,4.4vw,46px); line-height:1.12; color:#123B47; text-wrap:balance">Planejamento Financeiro Pessoal 360º</h2>
+            </div>
+            <p style="flex:1 1 340px; min-width:0; margin:0; font-size:clamp(15px,1.5vw,17px); line-height:1.75; color:#48534F; text-wrap:pretty">Com um modelo independente e sem vínculo com instituições financeiras, nosso planejamento visa o que de fato é melhor para o interesse do cliente.</p>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:clamp(28px,4vw,44px) clamp(24px,4vw,40px)">
+          <div style="border-top:1px solid #123B47; padding-top:20px">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; line-height:1; color:#C08A4E; margin-bottom:16px">01</div>
+            <div style="font-size:15px; font-weight:600; margin-bottom:10px">Diagnóstico</div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Início do projeto, no qual levantamos as informações relevantes e alinhamos as expectativas e os objetivos de cada um.</p>
+          </div>
+          <div style="border-top:1px solid #123B47; padding-top:20px">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; line-height:1; color:#C08A4E; margin-bottom:16px">02</div>
+            <div style="font-size:15px; font-weight:600; margin-bottom:10px">Orçamento</div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Aqui, organizamos e revemos as finanças familiares, buscando otimizar as saídas e melhorar o planejamento financeiro.</p>
+          </div>
+          <div style="border-top:1px solid #123B47; padding-top:20px">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; line-height:1; color:#C08A4E; margin-bottom:16px">03</div>
+            <div style="font-size:15px; font-weight:600; margin-bottom:10px">Fluxo Projetado</div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Nesta etapa, buscamos equilibrar ganhos e gastos para projetar um futuro sólido, alinhado aos objetivos e fatores econômicos.</p>
+          </div>
+          <div style="border-top:1px solid #123B47; padding-top:20px">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; line-height:1; color:#C08A4E; margin-bottom:16px">04</div>
+            <div style="font-size:15px; font-weight:600; margin-bottom:10px">Balanço Patrimonial</div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Neste passo, estruturamos a situação patrimonial para otimizar as dinâmicas de sucessão, proteção e blindagem.</p>
+          </div>
+          <div style="border-top:1px solid #123B47; padding-top:20px">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; line-height:1; color:#C08A4E; margin-bottom:16px">05</div>
+            <div style="font-size:15px; font-weight:600; margin-bottom:10px">Política de Investimentos</div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Aqui, definimos a Política de Investimentos conforme o perfil do cliente e sua tolerância ao risco, considerando fatores econômicos.</p>
+          </div>
+          <div style="border-top:1px solid #123B47; padding-top:20px">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; line-height:1; color:#C08A4E; margin-bottom:16px">06</div>
+            <div style="font-size:15px; font-weight:600; margin-bottom:10px">Execução e Manutenção do Plano</div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Nesta última fase, validamos os processos e monitoramos os resultados para garantir um plano de vida bem estruturado.</p>
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicos" style="max-width:1120px; margin:0 auto; padding:clamp(56px,9vw,100px) clamp(20px,5vw,40px)">
+        <div style="display:flex; gap:clamp(20px,5vw,56px); flex-wrap:wrap; align-items:flex-end; margin-bottom:clamp(36px,5vw,52px)">
+          <div style="flex:1 1 380px; min-width:0">
+            <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#6B6358; margin-bottom:16px">SERVIÇOS</div>
+            <h2 style="margin:0; font-family:'Newsreader',serif; font-weight:400; font-size:clamp(30px,4.4vw,46px); line-height:1.12; color:#123B47; max-width:640px; text-wrap:balance">Planejamento com acompanhamento do início ao fim do plano</h2>
+          </div>
+          <p style="flex:1 1 320px; min-width:0; margin:0; font-size:15px; line-height:1.75; color:#48534F; text-wrap:pretty">Em todos os planos, sou eu quem coleta as informações, avalia a sua situação financeira, propõe caminhos efetivos e executa o plano junto com você, dentro do prazo combinado.</p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:16px; align-items:stretch">
+
+          <div style="background:#FBF9F5; color:#0B2530; border:1px solid #E6DFD2; padding:clamp(26px,3.4vw,34px); display:flex; flex-direction:column; gap:22px">
+            <div>
+              <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:12px">PLANO DE 3 MESES</div>
+              <div style="font-family:'Newsreader',serif; font-weight:400; font-size:clamp(26px,2.8vw,32px); line-height:1.1; color:#123B47"><span style="display:block; font-size:.62em; font-style:italic; font-weight:300; opacity:.8; margin-bottom:4px">Planejamento</span>Pontual</div>
+            </div>
+            <div style="border-top:1px solid #E6DFD2; border-bottom:1px solid #E6DFD2; padding:18px 0; min-height:96px; box-sizing:border-box">
+              <div style="display:flex; align-items:baseline; gap:10px"><span style="font-size:15px; color:#48534F">3x de</span><span style="font-family:'Newsreader',serif; font-size:42px; line-height:1; white-space:nowrap">R$ 340,00</span></div>
+              <div style="margin-top:8px; font-size:14px; color:#6B6358">R$ 1.020 no total · à vista R$ 970 (5% de desconto)</div>
+            </div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Para pessoas que tenham demandas financeiras pontuais e que querem contar com o acompanhamento de um consultor profissional.</p>
+            <div style="display:flex; flex-direction:column; gap:9px">
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Diagnóstico inicial da situação financeira</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Relatório de análise do consultor</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Primeira proposta de possíveis melhorias</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Passagem por todas as etapas de planejamento</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Ajuda operacional com a Instituição Financeira</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Execução do plano</span></div>
+            </div>
+            <a href="#" onClick="{{ goForms }}" style="margin-top:auto; border:1px solid #123B47; color:#123B47; font-size:12px; font-weight:600; letter-spacing:.16em; padding:16px 20px; text-align:center" style-hover="background:#123B47; color:#F2EDE4">COMEÇAR PELO DIAGNÓSTICO</a>
+          </div>
+
+          <div style="background:#123B47; color:#F2EDE4; border:1px solid #123B47; padding:clamp(26px,3.4vw,34px); display:flex; flex-direction:column; gap:22px">
+            <div>
+              <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:12px">PLANO DE 12 MESES</div>
+              <div style="font-family:'Newsreader',serif; font-weight:400; font-size:clamp(26px,2.8vw,32px); line-height:1.1"><span style="display:block; font-size:.62em; font-style:italic; font-weight:300; opacity:.8; margin-bottom:4px">Planejamento</span>Recorrente</div>
+            </div>
+            <div style="border-top:1px solid rgba(242,237,228,.2); border-bottom:1px solid rgba(242,237,228,.2); padding:18px 0; min-height:96px; box-sizing:border-box">
+              <div style="display:flex; align-items:baseline; gap:10px"><span style="font-size:15px; color:rgba(242,237,228,.85)">12x de</span><span style="font-family:'Newsreader',serif; font-size:42px; line-height:1; white-space:nowrap">R$ 250</span></div>
+              <div style="margin-top:8px; font-size:14px; color:rgba(242,237,228,.8)">R$ 3.000 no total</div>
+            </div>
+            <p style="margin:0; font-size:15px; line-height:1.7; color:rgba(242,237,228,.88); text-wrap:pretty">Para pessoas que tenham demandas financeiras recorrentes e que querem contar com o acompanhamento de um consultor profissional.</p>
+            <div style="display:flex; flex-direction:column; gap:9px">
+              <div style="font-size:11px; font-weight:600; letter-spacing:.2em; color:#C08A4E; margin-bottom:2px">TUDO DO PLANO DE 3 MESES, MAIS:</div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:rgba(242,237,228,.88)"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Reuniões mensais de alinhamento</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:rgba(242,237,228,.88)"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Contato ilimitado ao consultor financeiro</span></div>
+            </div>
+            <a href="#" onClick="{{ goForms }}" style="margin-top:auto; background:#C08A4E; color:#0B2530; font-size:12px; font-weight:600; letter-spacing:.16em; padding:16px 20px; text-align:center; border:none" style-hover="background:#D49B5C; color:#0B2530">COMEÇAR PELO DIAGNÓSTICO</a>
+          </div>
+
+          <div style="background:#FBF9F5; color:#0B2530; border:1px solid #E6DFD2; padding:clamp(26px,3.4vw,34px); display:flex; flex-direction:column; gap:22px">
+            <div>
+              <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:12px">PATRIMÔNIO A PARTIR DE R$ 300 MIL</div>
+              <div style="font-family:'Newsreader',serif; font-weight:400; font-size:clamp(26px,2.8vw,32px); line-height:1.1; color:#123B47"><span style="display:block; font-size:.62em; font-style:italic; font-weight:300; opacity:.8; margin-bottom:4px">Planejamento</span>Patrimonial</div>
+            </div>
+            <div style="border-top:1px solid #E6DFD2; border-bottom:1px solid #E6DFD2; padding:12px 0">
+              <div style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358; padding:6px 0 4px">TAXA DE ADMINISTRAÇÃO ANUAL</div>
+              <div style="font-size:13px; line-height:1.5; color:#6B6358; padding-bottom:6px">Percentual ao ano sobre o patrimônio, <br>conforme a faixa:</div>
+              <div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid #E6DFD2; font-size:14px; color:#48534F"><span>R$ 300 mil – R$ 500 mil</span><span style="font-family:'Newsreader',serif; font-size:17px; color:#123B47">1,00% <span style="font-family:'Archivo',sans-serif; font-size:12px; color:#6B6358">a.a.</span></span></div>
+              <div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid #E6DFD2; font-size:14px; color:#48534F"><span>+ R$ 500 mil – R$ 1 milhão</span><span style="font-family:'Newsreader',serif; font-size:17px; color:#123B47">0,80% <span style="font-family:'Archivo',sans-serif; font-size:12px; color:#6B6358">a.a.</span></span></div>
+              <div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid #E6DFD2; font-size:14px; color:#48534F"><span>+ R$ 1 milhão – R$ 3 milhões</span><span style="font-family:'Newsreader',serif; font-size:17px; color:#123B47">0,70% <span style="font-family:'Archivo',sans-serif; font-size:12px; color:#6B6358">a.a.</span></span></div>
+              <div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid #E6DFD2; font-size:14px; color:#48534F"><span>+ R$ 3 milhões – R$ 5 milhões</span><span style="font-family:'Newsreader',serif; font-size:17px; color:#123B47">0,60% <span style="font-family:'Archivo',sans-serif; font-size:12px; color:#6B6358">a.a.</span></span></div>
+              <div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; font-size:14px; color:#48534F"><span>+ R$ 5 milhões</span><span style="font-family:'Newsreader',serif; font-size:17px; color:#123B47">0,50% <span style="font-family:'Archivo',sans-serif; font-size:12px; color:#6B6358">a.a.</span></span></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:9px">
+              <div style="font-size:11px; font-weight:600; letter-spacing:.2em; color:#C08A4E; margin-bottom:2px">TUDO DO PLANEJAMENTO RECORRENTE, MAIS:</div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Gestão de investimentos financeiros</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Análise econômica dos consultores</span></div>
+              <div style="display:flex; gap:12px; align-items:baseline; font-size:15px; line-height:1.55; color:#48534F"><span style="color:#C08A4E; flex:0 0 auto">✓</span><span>Acompanhamento quinzenal da carteira</span></div>
+            </div>
+            <a href="#" onClick="{{ goForms }}" style="margin-top:auto; border:1px solid #123B47; color:#123B47; font-size:12px; font-weight:600; letter-spacing:.16em; padding:16px 20px; text-align:center" style-hover="background:#123B47; color:#F2EDE4">COMEÇAR PELO DIAGNÓSTICO</a>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="fale-comigo" style="background:#123B47; color:#F2EDE4">
+        <div style="max-width:1120px; margin:0 auto; padding:clamp(64px,10vw,110px) clamp(20px,5vw,40px); text-align:center">
+          <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:16px">FALE COMIGO</div>
+          <h2 style="margin:0 auto 40px; max-width:640px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(32px,5vw,52px); line-height:1.12; text-wrap:balance">Vamos conversar sobre o seu plano?</h2>
+          <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center"><a href="#" onClick="{{ goForms }}" style="display:inline-flex; align-items:center; background:#C08A4E; color:#0B2530; font-size:14px; font-weight:600; letter-spacing:.16em; padding:20px 34px; border:none" style-hover="background:#D49B5C">FAZER O DIAGNÓSTICO</a><a href="{{ waLink }}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:14px; border:1px solid rgba(242,237,228,.5); color:#F2EDE4; font-size:14px; font-weight:500; letter-spacing:.16em; padding:20px 30px" style-hover="border-color:#C08A4E; color:#C08A4E">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2c.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"></path></svg>
+            CHAMAR NO WHATSAPP
+          </a></div>
+          
+        </div>
+      </section>
+
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isForms }}" hint-placeholder-val="{{ false }}">
+    <main style="max-width:1120px; margin:0 auto; padding:clamp(40px,7vw,72px) clamp(20px,5vw,40px)">
+
+      <div style="border-bottom:1px solid #DCD4C6; padding-bottom:28px; margin-bottom:clamp(32px,5vw,52px)">
+        <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#6B6358; margin-bottom:16px">FORMULÁRIOS</div>
+        <h1 style="margin:0; font-family:'Newsreader',serif; font-weight:400; font-size:clamp(32px,5.5vw,52px); line-height:1.15; max-width:640px; text-wrap:balance">Comece aqui. Respondo em até dois dias úteis.</h1>
+      </div>
+
+      <div style="display:flex; gap:clamp(28px,5vw,56px); flex-wrap:wrap; align-items:flex-start">
+
+        <div style="flex:1 1 440px; min-width:0">
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#123B47; color:#F2EDE4; padding:clamp(28px,5vw,44px)">
+              <div style="font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,36px); line-height:1.2; margin-bottom:18px">Recebido. Obrigado.</div>
+              <p style="margin:0 0 28px; font-size:15px; line-height:1.7; color:rgba(242,237,228,.85); max-width:440px; text-wrap:pretty">Vou ler suas respostas com calma e retorno com dois ou três horários para a conversa de 30 minutos.</p>
+              <a href="#" onClick="{{ reset }}" style="border:1px solid rgba(242,237,228,.4); color:#F2EDE4; font-size:12px; font-weight:500; letter-spacing:.16em; padding:14px 20px; display:inline-block" style-hover="border-color:#C08A4E">ENVIAR OUTRA RESPOSTA</a>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+            <form onSubmit="{{ submit }}" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,40px); display:flex; flex-direction:column; gap:26px">
+              <div style="font-family:'Newsreader',serif; font-weight:400; font-size:24px">Pedido de conversa</div>
+
+              <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px">
+                <label style="display:flex; flex-direction:column; gap:8px">
+                  <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">NOME COMPLETO</span>
+                  <input type="text" required="required" placeholder="Seu nome" style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px">
+                  <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">E-MAIL</span>
+                  <input type="email" required="required" placeholder="voce@email.com" style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px">
+                  <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">WHATSAPP</span>
+                  <input type="tel" placeholder="(00) 00000-0000" style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+                </label>
+                <label style="display:flex; flex-direction:column; gap:8px">
+                  <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">CIDADE</span>
+                  <input type="text" placeholder="Cidade, estado" style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+                </label>
+              </div>
+
+              <label style="display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">MOMENTO DE VIDA</span>
+                <select style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+                  <option>Solteiro, sem dependentes</option>
+                  <option>Casal sem filhos</option>
+                  <option>Família com filhos</option>
+                  <option>Profissional liberal ou autônomo</option>
+                  <option>Perto da aposentadoria</option>
+                  <option>Outro</option>
+                </select>
+              </label>
+
+              <div style="display:flex; flex-direction:column; gap:12px">
+                <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">O QUE VOCÊ QUER RESOLVER PRIMEIRO</span>
+                <div style="display:flex; flex-wrap:wrap; gap:10px">
+                  <label style="display:flex; align-items:center; gap:9px; border:1px solid #DCD4C6; background:#FFFFFF; padding:11px 15px; font-size:15px; min-height:44px; box-sizing:border-box; cursor:pointer" style-hover="border-color:#123B47"><input type="checkbox" style="accent-color:#123B47; width:15px; height:15px"><span>Organizar o orçamento</span></label>
+                  <label style="display:flex; align-items:center; gap:9px; border:1px solid #DCD4C6; background:#FFFFFF; padding:11px 15px; font-size:15px; min-height:44px; box-sizing:border-box; cursor:pointer" style-hover="border-color:#123B47"><input type="checkbox" style="accent-color:#123B47; width:15px; height:15px"><span>Sair das dívidas</span></label>
+                  <label style="display:flex; align-items:center; gap:9px; border:1px solid #DCD4C6; background:#FFFFFF; padding:11px 15px; font-size:15px; min-height:44px; box-sizing:border-box; cursor:pointer" style-hover="border-color:#123B47"><input type="checkbox" style="accent-color:#123B47; width:15px; height:15px"><span>Montar reserva</span></label>
+                  <label style="display:flex; align-items:center; gap:9px; border:1px solid #DCD4C6; background:#FFFFFF; padding:11px 15px; font-size:15px; min-height:44px; box-sizing:border-box; cursor:pointer" style-hover="border-color:#123B47"><input type="checkbox" style="accent-color:#123B47; width:15px; height:15px"><span>Investir melhor</span></label>
+                  <label style="display:flex; align-items:center; gap:9px; border:1px solid #DCD4C6; background:#FFFFFF; padding:11px 15px; font-size:15px; min-height:44px; box-sizing:border-box; cursor:pointer" style-hover="border-color:#123B47"><input type="checkbox" style="accent-color:#123B47; width:15px; height:15px"><span>Planejar aposentadoria</span></label>
+                  <label style="display:flex; align-items:center; gap:9px; border:1px solid #DCD4C6; background:#FFFFFF; padding:11px 15px; font-size:15px; min-height:44px; box-sizing:border-box; cursor:pointer" style-hover="border-color:#123B47"><input type="checkbox" style="accent-color:#123B47; width:15px; height:15px"><span>Proteger a família</span></label>
+                </div>
+              </div>
+
+              <label style="display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">CONTE EM POUCAS LINHAS ONDE VOCÊ ESTÁ HOJE</span>
+                <textarea rows="5" placeholder="Renda, composição da família, dívidas, o que já tem guardado e o objetivo que mais pesa." style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; line-height:1.6; color:#0B2530; resize:vertical; box-sizing:border-box; border-radius:0"></textarea>
+              </label>
+
+              <label style="display:flex; gap:11px; align-items:flex-start; font-size:14px; line-height:1.6; color:#48534F; cursor:pointer">
+                <input type="checkbox" required="required" style="accent-color:#123B47; width:16px; height:16px; margin-top:2px; flex:0 0 auto">
+                <span>Autorizo o contato por e-mail e WhatsApp sobre este formulário. Os dados não são compartilhados com terceiros.</span>
+              </label>
+
+              <button type="submit" style="background:#123B47; color:#F2EDE4; border:none; font-size:12px; font-weight:600; letter-spacing:.18em; padding:18px 24px; min-height:52px; cursor:pointer" style-hover="background:#0B2530">ENVIAR PEDIDO</button>
+            </form>
+          </sc-if>
+        </div>
+
+        <aside style="flex:1 1 280px; min-width:0; display:flex; flex-direction:column; gap:22px">
+          <div style="background:#123B47; color:#F2EDE4; padding:28px">
+            <div style="font-size:11px; font-weight:500; letter-spacing:.22em; color:#C08A4E; margin-bottom:16px">DEPOIS DO ENVIO</div>
+            <div style="font-size:15px; line-height:1.85; color:rgba(242,237,228,.88)">
+              <div>1 · Leio suas respostas.</div>
+              <div>2 · Envio dois horários para conversa.</div>
+              <div>3 · Trinta minutos, online.</div>
+              <div>4 · Você decide se quer seguir.</div>
+            </div>
+          </div>
+          <div style="border:1px solid #E6DFD2; background:#FBF9F5; padding:28px">
+            <div style="font-size:11px; font-weight:500; letter-spacing:.22em; color:#6B6358; margin-bottom:16px">OUTROS FORMULÁRIOS</div>
+            <div style="display:flex; flex-direction:column">
+              <div style="border-bottom:1px solid #E6DFD2; padding:14px 0">
+                <div style="font-size:15px; font-weight:500; color:#123B47">Perfil de investidor</div>
+                <div style="font-size:14px; line-height:1.6; color:#48534F; margin-top:4px">Enviado por mim depois da primeira conversa.</div>
+              </div>
+              <div style="border-bottom:1px solid #E6DFD2; padding:14px 0">
+                <div style="font-size:15px; font-weight:500; color:#123B47">Mapa de orçamento</div>
+                <div style="font-size:14px; line-height:1.6; color:#48534F; margin-top:4px">Planilha que preenchemos na etapa de levantamento.</div>
+              </div>
+              <div style="padding:14px 0">
+                <div style="font-size:15px; font-weight:500; color:#123B47">Revisão semestral</div>
+                <div style="font-size:14px; line-height:1.6; color:#48534F; margin-top:4px">Só para quem já tem plano em andamento.</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:14px; line-height:1.75; color:#48534F">
+            Prefere conversar direto? <a href="mailto:germanovitorhugo@gmail.com" style="border-bottom:1px solid rgba(18,59,71,.35)">germanovitorhugo@gmail.com</a> ou +55 14 99643-3289.
+          </div>
+        </aside>
+
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+    <main style="max-width:1120px; margin:0 auto; padding:clamp(48px,9vw,110px) clamp(20px,5vw,40px); display:flex; justify-content:center">
+      <div style="width:100%; max-width:440px">
+        <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:16px">ÁREA DO CLIENTE</div>
+        <sc-if value="{{ modeLogin }}" hint-placeholder-val="{{ true }}">
+          <h1 style="margin:0 0 12px; font-family:'Newsreader',serif; font-weight:400; font-size:clamp(34px,5vw,46px); line-height:1.1; color:#123B47">Entrar</h1>
+          <p style="margin:0 0 32px; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Acesse sua ficha cadastral e o diagnóstico financeiro. O acesso é liberado por mim após a contratação.</p>
+          <form onSubmit="{{ doLogin }}" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,36px); display:flex; flex-direction:column; gap:22px">
+            <label style="display:flex; flex-direction:column; gap:8px">
+              <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">E-MAIL</span>
+              <input type="email" required="required" autoComplete="email" value="{{ email }}" onChange="{{ setEmail }}" placeholder="voce@email.com" style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+            </label>
+            <label style="display:flex; flex-direction:column; gap:8px">
+              <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">SENHA</span>
+              <input type="password" required="required" autoComplete="current-password" value="{{ password }}" onChange="{{ setPassword }}" placeholder="Sua senha" style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+            </label>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px; line-height:1.6; color:#9A3B2E; border-top:1px solid #E6DFD2; padding-top:14px">{{ error }}</div>
+            </sc-if>
+            <button type="submit" style="background:#123B47; color:#F2EDE4; border:none; font-size:12px; font-weight:600; letter-spacing:.18em; padding:18px 24px; min-height:52px; cursor:pointer" style-hover="background:#0B2530">{{ loginLabel }}</button>
+            <a href="#" onClick="{{ goReset }}" style="align-self:center; font-size:14px; color:#48534F; border-bottom:1px solid #DCD4C6" style-hover="color:#C08A4E">Esqueci minha senha</a>
+          </form>
+        </sc-if>
+        <sc-if value="{{ modeReset }}" hint-placeholder-val="{{ false }}">
+          <h1 style="margin:0 0 12px; font-family:'Newsreader',serif; font-weight:400; font-size:clamp(34px,5vw,46px); line-height:1.1; color:#123B47">Nova senha</h1>
+          <p style="margin:0 0 32px; font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">Informe o e-mail cadastrado. Você receberá um link para criar uma nova senha.</p>
+          <sc-if value="{{ resetNotSent }}" hint-placeholder-val="{{ true }}">
+            <form onSubmit="{{ doReset }}" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,36px); display:flex; flex-direction:column; gap:22px">
+              <label style="display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11px; font-weight:500; letter-spacing:.2em; color:#6B6358">E-MAIL</span>
+                <input type="email" required="required" value="{{ email }}" onChange="{{ setEmail }}" placeholder="voce@email.com" style="border:1px solid #DCD4C6; background:#FFFFFF; padding:13px 14px; font-size:15px; color:#0B2530; min-height:46px; box-sizing:border-box; border-radius:0">
+              </label>
+              <button type="submit" style="background:#123B47; color:#F2EDE4; border:none; font-size:12px; font-weight:600; letter-spacing:.18em; padding:18px 24px; min-height:52px; cursor:pointer" style-hover="background:#0B2530">ENVIAR LINK</button>
+            </form>
+          </sc-if>
+          <sc-if value="{{ resetSent }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#123B47; color:#F2EDE4; padding:clamp(24px,4vw,36px); font-size:15px; line-height:1.7">Se houver uma conta para <strong style="font-weight:600">{{ email }}</strong>, o link chega em alguns minutos. Confira também a caixa de spam.</div>
+          </sc-if>
+          <a href="#" onClick="{{ goLoginMode }}" style="display:inline-block; margin-top:22px; font-size:14px; color:#48534F; border-bottom:1px solid #DCD4C6" style-hover="color:#C08A4E">Voltar para o login</a>
+        </sc-if>
+        <div style="margin-top:36px; padding-top:22px; border-top:1px solid #DCD4C6; font-size:14px; line-height:1.7; color:#48534F">Ainda não é cliente? <a href="#" onClick="{{ goForms }}" style="border-bottom:1px solid rgba(18,59,71,.35)">Comece pelo pedido de conversa</a>.</div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isArea }}" hint-placeholder-val="{{ false }}">
+    <main style="max-width:1120px; margin:0 auto; padding:clamp(40px,7vw,72px) clamp(20px,5vw,40px)">
+      <div style="border-bottom:1px solid #DCD4C6; padding-bottom:28px; margin-bottom:clamp(32px,5vw,52px); display:flex; gap:20px; flex-wrap:wrap; justify-content:space-between; align-items:flex-end">
+        <div style="min-width:0">
+          <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#6B6358; margin-bottom:16px">ÁREA DO CLIENTE</div>
+          <h1 style="margin:0; font-family:'Newsreader',serif; font-weight:400; font-size:clamp(32px,5.5vw,52px); line-height:1.15; color:#123B47">Olá, {{ firstName }}.</h1>
+          <div style="margin-top:10px; font-size:14px; color:#6B6358">{{ userEmail }}</div>
+        </div>
+        <button type="button" onClick="{{ logout }}" style="background:transparent; border:1px solid #DCD4C6; color:#48534F; font-size:12px; font-weight:500; letter-spacing:.16em; padding:0 18px; min-height:44px; cursor:pointer" style-hover="border-color:#123B47; color:#123B47">SAIR</button>
+      </div>
+
+      <div style="display:flex; gap:clamp(28px,5vw,56px); flex-wrap:wrap; align-items:flex-start">
+        <div style="flex:1 1 520px; min-width:0">
+          <div style="font-size:11px; font-weight:500; letter-spacing:.24em; color:#6B6358; margin-bottom:18px">SEUS FORMULÁRIOS</div>
+          <div style="display:flex; flex-direction:column; gap:16px">
+            <sc-for list="{{ forms }}" as="f" hint-placeholder-count="2">
+              <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(22px,4vw,32px); display:flex; gap:clamp(18px,3vw,28px); flex-wrap:wrap; align-items:center">
+                <div style="font-family:'Newsreader',serif; font-weight:300; font-size:44px; line-height:1; color:#C08A4E; flex:0 0 auto">{{ f.num }}</div>
+                <div style="flex:1 1 240px; min-width:0">
+                  <div style="font-family:'Newsreader',serif; font-weight:400; font-size:24px; line-height:1.2; color:#123B47">{{ f.title }}</div>
+                  <p style="margin:6px 0 16px; font-size:14px; line-height:1.65; color:#48534F; text-wrap:pretty">{{ f.desc }}</p>
+                  <div style="display:flex; align-items:center; gap:14px">
+                    <div style="flex:1 1 auto; max-width:220px; height:2px; background:#E6DFD2"><div style="height:2px; background:#123B47; width:{{ f.pctCss }}"></div></div>
+                    <span style="font-size:11px; font-weight:600; letter-spacing:.18em; color:{{ f.statusColor }}">{{ f.statusLabel }}</span>
+                  </div>
+                </div>
+                <sc-if value="{{ f.available }}" hint-placeholder-val="{{ true }}">
+                  <a href="{{ f.href }}" style="flex:0 0 auto; background:#123B47; color:#F2EDE4; font-size:12px; font-weight:600; letter-spacing:.16em; padding:0 22px; min-height:48px; display:flex; align-items:center; border:none" style-hover="background:#0B2530; color:#F2EDE4">{{ f.action }}</a>
+                </sc-if>
+                <sc-if value="{{ f.unavailable }}" hint-placeholder-val="{{ false }}">
+                  <span style="flex:0 0 auto; border:1px solid #DCD4C6; color:#6B6358; font-size:12px; font-weight:500; letter-spacing:.16em; padding:0 22px; min-height:48px; display:flex; align-items:center">EM BREVE</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <aside style="flex:1 1 280px; min-width:0; display:flex; flex-direction:column; gap:22px">
+          <div style="background:#123B47; color:#F2EDE4; padding:28px">
+            <div style="font-size:11px; font-weight:500; letter-spacing:.22em; color:#C08A4E; margin-bottom:16px">COMO FUNCIONA</div>
+            <div style="font-size:15px; line-height:1.85; color:rgba(242,237,228,.88)">
+              <div>1 · Preencha a ficha cadastral.</div>
+              <div>2 · Responda o diagnóstico no seu ritmo.</div>
+              <div>3 · As respostas ficam salvas.</div>
+              <div>4 · Analiso e marco nossa reunião.</div>
+            </div>
+          </div>
+          <div style="font-size:14px; line-height:1.75; color:#48534F">
+            Dúvida sobre algum campo? <a href="{{ waLink }}" target="_blank" rel="noopener" style="border-bottom:1px solid rgba(18,59,71,.35)">Fale comigo no WhatsApp</a> ou <a href="mailto:germanovitorhugo@gmail.com" style="border-bottom:1px solid rgba(18,59,71,.35)">por e-mail</a>.
+          </div>
+        </aside>
+      </div>
+    </main>
+  </sc-if>
+
+  <footer style="background:#0B2530; color:rgba(242,237,228,.75)">
+    <div style="max-width:1120px; margin:0 auto; padding:clamp(36px,6vw,56px) clamp(20px,5vw,40px); display:flex; gap:32px; flex-wrap:wrap; justify-content:space-between; align-items:flex-start">
+      <div>
+        <div style="font-family:'Newsreader',serif; font-weight:300; font-size:30px; letter-spacing:.08em; color:#F2EDE4; padding-left:.08em">VHG</div>
+        <div style="width:52px; height:1px; background:#C08A4E; margin:14px 0"></div>
+        <div style="font-size:11px; font-weight:500; letter-spacing:.24em">PLANEJAMENTO FINANCEIRO</div>
+      </div>
+      <div style="font-size:14px; line-height:1.9">
+        <div>Vitor Hugo Germano</div>
+        <div>germanovitorhugo@gmail.com</div>
+        <div>+55 14 99643-3289</div>
+        <div>Botucatu, SP · atendimento online</div>
+      </div>
+      <div style="font-size:14px; line-height:1.9">
+        <div><a href="#" onClick="{{ goServicos }}" style="color:rgba(242,237,228,.75); border:none" style-hover="color:#C08A4E">Serviços</a></div>
+        <div><a href="#" onClick="{{ goForms }}" style="color:rgba(242,237,228,.75); border:none" style-hover="color:#C08A4E">Diagnóstico</a></div>
+        <div><a href="#" onClick="{{ goCliente }}" style="color:rgba(242,237,228,.75); border:none" style-hover="color:#C08A4E">Área do cliente</a></div>
+        <div><a href="https://instagram.com/vitorhgermano" style="color:rgba(242,237,228,.75); border:none" style-hover="color:#C08A4E">@vitorhgermano</a></div>
+      </div>
+      <div style="flex:1 1 240px; min-width:0; font-size:12px; line-height:1.7; color:rgba(242,237,228,.72); text-wrap:pretty">Este site tem caráter informativo e não constitui recomendação de investimento. Nenhum conteúdo aqui garante rentabilidade.</div>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+// Troca para Supabase: substituir os 4 métodos de `auth` por
+// supabase.auth.signInWithPassword / signOut / resetPasswordForEmail / getSession,
+// e `loadForms` por um select na tabela de respostas (status + progresso por cliente).
+const FORMS = [
+  { id: 'ficha', num: '01', title: 'Ficha cadastral', desc: 'Dados pessoais, família, profissão e contatos. Leva cerca de 10 minutos.', href: '' },
+  { id: 'diagnostico', num: '02', title: 'Diagnóstico financeiro', desc: 'Renda, gastos, patrimônio, dívidas e objetivos, em 10 etapas. Pode pausar e continuar depois.', href: 'Diagnóstico VHG.dc.html' }
+];
+const SESSION_KEY = 'vhg-cliente-sessao';
+const auth = {
+  async signIn(email, password) {
+    await new Promise(r => setTimeout(r, 500));
+    if (password.length < 6) throw new Error('E-mail ou senha incorretos.');
+    const user = { email };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    return user;
+  },
+  async signOut() { localStorage.removeItem(SESSION_KEY); },
+  async resetPassword(email) { await new Promise(r => setTimeout(r, 500)); },
+  getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch (e) { return null; } }
+};
+async function loadForms(user) {
+  return { ficha: { status: 'nao_iniciado', progress: 0 }, diagnostico: { status: 'andamento', progress: 40 } };
+}
+const STATUS = {
+  nao_iniciado: { label: 'NÃO INICIADO', color: '#6B6358', action: 'COMEÇAR' },
+  andamento: { label: 'EM ANDAMENTO', color: '#C08A4E', action: 'CONTINUAR' },
+  enviado: { label: 'ENVIADO ✓', color: '#123B47', action: 'VER RESPOSTAS' }
+};
+
+class Component extends DCLogic {
+  state = { page: 'home', sent: false, user: null, email: '', password: '', error: '', loading: false, authMode: 'login', resetSent: false, formData: {}, mobile: typeof window !== 'undefined' && window.innerWidth < 1000, menuOpen: false };
+  componentDidMount() {
+    const u = auth.getSession();
+    if (u) this.setUser(u); this.onResize = () => { const m = window.innerWidth < 1000; if (m !== this.state.mobile) this.setState({ mobile: m, menuOpen: false }); }; window.addEventListener('resize', this.onResize); this.onResize(); }
+  componentWillUnmount() { window.removeEventListener('resize', this.onResize); }
+  nav(page) {
+    return (e) => {
+      if (e) e.preventDefault();
+      this.setState({ page, menuOpen: false });
+      if (typeof window !== 'undefined') window.scrollTo(0, 0);
+    };
+  }
+  section(id) {
+    return (e) => {
+      if (e) e.preventDefault();
+      this.setState({ page: 'home', menuOpen: false }, () => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const h = document.querySelector('header');
+        window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - (h ? h.offsetHeight : 0), behavior: 'smooth' });
+      });
+    };
+  }
+  async setUser(user) {
+    this.setState({ user });
+    const formData = await loadForms(user);
+    this.setState({ formData });
+  }
+  renderVals() {
+    const page = this.state.page;
+    const { user, formData, authMode, error, loading } = this.state;
+    const name = user ? (user.name || user.email.split('@')[0]) : '';
+    const forms = FORMS.map(f => {
+      const d = formData[f.id] || { status: 'nao_iniciado', progress: 0 };
+      const st = STATUS[d.status] || STATUS.nao_iniciado;
+      return { ...f, pctCss: d.progress + '%', statusLabel: d.status === 'andamento' ? st.label + ' · ' + d.progress + '%' : st.label, statusColor: st.color, action: st.action, available: !!f.href, unavailable: !f.href };
+    });
+    const { mobile, menuOpen } = this.state;
+    return {
+      isDesktop: !mobile, isMobile: mobile, menuOpen, showMenu: mobile && menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      bar1: menuOpen ? 'translateY(7.5px) rotate(45deg)' : 'none',
+      bar2: menuOpen ? 0 : 1,
+      bar3: menuOpen ? 'translateY(-7.5px) rotate(-45deg)' : 'none',
+      isHome: page === 'home',
+      isForms: page === 'forms',
+      isLogin: page === 'login',
+      isArea: page === 'area',
+      goCliente: this.nav(user ? 'area' : 'login'),
+      modeLogin: authMode === 'login', modeReset: authMode === 'reset',
+      goReset: (e) => { e.preventDefault(); this.setState({ authMode: 'reset', resetSent: false, error: '' }); },
+      goLoginMode: (e) => { e.preventDefault(); this.setState({ authMode: 'login' }); },
+      email: this.state.email, password: this.state.password,
+      setEmail: (e) => this.setState({ email: e.target.value }),
+      setPassword: (e) => this.setState({ password: e.target.value }),
+      hasError: !!error, error,
+      loginLabel: loading ? 'ENTRANDO…' : 'ENTRAR',
+      doLogin: async (e) => {
+        e.preventDefault();
+        this.setState({ loading: true, error: '' });
+        try { const u = await auth.signIn(this.state.email, this.state.password); await this.setUser(u); this.setState({ page: 'area', password: '' }); window.scrollTo(0, 0); }
+        catch (err) { this.setState({ error: err.message }); }
+        this.setState({ loading: false });
+      },
+      doReset: async (e) => { e.preventDefault(); await auth.resetPassword(this.state.email); this.setState({ resetSent: true }); },
+      resetSent: this.state.resetSent, resetNotSent: !this.state.resetSent,
+      logout: async () => { await auth.signOut(); this.setState({ user: null, formData: {}, page: 'login', authMode: 'login' }); window.scrollTo(0, 0); },
+      firstName: name.charAt(0).toUpperCase() + name.slice(1),
+      userEmail: user ? user.email : '',
+      forms,
+      goHome: this.nav('home'),
+      goForms: this.nav('forms'),
+      goQuem: this.section('quem-sou'),
+      goFaco: this.section('o-que-faco'),
+      goServicos: this.section('servicos'),
+      goFale: this.section('fale-comigo'),
+      waLink: 'https://wa.me/5514996433289?text=' + encodeURIComponent('Olá, Vitor! Vim pelo site e gostaria de conversar sobre planejamento financeiro.'),
+      sent: this.state.sent,
+      notSent: !this.state.sent,
+      submit: (e) => { e.preventDefault(); this.setState({ sent: true }); window.scrollTo(0, 0); },
+      reset: (e) => { e.preventDefault(); this.setState({ sent: false }); }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

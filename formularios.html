@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formulários · VHG Planejamento Financeiro</title>
+<meta name="description" content="Pedido de conversa com Vitor Hugo Germano. Respondo em até dois dias úteis.">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/vhg.css?v=5">
+</head>
+<body data-precisa-supabase>
+<div id="vhg-header"></div>
+
+<main class="wrap pagina">
+
+  <div class="cabeca-pagina">
+    <div class="eyebrow">FORMULÁRIOS</div>
+    <h1 class="h1-pagina">Comece aqui. Respondo em até dois dias úteis.</h1>
+  </div>
+
+  <div class="duas-colunas">
+
+    <div class="principal">
+      <div class="confirmacao" id="recebido" hidden>
+        <div class="titulo">Recebido. Obrigado.</div>
+        <p>Vou ler suas respostas com calma e retorno com dois ou três horários para a conversa de 30 minutos.</p>
+        <button type="button" class="btn" id="outra">ENVIAR OUTRA RESPOSTA</button>
+      </div>
+
+      <form class="card form" id="form-lead" novalidate>
+        <div class="titulo-form">Pedido de conversa</div>
+
+        <div class="grade-campos">
+          <label class="campo"><span>NOME COMPLETO</span>
+            <input class="input" type="text" name="nome" required autocomplete="name" placeholder="Seu nome"></label>
+          <label class="campo"><span>E-MAIL</span>
+            <input class="input" type="email" name="email" required autocomplete="email" placeholder="voce@email.com"></label>
+          <label class="campo"><span>WHATSAPP</span>
+            <input class="input" type="tel" name="whatsapp" autocomplete="tel" placeholder="(00) 00000-0000"></label>
+          <label class="campo"><span>CIDADE</span>
+            <input class="input" type="text" name="cidade" autocomplete="address-level2" placeholder="Cidade, estado"></label>
+        </div>
+
+        <label class="campo"><span>MOMENTO DE VIDA</span>
+          <select class="input" name="momento">
+            <option>Solteiro, sem dependentes</option>
+            <option>Casal sem filhos</option>
+            <option>Família com filhos</option>
+            <option>Profissional liberal ou autônomo</option>
+            <option>Perto da aposentadoria</option>
+            <option>Outro</option>
+          </select></label>
+
+        <div class="campo" role="group" aria-labelledby="rot-prioridades">
+          <span id="rot-prioridades">O QUE VOCÊ QUER RESOLVER PRIMEIRO</span>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="prioridades" value="Organizar o orçamento"><span>Organizar o orçamento</span></label>
+            <label class="chip"><input type="checkbox" name="prioridades" value="Sair das dívidas"><span>Sair das dívidas</span></label>
+            <label class="chip"><input type="checkbox" name="prioridades" value="Montar reserva"><span>Montar reserva</span></label>
+            <label class="chip"><input type="checkbox" name="prioridades" value="Investir melhor"><span>Investir melhor</span></label>
+            <label class="chip"><input type="checkbox" name="prioridades" value="Planejar aposentadoria"><span>Planejar aposentadoria</span></label>
+            <label class="chip"><input type="checkbox" name="prioridades" value="Proteger a família"><span>Proteger a família</span></label>
+          </div>
+        </div>
+
+        <label class="campo"><span>CONTE EM POUCAS LINHAS ONDE VOCÊ ESTÁ HOJE</span>
+          <textarea class="input" name="mensagem" rows="5" placeholder="Renda, composição da família, dívidas, o que já tem guardado e o objetivo que mais pesa."></textarea></label>
+
+        <label class="consentimento">
+          <input type="checkbox" name="consentimento" required>
+          <span>Autorizo o contato por e-mail e WhatsApp sobre este formulário. Os dados não são compartilhados com terceiros.</span>
+        </label>
+
+        <div class="erro" id="erro" role="alert" hidden></div>
+
+        <button type="submit" class="btn btn-petroleo btn-bloco" id="enviar">ENVIAR PEDIDO</button>
+      </form>
+    </div>
+
+    <aside>
+      <div class="card-escuro">
+        <div class="eyebrow cobre">DEPOIS DO ENVIO</div>
+        <div class="passos">
+          <div>1 · Leio suas respostas.</div>
+          <div>2 · Envio dois horários para conversa.</div>
+          <div>3 · Trinta minutos, online.</div>
+          <div>4 · Você decide se quer seguir.</div>
+        </div>
+      </div>
+      <div class="card" style="padding:28px">
+        <div class="eyebrow" style="letter-spacing:.22em">OUTROS FORMULÁRIOS</div>
+        <div>
+          <div style="border-bottom:1px solid var(--linha-suave); padding:14px 0">
+            <div style="font-size:15px; font-weight:500; color:var(--petroleo)">Perfil de investidor</div>
+            <div class="texto-apoio" style="margin-top:4px; line-height:1.6">Enviado por mim depois da primeira conversa.</div>
+          </div>
+          <div style="border-bottom:1px solid var(--linha-suave); padding:14px 0">
+            <div style="font-size:15px; font-weight:500; color:var(--petroleo)">Mapa de orçamento</div>
+            <div class="texto-apoio" style="margin-top:4px; line-height:1.6">Planilha que preenchemos na etapa de levantamento.</div>
+          </div>
+          <div style="padding:14px 0">
+            <div style="font-size:15px; font-weight:500; color:var(--petroleo)">Revisão semestral</div>
+            <div class="texto-apoio" style="margin-top:4px; line-height:1.6">Só para quem já tem plano em andamento.</div>
+          </div>
+        </div>
+      </div>
+      <div class="texto-apoio">
+        Prefere conversar direto? <a href="#" data-email class="sublinhado">germanovitorhugo@gmail.com</a> ou +55 14 99643-3289.
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<div id="vhg-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/vhg.js?v=5"></script>
+<script>
+(function () {
+  var form = document.getElementById("form-lead");
+  var erro = document.getElementById("erro");
+  var botao = document.getElementById("enviar");
+  var recebido = document.getElementById("recebido");
+
+  function mostrarErro(msg) { erro.textContent = msg; erro.hidden = !msg; }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    mostrarErro("");
+    var f = form.elements;
+    if (!f.nome.value.trim()) return mostrarErro("Informe seu nome.");
+    if (!/\S+@\S+\.\S+/.test(f.email.value)) return mostrarErro("Informe um e-mail válido.");
+    if (!f.consentimento.checked) return mostrarErro("Para enviar, marque a autorização de contato.");
+
+    var c = VHG.sb();
+    if (!c) return mostrarErro("O envio está indisponível no momento. Escreva para " + VHG.config.EMAIL + " ou chame no WhatsApp.");
+
+    botao.disabled = true; botao.textContent = "ENVIANDO…";
+    var prioridades = Array.prototype.slice.call(form.querySelectorAll('input[name="prioridades"]:checked')).map(function (i) { return i.value; });
+    var r = await c.from("leads").insert({
+      nome: f.nome.value.trim(),
+      email: f.email.value.trim(),
+      whatsapp: f.whatsapp.value.trim() || null,
+      cidade: f.cidade.value.trim() || null,
+      momento: f.momento.value,
+      prioridades: prioridades,
+      mensagem: f.mensagem.value.trim() || null,
+      consentimento: true
+    });
+    botao.disabled = false; botao.textContent = "ENVIAR PEDIDO";
+    if (r.error) {
+      console.error(r.error);
+      return mostrarErro("Não foi possível enviar agora. Tente de novo em instantes ou escreva para " + VHG.config.EMAIL + ".");
+    }
+    form.hidden = true;
+    recebido.hidden = false;
+    window.scrollTo(0, 0);
+  });
+
+  document.getElementById("outra").addEventListener("click", function () {
+    form.reset();
+    recebido.hidden = true;
+    form.hidden = false;
+  });
+})();
+</script>
+</body>
+</html>

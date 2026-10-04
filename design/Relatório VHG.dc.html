@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,ital,wght@6..72,0,200;6..72,0,300;6..72,0,400;6..72,1,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="omelette-owns-print" content="1">
+<style>
+  body { margin:0; background:#F2EDE4; }
+  a { color:#123B47; text-decoration:none; }
+  a:hover { color:#C08A4E; }
+  ::selection { background:rgba(192,138,78,.35); }
+  @media print {
+    .no-print { display:none !important; }
+    body { background:#fff; }
+    @page { size:A4; margin:16mm; }
+    @page sangria { margin:0; }
+    .capa, .encerramento { page:sangria; min-height:0 !important; height:296mm; padding:26mm 22mm !important; }
+    .encerramento { break-before:page; }
+    .secao { break-before:page; padding:0 !important; }
+    .bloco { break-inside:avoid; }
+  }
+</style>
+</helmet>
+
+<div style="font-family:'Archivo',sans-serif; color:#0B2530; background:#F2EDE4">
+
+  <button type="button" class="no-print" onClick="{{ imprimir }}" style="position:fixed; top:20px; right:20px; z-index:99; background:#123B47; color:#F2EDE4; border:none; padding:14px 22px; font-size:11px; font-weight:600; letter-spacing:.16em; cursor:pointer; min-height:44px">BAIXAR PDF</button>
+
+  <section class="capa" data-screen-label="01 Capa" style="background:#123B47; color:#F2EDE4; min-height:92vh; box-sizing:border-box; padding:clamp(40px,7vw,80px) clamp(24px,5vw,72px); display:flex; flex-direction:column; justify-content:space-between; gap:60px">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap">
+      <div style="display:flex; align-items:baseline; gap:12px">
+        <span style="font-family:'Newsreader',serif; font-weight:200; font-size:28px; letter-spacing:.08em; padding-left:.08em">VHG</span>
+        <span style="font-size:9px; font-weight:500; letter-spacing:.22em; color:rgba(242,237,228,.7)">PLANEJAMENTO FINANCEIRO</span>
+      </div>
+      <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#C08A4E">DIAGNÓSTICO FINANCEIRO</div>
+    </div>
+    <div style="max-width:640px">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:26px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.26em; color:#C08A4E">RELATÓRIO PERSONALIZADO</div>
+      </div>
+      <div style="font-family:'Newsreader',serif; font-weight:200; font-size:clamp(36px,7vw,58px); line-height:1.1; letter-spacing:-.01em">Mariana Castilho</div>
+      <div style="margin-top:22px; font-size:15px; color:rgba(242,237,228,.7)">19 de setembro de 2026</div>
+    </div>
+    <div style="font-size:12px; line-height:1.7; color:rgba(242,237,228,.55)">Documento educacional e orientativo · Vitor Hugo Germano · Planejamento Financeiro</div>
+  </section>
+
+  <section class="secao" data-screen-label="02 Abertura" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px)">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">ANTES DE COMEÇAR</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">02 · 13</div>
+      </div>
+      <h2 style="margin:0 0 30px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Bem-vinda ao seu diagnóstico, Mariana.</h2>
+      <div style="font-size:16px; line-height:1.8; color:#48534F; max-width:640px; text-wrap:pretty">
+        <p style="margin:0 0 18px">Este relatório traduz tudo o que você compartilhou em um retrato claro e honesto da sua vida financeira hoje, sem jargão e sem julgamento.</p>
+        <p style="margin:0 0 18px">Nas próximas páginas você encontra: o score geral e o nível de maturidade financeira, o perfil comportamental, os números centrais da sua situação, o desempenho em cada uma das seis dimensões avaliadas, a projeção do patrimônio até a aposentadoria — quanto precisa ter, quanto precisa guardar por mês e o que o ritmo atual entrega — e um plano de ação com uma lista prática para os próximos 30 dias.</p>
+        <p style="margin:0">É um retrato do momento, não uma sentença. Toda situação financeira evolui com clareza e direção certas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="03 Score" style="padding:clamp(44px,6vw,64px) clamp(20px,5vw,32px); border-top:1px solid #E6DFD2">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">ONDE VOCÊ ESTÁ</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">03 · 13</div>
+      </div>
+      <h2 style="margin:0 0 30px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Score geral e nível de maturidade</h2>
+
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(26px,4vw,38px); display:flex; align-items:center; gap:clamp(24px,4vw,40px); flex-wrap:wrap">
+        <div style="position:relative; width:158px; height:158px; flex:0 0 auto">
+          <svg width="158" height="158" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="68" fill="none" stroke="#E6DFD2" stroke-width="12"></circle>
+            <circle cx="80" cy="80" r="68" fill="none" stroke="#C08A4E" stroke-width="12" stroke-dasharray="284 427" transform="rotate(-90 80 80)"></circle>
+          </svg>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:46px; line-height:1; color:#123B47; font-feature-settings:'tnum'">66</div>
+            <div style="font-size:9px; font-weight:500; letter-spacing:.14em; color:#8A8175; margin-top:5px">DE 100</div>
+          </div>
+        </div>
+        <div style="flex:1 1 280px; min-width:250px">
+          <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; margin-bottom:10px">NÍVEL 3 · ORGANIZADA</div>
+          <div style="font-size:15px; line-height:1.7; color:#48534F; text-wrap:pretty">As contas fecham e há patrimônio formado, mas o dinheiro ainda anda sem destino definido. O próximo degrau é transformar a sobra em aporte programado e fechar as duas lacunas de proteção.</div>
+          <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:22px">
+            <sc-for list="{{ niveis }}" as="n" hint-placeholder-count="5">
+              <div>
+                <div style="height:5px; background:{{ n.cor }}; margin-bottom:8px"></div>
+                <div style="font-size:9.5px; line-height:1.3; text-align:center; color:{{ n.corTexto }}">{{ n.nome }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px; margin:36px 0 14px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175">CONTEXTO</div>
+      </div>
+      <h3 style="margin:0 0 16px; font-family:'Newsreader',serif; font-weight:300; font-size:22px">Resumo do perfil</h3>
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(24px,4vw,32px)">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:20px 24px">
+          <div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.14em; color:#9A9184; margin-bottom:6px">IDADE</div>
+            <div style="font-size:16px; font-weight:600; color:#123B47">41 anos</div>
+          </div>
+          <div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.14em; color:#9A9184; margin-bottom:6px">ESTADO CIVIL</div>
+            <div style="font-size:16px; font-weight:600; color:#123B47">Casada</div>
+          </div>
+          <div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.14em; color:#9A9184; margin-bottom:6px">FILHOS / DEPENDENTES</div>
+            <div style="font-size:16px; font-weight:600; color:#123B47">2</div>
+          </div>
+          <div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.14em; color:#9A9184; margin-bottom:6px">OCUPAÇÃO</div>
+            <div style="font-size:16px; font-weight:600; color:#123B47">Saúde</div>
+          </div>
+        </div>
+        <div style="height:1px; background:#E6DFD2; margin:24px 0"></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px 24px">
+          <div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.14em; color:#9A9184; margin-bottom:6px">RENDA TOTAL MENSAL</div>
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:26px; color:#123B47; font-feature-settings:'tnum'">R$ 24.700,00</div>
+          </div>
+          <div>
+            <div style="font-size:10px; font-weight:500; letter-spacing:.14em; color:#9A9184; margin-bottom:6px">PATRIMÔNIO TOTAL</div>
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:26px; color:#123B47; font-feature-settings:'tnum'">R$ 1.284.000,00</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px; margin:36px 0 14px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175">PERCEPÇÃO X REALIDADE</div>
+      </div>
+      <h3 style="margin:0 0 16px; font-family:'Newsreader',serif; font-weight:300; font-size:22px">Onde a sensação diverge dos números</h3>
+      <div class="bloco" style="background:#FBF9F5; border-left:2px solid #C08A4E; border-top:1px solid #E6DFD2; border-right:1px solid #E6DFD2; border-bottom:1px solid #E6DFD2; padding:20px 24px">
+        <div style="font-size:14px; line-height:1.7; color:#48534F; margin-bottom:10px">Você marcou que sobra dinheiro no fim do mês, e sobra: R$ 5.660,00. Mas R$ 1.950,00 disso já estão comprometidos com parcelas de dívida.</div>
+        <div style="font-size:14px; line-height:1.7; color:#48534F">Você se declarou de perfil moderado, e 71% dos investimentos estão em renda fixa — uma carteira conservadora com um rótulo moderado.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="04 Arquétipo" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px)">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">ANÁLISE COMPORTAMENTAL</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">04 · 13</div>
+      </div>
+      <h2 style="margin:0 0 30px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Seu arquétipo financeiro</h2>
+
+      <div class="bloco" style="background:#123B47; color:#F2EDE4; padding:clamp(28px,4vw,38px)">
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#C08A4E; margin-bottom:16px">SEU ARQUÉTIPO</div>
+        <div style="font-family:'Newsreader',serif; font-weight:300; font-style:italic; font-size:clamp(26px,4vw,32px); margin-bottom:18px">A Provedora no Piloto Automático</div>
+        <div style="font-family:'Newsreader',serif; font-weight:300; font-size:20px; line-height:1.6; color:#C08A4E; max-width:620px; margin-bottom:26px; text-wrap:pretty">“Você ganha bem, decide rápido e confia que dá conta. O que falta não é disciplina: é ver o número antes que ele apareça no extrato.”</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-bottom:16px">
+          <div style="background:rgba(242,237,228,.07); padding:20px 22px">
+            <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#C08A4E; margin-bottom:10px">PADRÃO IDENTIFICADO</div>
+            <div style="font-size:14.5px; line-height:1.7; color:rgba(242,237,228,.88)">Renda alta, controle baixo. O orçamento existe na cabeça, não no papel, e a sobra é descoberta depois do fato.</div>
+          </div>
+          <div style="background:rgba(242,237,228,.07); padding:20px 22px">
+            <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#C08A4E; margin-bottom:10px">POR QUE ESTE É O SEU PADRÃO</div>
+            <div style="font-size:14.5px; line-height:1.7; color:rgba(242,237,228,.88)">Você guarda todo mês, mas o aporte é o que restou, não um valor decidido. Por isso oscila entre R$ 800 e R$ 4.000.</div>
+          </div>
+        </div>
+        <div style="background:rgba(192,138,78,.18); padding:20px 24px">
+          <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#C08A4E; margin-bottom:8px">PRIORIDADE IMEDIATA</div>
+          <div style="font-size:16px; line-height:1.6; font-weight:500">Fixar o aporte mensal em R$ 3.400 com débito automático no dia do salário.</div>
+        </div>
+        <div style="border-top:1px solid rgba(242,237,228,.18); margin-top:26px; padding-top:24px">
+          <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#C08A4E; margin-bottom:14px">NA SUA FALA</div>
+          <div style="font-family:'Newsreader',serif; font-style:italic; font-weight:300; font-size:16px; line-height:1.65; color:rgba(242,237,228,.85); margin-bottom:10px">“Ganhamos bem, mas nunca sei quanto realmente sobra.”</div>
+          <div style="font-family:'Newsreader',serif; font-style:italic; font-weight:300; font-size:16px; line-height:1.65; color:rgba(242,237,228,.85)">“O empréstimo do carro. Pago há dois anos e parece que não anda.”</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="05 KPIs" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px); border-top:1px solid #E6DFD2">
+    <div style="max-width:900px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">OS NÚMEROS POR TRÁS</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">05 · 13</div>
+      </div>
+      <h2 style="margin:0 0 30px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Indicadores financeiros</h2>
+
+      <sc-for list="{{ grupos }}" as="g" hint-placeholder-count="3">
+        <div class="bloco" style="margin-bottom:28px">
+          <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; padding-bottom:10px; margin-bottom:16px; border-bottom:1px solid #E6DFD2">{{ g.titulo }}</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; align-items:stretch">
+            <div style="background:#123B47; color:#F2EDE4; padding:26px; display:flex; flex-direction:column; justify-content:center">
+              <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#C08A4E; margin-bottom:12px">{{ g.destaque.rotulo }}</div>
+              <div style="font-family:'Newsreader',serif; font-weight:300; font-size:30px; line-height:1.15; font-feature-settings:'tnum'">{{ g.destaque.valor }}</div>
+              <div style="font-size:12px; color:rgba(242,237,228,.62); margin-top:10px">{{ g.destaque.sub }}</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:12px; align-content:start">
+              <sc-for list="{{ g.itens }}" as="k" hint-placeholder-count="4">
+                <div style="background:#FBF9F5; border:1px solid #E6DFD2; padding:16px 18px">
+                  <div style="font-size:9.5px; font-weight:500; letter-spacing:.16em; color:#8A8175; margin-bottom:8px">{{ k.rotulo }}</div>
+                  <div style="font-family:'Newsreader',serif; font-weight:300; font-size:20px; color:#123B47; font-feature-settings:'tnum'">{{ k.valor }}</div>
+                  <div style="font-size:11.5px; color:#9A9184; margin-top:5px; line-height:1.45">{{ k.sub }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="06 Despesas" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px); border-top:1px solid #E6DFD2">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">PARA ONDE VAI O DINHEIRO</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">06 · 13</div>
+      </div>
+      <h2 style="margin:0 0 18px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Distribuição de despesas</h2>
+      <p style="margin:0 0 22px; font-size:14px; line-height:1.7; color:#48534F; max-width:580px; text-wrap:pretty">Como os R$ 19.040,00 que saem por mês se repartem entre as categorias. Aqui os percentuais são sobre a despesa; na régua abaixo, sobre a renda.</p>
+
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(22px,3vw,30px); display:flex; gap:clamp(22px,4vw,32px); align-items:center; flex-wrap:wrap">
+        <div style="position:relative; width:176px; height:176px; flex-shrink:0; margin:0 auto">
+          <svg width="176" height="176" viewBox="0 0 160 160" role="img" aria-label="Distribuição das despesas por categoria">
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#E6DFD2" stroke-width="22"></circle>
+            <g transform="rotate(-90 80 80)">
+              <sc-for list="{{ fatias }}" as="f" hint-placeholder-count="8">
+                <circle cx="80" cy="80" r="60" fill="none" stroke="{{ f.cor }}" stroke-width="22" stroke-dasharray="{{ f.dash }}" stroke-dashoffset="{{ f.offset }}"></circle>
+              </sc-for>
+            </g>
+          </svg>
+          <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none">
+            <div style="font-size:9.5px; font-weight:500; letter-spacing:.14em; color:#8A8175">TOTAL</div>
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:17px; color:#123B47; font-feature-settings:'tnum'; white-space:nowrap">R$ 19.040</div>
+          </div>
+        </div>
+        <div style="flex:1 1 280px; min-width:240px; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:4px 20px">
+          <sc-for list="{{ fatias }}" as="f" hint-placeholder-count="8">
+            <div style="display:flex; align-items:center; gap:8px; padding:5px 0">
+              <div style="width:9px; height:9px; background:{{ f.cor }}; flex-shrink:0"></div>
+              <div style="font-size:12.5px; color:#48534F; flex:1; min-width:0">{{ f.nome }}</div>
+              <div style="font-size:12.5px; font-weight:600; color:#123B47; font-feature-settings:'tnum'">{{ f.pct }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; margin:34px 0 12px">REFERÊNCIA</div>
+      <h3 style="margin:0 0 12px; font-family:'Newsreader',serif; font-weight:300; font-size:20px">O que seria uma distribuição equilibrada</h3>
+      <p style="margin:0 0 18px; font-size:13.5px; line-height:1.75; color:#48534F; max-width:620px; text-wrap:pretty">Uma referência comum de planejamento sugere até 50% da renda em despesas essenciais, até 30% em flexíveis e pelo menos 20% direcionado a investimentos e reserva — a lógica do “50/30/20”. É um ponto de partida, não uma regra: serve para mostrar onde vale ajustar primeiro.</p>
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:24px clamp(20px,3vw,28px)">
+        <sc-for list="{{ faixas }}" as="x" hint-placeholder-count="3">
+          <div style="margin-bottom:20px">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:7px">
+              <div style="font-size:14px; font-weight:600; color:#123B47">{{ x.nome }}</div>
+              <div style="font-size:13px; font-weight:600; color:{{ x.cor }}; font-feature-settings:'tnum'">{{ x.pct }} <span style="color:#9A9184; font-weight:400">{{ x.ideal }}</span></div>
+            </div>
+            <div style="position:relative; height:8px; background:#E6DFD2">
+              <div style="width:{{ x.largura }}; height:100%; background:{{ x.cor }}"></div>
+              <div style="position:absolute; top:-3px; left:{{ x.marca }}; width:2px; height:14px; background:#123B47"></div>
+            </div>
+            <div style="font-size:12px; color:#8A8175; line-height:1.55; margin-top:7px">{{ x.texto }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="07 Dimensões" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px)">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">DIMENSÃO POR DIMENSÃO</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">07 · 13</div>
+      </div>
+      <h2 style="margin:0 0 20px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Score por dimensão</h2>
+      <div style="display:flex; gap:22px; flex-wrap:wrap; margin-bottom:26px">
+        <sc-for list="{{ legenda }}" as="l" hint-placeholder-count="4">
+          <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#8A8175">
+            <div style="width:10px; height:10px; background:{{ l.cor }}"></div>{{ l.nome }}
+          </div>
+        </sc-for>
+      </div>
+      <sc-for list="{{ dimensoes }}" as="d" hint-placeholder-count="6">
+        <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:20px clamp(20px,3vw,26px); margin-bottom:12px">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap">
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:19px; color:#123B47">{{ d.nome }}</div>
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:19px; color:#123B47; font-feature-settings:'tnum'">{{ d.score }}<span style="font-size:13px; color:#9A9184"> / 100</span></div>
+          </div>
+          <div style="height:7px; background:#E6DFD2; margin-bottom:12px">
+            <div style="width:{{ d.largura }}; height:100%; background:{{ d.cor }}"></div>
+          </div>
+          <div style="font-size:13.5px; color:#48534F; line-height:1.65; text-wrap:pretty">{{ d.texto }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="08 Projeção" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px); border-top:1px solid #E6DFD2">
+    <div style="max-width:900px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">PRA ONDE ISSO LEVA</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">08 · 13</div>
+      </div>
+      <h2 style="margin:0 0 14px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Projeção da aposentadoria aos 60</h2>
+      <p style="margin:0 0 24px; font-size:14.5px; line-height:1.7; color:#48534F; max-width:660px; text-wrap:pretty">Você tem 19 anos de acumulação pela frente e quer uma renda de R$ 14.000 por mês sem consumir o patrimônio.</p>
+
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:24px 28px; margin-bottom:16px">
+        <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">ESTRATÉGIA ESCOLHIDA · VIVER DO RENDIMENTO</div>
+        <div style="font-size:14.5px; line-height:1.7; color:#48534F; text-wrap:pretty">O patrimônio permanece intacto e você vive do que ele rende. Exige um capital maior na largada, e em troca a renda não tem prazo de validade e o patrimônio passa adiante.</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-bottom:24px">
+        <sc-for list="{{ cardsApo }}" as="c" hint-placeholder-count="4">
+          <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:18px 20px">
+            <div style="font-size:9.5px; font-weight:500; letter-spacing:.16em; color:#8A8175; margin-bottom:9px">{{ c.rotulo }}</div>
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:21px; color:#123B47; font-feature-settings:'tnum'">{{ c.valor }}</div>
+            <div style="font-size:11.5px; color:#9A9184; margin-top:6px; line-height:1.5">{{ c.sub }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px; margin:0 0 14px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175">A CURVA</div>
+      </div>
+      <h3 style="margin:0 0 16px; font-family:'Newsreader',serif; font-weight:300; font-size:22px">Como o patrimônio evolui até lá</h3>
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:26px 24px 20px">
+        <svg viewBox="0 0 720 300" style="width:100%; height:auto; display:block" role="img" aria-label="Projeção do patrimônio: plano necessário alcança a meta aos 60 anos, o ritmo atual fica abaixo.">
+          <line x1="60" y1="250" x2="700" y2="250" stroke="#DCD4C6" stroke-width="1"></line>
+          <line x1="60" y1="20" x2="60" y2="250" stroke="#DCD4C6" stroke-width="1"></line>
+          <line x1="60" y1="190" x2="700" y2="190" stroke="#EDE7DC" stroke-width="1"></line>
+          <line x1="60" y1="130" x2="700" y2="130" stroke="#EDE7DC" stroke-width="1"></line>
+          <line x1="60" y1="70" x2="700" y2="70" stroke="#EDE7DC" stroke-width="1"></line>
+          <line x1="60" y1="52" x2="700" y2="52" stroke="#C08A4E" stroke-width="2" stroke-dasharray="7 6"></line>
+          <path d="M60 232 C 240 212, 400 168, 520 118 S 660 66, 700 52" fill="none" stroke="#123B47" stroke-width="2.5"></path>
+          <path d="M60 232 C 240 220, 400 198, 520 170 S 660 136, 700 122" fill="none" stroke="#9AAFA9" stroke-width="2.5"></path>
+          <circle cx="700" cy="52" r="4" fill="#C08A4E"></circle>
+          <circle cx="700" cy="122" r="4" fill="#9AAFA9"></circle>
+          <text x="52" y="56" text-anchor="end" font-family="Archivo, sans-serif" font-size="11" fill="#8A8175">4,2 mi</text>
+          <text x="52" y="134" text-anchor="end" font-family="Archivo, sans-serif" font-size="11" fill="#8A8175">2,1 mi</text>
+          <text x="52" y="254" text-anchor="end" font-family="Archivo, sans-serif" font-size="11" fill="#8A8175">0</text>
+          <text x="60" y="272" font-family="Archivo, sans-serif" font-size="11" fill="#8A8175">41 anos</text>
+          <text x="380" y="272" text-anchor="middle" font-family="Archivo, sans-serif" font-size="11" fill="#8A8175">50 anos</text>
+          <text x="700" y="272" text-anchor="end" font-family="Archivo, sans-serif" font-size="11" fill="#8A8175">60 anos</text>
+        </svg>
+        <div style="display:flex; gap:24px; margin-top:16px; flex-wrap:wrap; padding-left:8px">
+          <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#48534F"><div style="width:22px; height:3px; background:#123B47"></div>Plano necessário</div>
+          <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#48534F"><div style="width:22px; height:3px; background:#9AAFA9"></div>Ritmo atual</div>
+          <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#48534F"><div style="width:22px; height:0; border-top:2px dashed #C08A4E"></div>Patrimônio necessário</div>
+        </div>
+        <div style="font-size:12.5px; color:#8A8175; margin-top:18px; line-height:1.65; border-top:1px solid #E6DFD2; padding-top:14px">Premissas: retorno real de 4% ao ano na fase de acumulação, 3,5% na fase de renda, inflação já descontada. Projeção, não promessa de rentabilidade.</div>
+      </div>
+
+      <div class="bloco" style="margin-top:16px; background:#FBF9F5; border:1px solid #DCD4C6; border-left:2px solid #C08A4E; padding:22px 26px">
+        <div style="font-size:10px; font-weight:500; letter-spacing:.2em; color:#8A8175; margin-bottom:10px">PRECISA DE AJUSTE</div>
+        <div style="font-size:15px; line-height:1.75; color:#0B2530; text-wrap:pretty">No ritmo atual você chega aos 60 com cerca de R$ 2,9 milhões, contra os R$ 4,2 milhões necessários para a renda que você quer. A diferença some com um aporte de R$ 3.400 por mês no lugar dos R$ 2.000 de hoje — valor que já cabe na sua sobra assim que o empréstimo do carro for quitado.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="09 Plano de ação" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px); border-top:1px solid #E6DFD2">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">O QUE FAZER</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">09 · 13</div>
+      </div>
+      <h2 style="margin:0 0 28px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Plano de ação individualizado</h2>
+
+      <sc-for list="{{ plano }}" as="p" hint-placeholder-count="4">
+        <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:24px clamp(20px,3vw,28px); margin-bottom:14px">
+          <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px">
+            <div style="font-family:'Newsreader',serif; font-style:italic; font-weight:300; font-size:24px; color:#C08A4E">{{ p.n }}</div>
+            <div style="font-family:'Newsreader',serif; font-weight:300; font-size:20px; color:#123B47">{{ p.dim }}</div>
+          </div>
+          <div style="font-size:15px; line-height:1.75; color:#48534F; margin-bottom:16px; text-wrap:pretty">{{ p.texto }}</div>
+          <div style="background:#F2EDE4; border-left:2px solid #C08A4E; padding:15px 20px; font-size:14px; line-height:1.65; color:#0B2530">
+            <span style="font-weight:600">Ação prática: </span>{{ p.acao }}
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="margin-top:36px">
+        <h3 style="margin:0 0 16px; font-family:'Newsreader',serif; font-weight:300; font-size:20px; color:#123B47">Pontos fortes a manter</h3>
+        <sc-for list="{{ fortes }}" as="f" hint-placeholder-count="3">
+          <div style="display:flex; gap:12px; margin-bottom:12px; align-items:baseline">
+            <div style="font-family:'Newsreader',serif; font-style:italic; color:#C08A4E; flex-shrink:0">—</div>
+            <div style="font-size:14.5px; line-height:1.65; color:#48534F"><span style="font-weight:600; color:#123B47">{{ f.dim }}: </span>{{ f.texto }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="10 Checklist" style="padding:clamp(44px,6vw,64px) clamp(20px,5vw,32px)">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">COMECE POR AQUI</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">10 · 13</div>
+      </div>
+      <h2 style="margin:0 0 28px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Checklist dos próximos 30 dias</h2>
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:10px clamp(20px,3vw,32px)">
+        <sc-for list="{{ checklist }}" as="c" hint-placeholder-count="6">
+          <div style="display:flex; align-items:flex-start; gap:16px; padding:19px 0; border-bottom:1px solid #EDE7DC">
+            <div style="width:20px; height:20px; border:1px solid #C08A4E; flex-shrink:0; margin-top:2px"></div>
+            <div style="font-size:15px; line-height:1.6; color:#48534F">{{ c.texto }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="11 Glossário" style="padding:clamp(48px,7vw,80px) clamp(20px,5vw,32px); border-top:1px solid #E6DFD2">
+    <div style="max-width:900px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">PARA CONSULTAR SEMPRE QUE PRECISAR</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">11 · 13</div>
+      </div>
+      <h2 style="margin:0 0 28px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Glossário</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:24px 32px">
+        <sc-for list="{{ glossario }}" as="g" hint-placeholder-count="6">
+          <div class="bloco">
+            <div style="font-size:10px; font-weight:500; letter-spacing:.18em; color:#8A8175; margin-bottom:8px">{{ g.termo }}</div>
+            <div style="font-size:14px; line-height:1.7; color:#48534F; text-wrap:pretty">{{ g.def }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" data-screen-label="12 Próximo passo" style="padding:clamp(44px,6vw,64px) clamp(20px,5vw,32px); border-top:1px solid #E6DFD2">
+    <div style="max-width:780px; margin:0 auto">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+        <div style="width:48px; height:1px; background:#C08A4E; flex-shrink:0"></div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.24em; color:#8A8175; flex:1">RECOMENDAÇÃO</div>
+        <div style="font-size:10px; font-weight:500; letter-spacing:.1em; color:#B3AB9C; font-feature-settings:'tnum'">12 · 13</div>
+      </div>
+      <h2 style="margin:0 0 26px; font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); line-height:1.18; letter-spacing:-.01em">Seu próximo passo</h2>
+      <div class="bloco" style="background:#FBF9F5; border:1px solid #E6DFD2; padding:clamp(28px,5vw,44px)">
+        <div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; margin-bottom:14px">PLANO RECOMENDADO</div>
+        <div style="font-family:'Newsreader',serif; font-weight:300; font-size:clamp(26px,4vw,34px); color:#123B47; margin-bottom:20px">Acompanhamento de 6 meses</div>
+        <p style="margin:0 0 30px; font-size:15.5px; line-height:1.8; color:#48534F; max-width:560px; text-wrap:pretty">Sua estrutura já está de pé: o que falta é disciplina de execução em três frentes que dependem umas das outras — quitar o empréstimo, fixar o aporte e recompor a proteção. Seis meses é o prazo em que dá para acompanhar as três até virarem rotina.</p>
+        <a href="mailto:germanovitorhugo@gmail.com" style="display:inline-block; background:#123B47; color:#F2EDE4; padding:17px 30px; font-size:12px; font-weight:600; letter-spacing:.16em" style-hover="background:#0B2530">AGENDAR CONVERSA COM O VITOR</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="encerramento" data-screen-label="13 Encerramento" style="background:#123B47; color:#F2EDE4; padding:clamp(56px,8vw,96px) clamp(24px,5vw,40px)">
+    <div style="max-width:700px; margin:0 auto; text-align:center">
+      <div style="font-family:'Newsreader',serif; font-weight:300; font-style:italic; font-size:24px; color:#C08A4E; margin-bottom:20px">Obrigado pela confiança, Mariana.</div>
+      <p style="margin:0 0 32px; font-size:15.5px; line-height:1.8; color:rgba(242,237,228,.82); text-wrap:pretty">Espero que este diagnóstico tenha trazido clareza. Fico à disposição para conversar sobre os próximos passos.</p>
+      <div style="font-size:14px; color:rgba(242,237,228,.68); margin-bottom:28px">Vitor Hugo Germano · <a href="mailto:germanovitorhugo@gmail.com" style="color:#C08A4E">germanovitorhugo@gmail.com</a> · <a href="#" style="color:#C08A4E">Política de Privacidade</a></div>
+      <div style="height:1px; background:rgba(242,237,228,.22); max-width:400px; margin:0 auto 24px"></div>
+      <div style="font-size:11.5px; line-height:1.75; color:rgba(242,237,228,.6); max-width:560px; margin:0 auto">Este diagnóstico é educacional e orientativo. Não substitui uma consultoria financeira individualizada completa. Projeções e cenários apresentados são baseados em premissas assumidas e não constituem garantia ou promessa de retorno.</div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NIVEIS = ["Início", "Consciência", "Organizada", "Consolidação", "Liberdade"];
+
+const FATIAS = [
+  ["Moradia", 22.6, "#123B47"], ["Educação", 16.8, "#1C5266"], ["Alimentação", 13.7, "#2A6C81"],
+  ["Investimentos", 10.5, "#3E8A96"], ["Saúde", 7.8, "#6E9AA4"], ["Impostos", 7.6, "#C08A4E"],
+  ["Transporte", 5.6, "#D0A068"], ["Lazer", 5.8, "#DCB585"], ["Outros", 9.6, "#E2C9A6"]
+];
+
+const GRUPOS = [
+  { titulo: "FLUXO DE CAIXA", destaque: { rotulo: "SOBRA MENSAL", valor: "R$ 5.660,00", sub: "22,9% da renda" },
+    itens: [["TAXA DE POUPANÇA", "8,1%", "aporte / renda"], ["COMPROMETIMENTO COM DÍVIDA", "7,9%", "parcelas / renda"], ["DESPESA MÉDIA", "R$ 19.040", "por mês"], ["CUSTO DE VIDA ANUAL", "R$ 228.480", "projetado"]] },
+  { titulo: "LIQUIDEZ E PROTEÇÃO", destaque: { rotulo: "RESERVA DE EMERGÊNCIA", valor: "2,0 meses", sub: "R$ 38.000 de R$ 114.240 ideais" },
+    itens: [["COBERTURA DE SEGURO", "1,2 ano", "de renda familiar"], ["LIQUIDEZ IMEDIATA", "R$ 50.000", "reserva + poupança"], ["DEPENDENTES", "2", "filhos"], ["META DE RESERVA", "6 meses", "R$ 114.240"]] },
+  { titulo: "PATRIMÔNIO", destaque: { rotulo: "PATRIMÔNIO LÍQUIDO", valor: "R$ 962.400,00", sub: "descontadas dívidas e financiamento" },
+    itens: [["INVESTIDO", "R$ 338.000", "26,3% do total"], ["IMOBILIZADO", "R$ 780.000", "60,7% do total"], ["ENDIVIDAMENTO", "25,0%", "dívidas / patrimônio"], ["RENDA FIXA", "71%", "da carteira"]] }
+];
+
+const FAIXAS = [
+  ["Despesas essenciais", 52.4, 50, "ate", false, "Moradia, alimentação, saúde, transporte, educação e impostos."],
+  ["Despesas flexíveis", 9.4, 30, "ate", true, "Lazer, vestuário, presentes e serviços diversos."],
+  ["Investimentos e reserva", 8.1, 20, "min", false, "Aportes mensais e o que entra na reserva."]
+];
+
+const DIMENSOES = [
+  ["Fluxo de caixa", 78, "As contas fecham com folga real de R$ 5.660 por mês. O que falta é destino: hoje a sobra não tem endereço definido."],
+  ["Liquidez", 42, "Dois meses de reserva para uma família de quatro pessoas com renda de profissional liberal. O mínimo confortável no seu caso são seis."],
+  ["Endividamento", 61, "O empréstimo pessoal responde por 86% da dívida e consome R$ 1.950 por mês. Não é crítico, mas é caro."],
+  ["Gestão de risco", 48, "O capital segurado cobre pouco mais de um ano de renda familiar, e a apólice não é revista há mais de dois anos."],
+  ["Patrimônio", 74, "Patrimônio sólido para a idade, porém concentrado: 61% em um único imóvel e 71% da carteira em renda fixa."],
+  ["Metas", 66, "As metas existem e têm valor, mas nenhuma tem aporte mensal correspondente reservado."]
+];
+
+const PLANO = [
+  ["01", "Liquidez", "Sua reserva cobre dois meses. Em uma família com dois filhos e renda parcialmente variável, o piso é seis meses de despesa — R$ 114.240 no seu caso.", "Direcione R$ 3.200 por mês para um CDB de liquidez diária até chegar a R$ 114.240, em cerca de 24 meses."],
+  ["02", "Gestão de risco", "O seguro de vida cobre R$ 300.000, pouco mais de um ano de renda familiar, com dois filhos ainda em formação.", "Cote a elevação do capital para R$ 1.200.000 e inclua cobertura de invalidez. O custo estimado fica abaixo de R$ 190 por mês."],
+  ["03", "Endividamento", "O empréstimo pessoal de R$ 46.200 sai por R$ 1.950 mensais e é a sua dívida mais cara.", "Use R$ 20.000 dos R$ 148.000 em renda fixa privada para uma amortização. O prazo cai pela metade e libera aporte."],
+  ["04", "Metas", "A projeção da aposentadoria pede R$ 3.400 por mês e você aporta R$ 2.000, sem regularidade.", "Programe débito automático de R$ 3.400 no dia seguinte ao salário, assim que o empréstimo for quitado."]
+];
+
+const FORTES = [
+  ["Fluxo de caixa", "sobra real todo mês, sem depender de renda extra."],
+  ["Patrimônio", "R$ 962.400 líquidos aos 41 anos, acima da referência para a faixa de renda."],
+  ["Metas", "objetivos declarados com valor e prazo, o que já permite calcular o aporte."]
+];
+
+const CHECKLIST = [
+  "Levantar a taxa de juros exata do empréstimo pessoal no extrato do banco.",
+  "Abrir um CDB de liquidez diária separado, exclusivo para a reserva.",
+  "Pedir três cotações de seguro de vida com capital de R$ 1.200.000.",
+  "Programar o débito automático do aporte para o dia seguinte ao salário.",
+  "Listar as despesas dos últimos três meses por categoria e comparar com o que você informou.",
+  "Marcar a conversa de devolutiva para revisar o plano junto."
+];
+
+const GLOSSARIO = [
+  ["RESERVA DE EMERGÊNCIA", "Dinheiro guardado em aplicação de resgate imediato para cobrir imprevistos sem recorrer a crédito. A referência é de três a seis meses de despesa."],
+  ["PATRIMÔNIO LÍQUIDO", "Tudo o que você tem menos tudo o que deve. É o número que mede sua posição real, não o valor dos bens."],
+  ["TAXA DE POUPANÇA", "Quanto da renda vira investimento a cada mês, em percentual. É o indicador que mais influencia o resultado de longo prazo."],
+  ["RETORNO REAL", "Rentabilidade já descontada a inflação. É o que efetivamente aumenta seu poder de compra."],
+  ["CAPITAL SEGURADO", "Valor que o seguro de vida paga aos beneficiários. A referência comum é de cinco a dez anos de renda familiar."],
+  ["COMPROMETIMENTO DE RENDA", "Percentual da renda mensal que já está prometido a parcelas de dívida. Acima de 30% o orçamento perde flexibilidade."]
+];
+
+class Component extends DCLogic {
+  renderVals() {
+    const C = 2 * Math.PI * 60;
+    let acc = 0;
+    const fatias = FATIAS.map(f => {
+      const comp = (f[1] / 100) * C;
+      const traco = Math.max(comp - 2, 1);
+      const o = { nome: f[0], cor: f[2], pct: f[1].toFixed(1).replace(".", ",") + "%",
+        dash: traco.toFixed(2) + " " + (C - traco).toFixed(2), offset: (-acc).toFixed(2) };
+      acc += comp;
+      return o;
+    });
+    return {
+      imprimir: () => window.print(),
+      niveis: NIVEIS.map((n, i) => ({
+        nome: n,
+        cor: i + 1 === 3 ? "#C08A4E" : (i + 1 < 3 ? "#D9BE9B" : "#E6DFD2"),
+        corTexto: i + 1 === 3 ? "#123B47" : "#9A9184"
+      })),
+      grupos: GRUPOS.map(g => ({
+        titulo: g.titulo,
+        destaque: { rotulo: g.destaque.rotulo, valor: g.destaque.valor, sub: g.destaque.sub },
+        itens: g.itens.map(k => ({ rotulo: k[0], valor: k[1], sub: k[2] }))
+      })),
+      fatias,
+      faixas: FAIXAS.map(f => ({
+        nome: f[0],
+        pct: f[1].toFixed(1).replace(".", ",") + "%",
+        ideal: f[3] === "ate" ? "(ideal até " + f[2] + "%)" : "(ideal no mínimo " + f[2] + "%)",
+        cor: f[4] ? "#123B47" : "#C08A4E",
+        largura: Math.min(100, f[1]) + "%",
+        marca: f[2] + "%",
+        texto: f[5] + " " + (f[4] ? "Dentro da faixa geralmente considerada saudável." : "Fora da faixa geralmente considerada saudável — é por aqui que o ajuste começa.")
+      })),
+      legenda: [["Crítico", "#A2503F"], ["Insuficiente", "#C08A4E"], ["Adequado", "#4E7F7A"], ["Excelente", "#123B47"]].map(l => ({ nome: l[0], cor: l[1] })),
+      dimensoes: DIMENSOES.map(d => ({
+        nome: d[0], score: String(d[1]), texto: d[2], largura: d[1] + "%",
+        cor: d[1] >= 75 ? "#123B47" : d[1] >= 60 ? "#4E7F7A" : d[1] >= 45 ? "#C08A4E" : "#A2503F"
+      })),
+      cardsApo: [
+        { rotulo: "PATRIMÔNIO NECESSÁRIO", valor: "R$ 4.200.000", sub: "para render R$ 14.000 por mês" },
+        { rotulo: "APORTE NECESSÁRIO", valor: "R$ 3.400 / mês", sub: "pelos próximos 19 anos" },
+        { rotulo: "APORTE ATUAL", valor: "R$ 2.000 / mês", sub: "média dos últimos 12 meses" },
+        { rotulo: "PROJEÇÃO NO RITMO ATUAL", valor: "R$ 2.900.000", sub: "69% do necessário" }
+      ],
+      plano: PLANO.map(p => ({ n: p[0], dim: p[1], texto: p[2], acao: p[3] })),
+      fortes: FORTES.map(f => ({ dim: f[0], texto: f[1] })),
+      checklist: CHECKLIST.map(c => ({ texto: c })),
+      glossario: GLOSSARIO.map(g => ({ termo: g[0], def: g[1] }))
+    };
+  }
+}
+</script>
+</body>
+</html>
