@@ -36,6 +36,8 @@
 
   var ICONE_INSTAGRAM = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"></circle></svg>';
 
+  var ICONE_YOUTUBE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="4"></rect><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor" stroke="none"></path></svg>';
+
   /* ── Cabeçalho ──────────────────────────────────────────── */
   var LINKS = [
     ["QUEM SOU", "index.html#quem-sou"],
@@ -106,7 +108,8 @@
           '<div><a href="' + waLink() + '" target="_blank" rel="noopener">' + esc(C.WHATSAPP_EXIBICAO) + '</a></div><div>Botucatu, SP · atendimento online</div></div>' +
         '<div class="lista"><div><a href="index.html#servicos">Serviços</a></div>' +
           '<div><a href="area.html">Área do cliente</a></div>' +
-          '<div><a href="https://instagram.com/' + esc(C.INSTAGRAM) + '" target="_blank" rel="noopener">@' + esc(C.INSTAGRAM) + '</a></div></div>' +
+          '<div><a href="https://instagram.com/' + esc(C.INSTAGRAM) + '" target="_blank" rel="noopener">@' + esc(C.INSTAGRAM) + '</a></div>' +
+          '<div><a href="https://youtube.com/@' + esc(C.YOUTUBE) + '" target="_blank" rel="noopener">YouTube</a></div></div>' +
         '<div class="aviso">Este site tem caráter informativo e não constitui recomendação de investimento. Nenhum conteúdo aqui garante rentabilidade. <a href="politica-privacidade.html" style="border-bottom:1px solid rgba(242,237,228,.35)">Política de Privacidade</a>.</div>' +
       '</div></footer>';
   }
@@ -193,7 +196,7 @@
 
   window.VHG = {
     mascaraData: mascaraData, dataISO: dataISO, dataBRdeISO: dataBRdeISO, attrsData: attrsData,
-    config: C, configurado: configurado, sb: sb, esc: esc, waLink: waLink, ICONE_WHATSAPP: ICONE_WHATSAPP, ICONE_INSTAGRAM: ICONE_INSTAGRAM,
+    config: C, configurado: configurado, sb: sb, esc: esc, waLink: waLink, ICONE_WHATSAPP: ICONE_WHATSAPP, ICONE_INSTAGRAM: ICONE_INSTAGRAM, ICONE_YOUTUBE: ICONE_YOUTUBE,
     sessao: sessao, perfil: perfil, exigirLogin: exigirLogin, primeiroNome: primeiroNome, dataBR: dataBR, rolarAte: rolarAte
   };
 
@@ -210,6 +213,7 @@
     avisarSeNaoConfigurado();
     document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = waLink(a.getAttribute("data-wa")); });
     document.querySelectorAll("[data-instagram]").forEach(function (a) { a.href = "https://instagram.com/" + C.INSTAGRAM; });
+    document.querySelectorAll("[data-youtube]").forEach(function (a) { a.href = "https://youtube.com/@" + C.YOUTUBE; });
     document.querySelectorAll("[data-email]").forEach(function (a) { a.href = "mailto:" + C.EMAIL; });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
