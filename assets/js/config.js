@@ -18,5 +18,6 @@ window.VHG_CONFIG = {
   WHATSAPP: "5514996433289",
   WHATSAPP_EXIBICAO: "+55 14 99643-3289",
   WHATSAPP_MENSAGEM: "Olá, Vitor! Vim pelo site e gostaria de conversar sobre planejamento financeiro.",
-  INSTAGRAM: "vitorhgermano"
+  INSTAGRAM: "vitorhgermano",
+  YOUTUBE: "vhg_planejamento_financeiro"
 };

@@ -166,6 +166,7 @@
       <div class="botoes">
         <a href="#" data-wa target="_blank" rel="noopener" class="btn btn-cobre" id="btn-wa">CHAMAR NO WHATSAPP</a>
         <a href="#" data-instagram target="_blank" rel="noopener" class="btn btn-contorno-papel" id="btn-insta">SEGUIR NO INSTAGRAM</a>
+        <a href="#" data-youtube target="_blank" rel="noopener" class="btn btn-contorno-papel" id="btn-youtube">VER NO YOUTUBE</a>
       </div>
     </div>
   </section>
@@ -174,11 +175,12 @@
 
 <div id="vhg-footer"></div>
 
-<script src="assets/js/config.js"></script>
-<script src="assets/js/vhg.js?v=5"></script>
+<script src="assets/js/config.js?v=2"></script>
+<script src="assets/js/vhg.js?v=6"></script>
 <script>
   document.getElementById("btn-wa").insertAdjacentHTML("afterbegin", VHG.ICONE_WHATSAPP);
   document.getElementById("btn-insta").insertAdjacentHTML("afterbegin", VHG.ICONE_INSTAGRAM);
+  document.getElementById("btn-youtube").insertAdjacentHTML("afterbegin", VHG.ICONE_YOUTUBE);
   document.querySelectorAll("[data-ancora]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       var el = document.querySelector(a.getAttribute("href"));
