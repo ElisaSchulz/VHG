@@ -1,0 +1,51 @@
+# Mantém o projeto gratuito da Supabase acordado.
+#
+# A Supabase pausa projetos do plano gratuito depois de 7 dias sem uso.
+# Este workflow faz uma consulta leve ao banco 3 vezes por semana,
+# usando a mesma URL e chave pública que o site já usa (assets/js/config.js),
+# então não precisa cadastrar nenhum secret.
+#
+# O GitHub desliga agendamentos de repositórios sem atividade há 60 dias;
+# o último passo reativa o próprio workflow a cada execução para evitar isso.
+name: Manter Supabase ativa
+
+on:
+  schedule:
+    # seg, qua e sex às 09:00 (horário de Brasília = 12:00 UTC)
+    - cron: "0 12 * * 1,3,5"
+  workflow_dispatch: # permite rodar na mão pela aba Actions
+  push:
+    paths:
+      - .github/workflows/supabase-keepalive.yml
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Consultar a Supabase
+        run: |
+          URL=$(grep -oP 'SUPABASE_URL:\s*"\K[^"]+' assets/js/config.js)
+          KEY=$(grep -oP 'SUPABASE_ANON_KEY:\s*"\K[^"]+' assets/js/config.js)
+          # Com a chave pública, as regras de segurança devolvem uma lista
+          # vazia, mas a consulta chega ao banco e conta como atividade.
+          status=$(curl -sS -o resposta.txt -w "%{http_code}" \
+            --retry 3 --retry-delay 10 \
+            "$URL/rest/v1/perfis?select=id&limit=1" \
+            -H "apikey: $KEY")
+          echo "HTTP $status"; cat resposta.txt; echo
+          if [ "$status" != "200" ]; then
+            echo "::error::A Supabase respondeu $status. O projeto pode estar pausado: confira no painel da Supabase."
+            exit 1
+          fi
+
+      - name: Evitar que o GitHub desligue este agendamento
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/supabase-keepalive.yml/enable"
