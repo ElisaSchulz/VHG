@@ -751,19 +751,8 @@
       colheita: "Diferente de quem ainda está construindo, seu horizonte de acumulação acabou: não há mais décadas de juros compostos pela frente pra corrigir uma rota. O que resta são alavancas de curto prazo — o valor do saque, a alocação da carteira de renda e a proteção contra imprevistos de saúde."
     };
 
-    // ---- Duração do acompanhamento ----
-    // Um único número manda no relatório inteiro: a gravidade do quadro. O
-    // texto do arquétipo cita essa mesma duração, em vez de trazer a sua.
-    var criticosCount = dimScoreList.filter(function (d) { return d.score < 30; }).length;
-    var insuficientesCount = dimScoreList.filter(function (d) { return d.score >= 30 && d.score < 60; }).length;
-    var duracaoFinal = 3;
-    if (criticosCount >= 2) duracaoFinal = 12;
-    else if (criticosCount === 1 || insuficientesCount >= 2) duracaoFinal = 6;
-
-    // A prioridade imediata do arquétipo diz O QUE atacar primeiro. A duração
-    // do acompanhamento é recomendação comercial e vive só na seção "Seu
-    // Próximo Passo" — repetir "Plano de N meses" aqui antecipava a oferta no
-    // meio da análise e dizia duas vezes a mesma coisa.
+    // A prioridade imediata do arquétipo diz O QUE atacar primeiro. O
+    // relatório não recomenda duração de acompanhamento: é análise, não oferta.
     var CTA_FOCO = {
       negacao: {
         inicial: "Estancar o rombo mensal e construir o primeiro colchão de segurança, antes de qualquer outra coisa.",
@@ -1026,15 +1015,6 @@
     }
     // Rede de segurança: nenhuma linha repetida, venha de onde vier.
     checklist = checklist.filter(function (item, i, todos) { return todos.indexOf(item) === i; }).slice(0, 5);
-
-    // ---- Próximo passo ----
-    var plural2 = function (n, s, p) { return n + " " + (n === 1 ? s : p); };
-    var nextStep = {
-      duracao: duracaoFinal + " meses",
-      justificativa: "Com " + plural2(criticosCount, "dimensão crítica", "dimensões críticas") + " e " +
-        plural2(insuficientesCount, "insuficiente", "insuficientes") + ", somado ao seu perfil comportamental (" + arquetipo.nome +
-        "), um acompanhamento de " + duracaoFinal + " meses é o que permite consolidar mudanças de forma realista, sem pressa nem abandono no meio do caminho."
-    };
 
     // ---- Projeção patrimonial: acumulação + fase de renda ----
     // Toda a projeção corre em termos REAIS (acima da inflação), então meta,
@@ -1434,7 +1414,7 @@
       aposentadoria: aposentadoria,
       chart: chart,
       actionPlan: actionPlan, planoOtimizacao: planoOtimizacao, hasStrengths: strengths.length > 0, strengths: strengths, investSeguro: investSeguro,
-      checklist: checklist, glossario: GLOSSARIO, nextStep: nextStep, insightPercepcao: insightPercepcao,
+      checklist: checklist, glossario: GLOSSARIO, insightPercepcao: insightPercepcao,
       vozCliente: { show: !!(D.descricaoSituacao || D.maiorDor || D.sonhos), situacao: D.descricaoSituacao, maiorDor: D.maiorDor, sonhos: D.sonhos },
       contatoMailto: "mailto:germanovitorhugo@gmail.com?subject=Diagn%C3%B3stico%20Financeiro%20-%20Pr%C3%B3ximos%20passos"
     };

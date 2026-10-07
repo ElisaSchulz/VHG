@@ -378,15 +378,7 @@ function renderReport(R) {
         '<div style="font-size:14px; line-height:1.7; color:#48534F; text-wrap:pretty">' + g.definicao + "</div></div>";
     }).join("") + "</div></div></section>";
 
-  // 12 · Próximo passo
-  var assunto = "mailto:" + VHG.config.EMAIL + "?subject=" + encodeURIComponent("Diagnóstico financeiro - próximos passos");
-  h += '<section class="secao fina fio-topo"><div class="miolo">' + olho("RECOMENDAÇÃO", "12") + '<h2 class="tit" style="margin-bottom:26px">Seu próximo passo</h2>' +
-    '<div class="bloco-claro bloco" style="padding:clamp(28px,5vw,44px)"><div style="font-size:10px; font-weight:500; letter-spacing:.22em; color:#8A8175; margin-bottom:14px">PLANO RECOMENDADO</div>' +
-    '<div style="font-family:var(--serif); font-weight:300; font-size:clamp(26px,4vw,34px); color:#123B47; margin-bottom:20px">Acompanhamento de ' + esc(R.nextStep.duracao) + "</div>" +
-    '<p style="margin:0 0 30px; font-size:15.5px; line-height:1.8; color:#48534F; max-width:560px; text-wrap:pretty">' + R.nextStep.justificativa + "</p>" +
-    '<a href="' + assunto + '" class="btn btn-petroleo" style="padding:17px 30px">AGENDAR CONVERSA COM O VITOR</a></div></div></section>';
-
-  // 13 · Encerramento
+  // 12 · Encerramento
   h += '<section class="encerramento" style="background:#123B47; color:#F2EDE4; padding:clamp(56px,8vw,96px) clamp(24px,5vw,40px)"><div style="max-width:700px; margin:0 auto; text-align:center">' +
     '<div style="font-family:var(--serif); font-weight:300; font-style:italic; font-size:24px; color:#C08A4E; margin-bottom:20px">Obrigado pela confiança, ' + esc(D.primeiroNome) + ".</div>" +
     '<p style="margin:0 0 32px; font-size:15.5px; line-height:1.8; color:rgba(242,237,228,.82); text-wrap:pretty">Espero que este diagnóstico tenha trazido clareza. Fico à disposição para conversar sobre os próximos passos.</p>' +
