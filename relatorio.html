@@ -96,8 +96,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/config.js?v=2"></script>
 <script src="assets/js/vhg.js?v=6"></script>
-<script src="assets/js/diagnostico-core.js"></script>
-<script src="assets/js/exemplo-diagnostico.js"></script>
+<script src="assets/js/formato.js"></script>
 <script>
 "use strict";
 var fmt = VHGDiag.fmt, pct = VHGDiag.pct, esc = VHGDiag.esc;
@@ -395,11 +394,18 @@ function telaVazia(titulo, texto, botao, href) {
     '<a href="' + href + '" class="btn btn-petroleo">' + botao + "</a></div></div>";
 }
 
-/* Hook para testes e para gerar a prévia sem banco: ?demo carrega as
-   respostas de exemplo de assets/js/exemplo-diagnostico.js. */
-function mostrar(respostas, geradoEm, previa) {
-  var R = VHGDiag.computeReport(respostas, geradoEm);
-  // O gráfico vem do core como SVG + rótulos HTML posicionados.
+/* O relatório chega pronto da função "relatorio" do Supabase: as regras
+   de cálculo ficam só no servidor e não aparecem no código do site.
+   Corpo da chamada: { id } (admin abrindo o diagnóstico de um cliente),
+   {} (o próprio cliente) ou { demo: true } (exemplo com dados fictícios). */
+async function calcular(c, corpo) {
+  var r = await c.functions.invoke("relatorio", { body: corpo });
+  if (r.error || !r.data || !r.data.relatorio) return null;
+  return r.data.relatorio;
+}
+
+function mostrar(R, previa) {
+  // O gráfico vem do servidor como SVG + rótulos HTML posicionados.
   R.aposentadoria.chartSvg = R.chart.svg + R.chart.rotulos.map(function (r) {
     return '<div class="g-rot g-rot-' + r.tipo + '" style="' + r.style + '">' + esc(r.texto) + "</div>";
   }).join("");
@@ -408,32 +414,39 @@ function mostrar(respostas, geradoEm, previa) {
   document.getElementById("acoes").hidden = false;
 }
 
+function indisponivel(alvo, botao, href) {
+  alvo.innerHTML = telaVazia("Relatório indisponível", "Não foi possível montar o relatório agora. Tente de novo em alguns minutos.", botao, href);
+}
+
 (async function iniciar() {
   var alvo = document.getElementById("relatorio");
   var params = new URLSearchParams(location.search);
 
-  if (params.has("demo") && window.VHG_EXEMPLO) {
-    mostrar(window.VHG_EXEMPLO, new Date().toISOString(), "RELATÓRIO DE EXEMPLO · DADOS FICTÍCIOS");
+  if (!VHG.configurado()) { alvo.innerHTML = telaVazia("Relatório indisponível", "O acesso aos relatórios ainda não foi configurado.", "VOLTAR AO SITE", "index.html"); return; }
+  var c = VHG.sb();
+
+  if (params.has("demo")) {
     document.getElementById("voltar").href = "index.html";
+    var exemplo = await calcular(c, { demo: true });
+    if (!exemplo) { indisponivel(alvo, "VOLTAR AO SITE", "index.html"); return; }
+    mostrar(exemplo, "RELATÓRIO DE EXEMPLO · DADOS FICTÍCIOS");
     return;
   }
 
-  if (!VHG.configurado()) { alvo.innerHTML = telaVazia("Relatório indisponível", "O acesso aos relatórios ainda não foi configurado.", "VOLTAR AO SITE", "index.html"); return; }
   var s = await VHG.exigirLogin();
   if (!s) return;
-  var c = VHG.sb();
   var id = params.get("id");
   var p = await VHG.perfil(s.user.id);
   var admin = p && p.papel === "admin";
 
-  var q = c.from("diagnosticos").select("status, respostas, enviado_em, atualizado_em");
+  var q = c.from("diagnosticos").select("status, enviado_em, nome:respostas->>nome");
   q = id && admin ? q.eq("id", id) : q.eq("user_id", s.user.id);
   var r = await q.maybeSingle();
   var d = r.data;
 
   if (admin && id) document.getElementById("voltar").href = "admin.html";
 
-  if (!d || !d.respostas || !d.respostas.nome) {
+  if (!d || !d.nome) {
     alvo.innerHTML = telaVazia("Nenhum diagnóstico encontrado", "Ainda não há respostas suficientes para montar o relatório.", admin ? "VOLTAR AO PAINEL" : "IR PARA O DIAGNÓSTICO", admin ? "admin.html" : "diagnostico.html");
     return;
   }
@@ -442,9 +455,11 @@ function mostrar(respostas, geradoEm, previa) {
     alvo.innerHTML = telaVazia("Diagnóstico ainda não enviado", "Seu relatório aparece aqui assim que você terminar e enviar o diagnóstico.", "CONTINUAR O DIAGNÓSTICO", "diagnostico.html");
     return;
   }
+  var R = await calcular(c, id && admin ? { id: id } : {});
+  if (!R) { indisponivel(alvo, admin ? "VOLTAR AO PAINEL" : "VOLTAR", admin ? "admin.html" : "area.html"); return; }
   var previa = null;
   if (admin && d.status !== "enviado") previa = "PRÉVIA · DIAGNÓSTICO AINDA EM ANDAMENTO";
-  mostrar(d.respostas, d.enviado_em || d.atualizado_em, previa);
+  mostrar(R, previa);
 })();
 </script>
 </body>

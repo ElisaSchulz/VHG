@@ -19,7 +19,7 @@ O site é **HTML, CSS e JavaScript puro**: não precisa instalar nada nem rodar 
 | `admin.html` | Painel do admin: clientes, fichas, diagnósticos, liberação de relatórios e pedidos de conversa. Permite editar o nome dos clientes e editar, adicionar ou apagar contatos, com anotações internas |
 | `politica-privacidade.html` | Política de privacidade (revise o texto antes de publicar) |
 
-Para ver um relatório de exemplo sem precisar de banco: `relatorio.html?demo`.
+Para ver um relatório de exemplo, com dados fictícios: `relatorio.html?demo`.
 
 ## Como funciona o fluxo
 
@@ -76,16 +76,19 @@ Para testar no próprio computador, rode `python3 -m http.server` na pasta do pr
 assets/css/vhg.css              design tokens e componentes (cores, tipografia, botões, formulários)
 assets/js/config.js             chaves do Supabase e contatos
 assets/js/vhg.js                cabeçalho, rodapé, cliente do Supabase e funções de login
-assets/js/diagnostico-core.js   regras de cálculo do diagnóstico (score, arquétipo, projeções)
+assets/js/formato.js            formatação de moeda, datas e idade (o cálculo do relatório fica no Supabase)
 assets/js/planos.js              planos, preços, prazos e formas de pagamento (usado pela ficha e pelo contrato)
 assets/js/contrato-modelo.js     texto do contrato e dados do contratado — MODELO PROVISÓRIO, revisar antes de usar
-assets/js/exemplo-diagnostico.js respostas fictícias usadas em relatorio.html?demo
 assets/css/formulario.css       visual da ficha cadastral e do diagnóstico
 supabase/1…5-*.sql              tabelas e regras de segurança (RLS), em cinco partes
 design/                         protótipos originais do Claude Design (referência, não publicar)
 ```
 
-`diagnostico-core.js` foi portado do repositório `ElisaSchulz/hz-invest`. As regras de negócio são as mesmas; mudaram só as cores e o contato.
+### Cálculo do relatório
+
+As regras de cálculo do diagnóstico (score, arquétipo, projeções e textos do plano de ação) **não ficam neste repositório**. Elas rodam numa função do Supabase chamada `relatorio` (*Edge Functions*), e o site recebe o relatório já calculado. O código da função fica guardado fora do GitHub; para alterar uma regra, edite a função no painel do Supabase (*Edge Functions › relatorio › Code*) e clique em *Deploy*.
+
+A função deve ficar com **"Verify JWT" desligado**: ela mesma confere o login, e o relatório de exemplo (`relatorio.html?demo`) precisa funcionar sem login.
 
 ## Segurança
 
