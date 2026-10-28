@@ -66,7 +66,7 @@
 <script src="assets/js/vhg.js?v=6"></script>
 <script src="assets/js/diagnostico-core.js"></script>
 <script src="assets/js/planos.js?v=2"></script>
-<script src="assets/js/contrato-modelo.js?v=3"></script>
+<script src="assets/js/contrato-modelo.js?v=5"></script>
 <script>
 "use strict";
 /* ─────────────────────────────────────────────────────────────
@@ -182,7 +182,8 @@ function falha(e) {
 
   var resp = await Promise.all([
     c.from("contratos").select("*").eq("user_id", s.user.id).maybeSingle(),
-    c.from("fichas").select("status, respostas").eq("user_id", s.user.id).maybeSingle()
+    c.from("fichas").select("status, respostas").eq("user_id", s.user.id).maybeSingle(),
+    c.from("configuracoes").select("valor").eq("chave", "contratado").maybeSingle()
   ]);
   if (resp[0].error) return falha(resp[0].error);
   if (resp[1].error) return falha(resp[1].error);
@@ -192,6 +193,9 @@ function falha(e) {
   if (!ficha || ficha.status !== "enviado") {
     return telaAviso("Antes, a ficha cadastral.", "O contrato é montado com os dados da sua ficha. Preencha e envie a ficha primeiro.", "PREENCHER A FICHA", "ficha.html");
   }
+  // Dados do Vitor preenchidos no painel. Se a tabela ainda não existir
+  // (arquivo 7 não rodado), o contrato sai sem esses trechos.
+  if (!resp[2].error && resp[2].data) VHG_CONTRATO.usarDadosContratado(resp[2].data.valor);
   var f = ficha.respostas || {};
   var falta = VHG_CONTRATO.faltandoNaFicha(f);
   if (falta.length) {

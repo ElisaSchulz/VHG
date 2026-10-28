@@ -43,6 +43,7 @@ No banco ficam guardados **só os dados das respostas**. O relatório não é sa
    4. `4-fichas.sql`
    5. `5-admins-e-conferencia.sql`, que no final lista as quatro tabelas criadas.
    6. `6-contratos.sql`, que cria a tabela dos contratos assinados.
+   7. `7-dados-do-contratado.sql`, que guarda estado civil, RG e CPF do Vitor (preenchidos no painel do admin) para o contrato.
 
    Todos podem ser rodados de novo sem perder dados.
 3. **Copie as chaves** em *Project Settings › API* para o arquivo `assets/js/config.js` (já preenchido para o projeto atual):
