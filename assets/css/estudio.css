@@ -76,6 +76,9 @@
 .est-acoes .btn { width: 100%; }
 .est-status { margin-top: 12px; font-size: 13.5px; line-height: 1.6; color: var(--petroleo); min-height: 1.6em; }
 
+.est-mini { position: fixed; right: 12px; top: 84px; z-index: 30; padding: 4px; background: var(--papel-claro); border: 1px solid var(--cobre); cursor: pointer; line-height: 0; }
+.est-mini canvas { display: block; max-width: 34vw; max-height: 30vh; width: auto; height: auto; }
+
 @media (max-width: 860px) {
   .est-ed { grid-template-columns: 1fr; }
   .est-previa { position: static; }

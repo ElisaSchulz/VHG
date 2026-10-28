@@ -1047,6 +1047,7 @@ window.VHG_ESTUDIO = (function () {
       '<div class="eyebrow" style="margin-top:40px">FUNDO COM PADRÃO, EM QUALQUER FORMATO</div></div>';
   }
   function galeria() {
+    if (observador) { observador.disconnect(); observador = null; }
     var g = grupoAtual, itens = itensDoGrupo(g);
     var h = chips() + '<p class="texto-apoio est-intro">' + esc(INTRO[g]) + "</p>";
     if (g === "identidade") h += painelIdentidade();
@@ -1118,7 +1119,8 @@ window.VHG_ESTUDIO = (function () {
     raiz.innerHTML = chips() +
       '<div class="est-topo-ed"><button type="button" class="acao-tabela" data-voltar>← VOLTAR AOS MODELOS</button></div>' +
       '<div class="est-ed">' +
-        '<div class="est-previa"><div class="est-tela' + (tpl.transparente ? " xadrez" : "") + '"><canvas id="est-canvas"></canvas></div>' +
+        '<div class="est-previa"><div class="est-tela' + (tpl.transparente ? " xadrez" : "") + '" id="est-tela"><canvas id="est-canvas"></canvas></div>' +
+          '<button type="button" class="est-mini' + (tpl.transparente ? " xadrez" : "") + '" id="est-mini" aria-label="Voltar para a prévia" hidden><canvas></canvas></button>' +
           (tpl.carrossel ? '<div class="est-tira" id="est-tira"></div><div class="est-slide-acoes">' +
             '<select class="input" id="est-novo-tipo" aria-label="Tipo do novo slide">' + Object.keys(TIPOS_SLIDE).map(function (k) { return '<option value="' + k + '">' + TIPOS_SLIDE[k][0] + "</option>"; }).join("") + "</select>" +
             '<button type="button" class="acao-tabela" data-slide="add">+ SLIDE</button><button type="button" class="acao-tabela" data-slide="dup">DUPLICAR</button>' +
@@ -1149,9 +1151,30 @@ window.VHG_ESTUDIO = (function () {
       if (r) { definir(r.dataset.retrato, RETRATO); redesenhar(); }
     });
     aoCarregarImagem = function () { if (ed) redesenhar(); };
+    ligarMini();
     montarCampos();
     redesenhar();
     raiz.scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+  /* No celular, uma prévia pequena fica no canto enquanto a grande está fora da tela. */
+  var observador = null;
+  function ligarMini() {
+    var mini = document.getElementById("est-mini"), tela = document.getElementById("est-tela");
+    if (observador) observador.disconnect();
+    if (!window.IntersectionObserver) return;
+    observador = new IntersectionObserver(function (e) {
+      mini.hidden = e[0].isIntersecting || !matchMedia("(max-width: 860px)").matches;
+      if (!mini.hidden) copiarMini();
+    }, { threshold: .15 });
+    observador.observe(tela);
+    mini.addEventListener("click", function () { tela.scrollIntoView({ block: "start", behavior: "smooth" }); });
+  }
+  function copiarMini() {
+    var mini = document.getElementById("est-mini"), cv = document.getElementById("est-canvas");
+    if (!mini || mini.hidden || !cv) return;
+    var m = mini.querySelector("canvas"), s = 260 / Math.max(cv.width, cv.height);
+    m.width = Math.round(cv.width * s); m.height = Math.round(cv.height * s);
+    m.getContext("2d").drawImage(cv, 0, 0, m.width, m.height);
   }
   function montarCampos() {
     var tpl = ed.tpl, h = tpl.campos.map(function (c) { return campoHTML(c, ed.v[c[0]], "g:"); }).join("");
@@ -1213,6 +1236,7 @@ window.VHG_ESTUDIO = (function () {
       var d = tamanho(ed.tpl, ed.v);
       document.getElementById("est-medida").textContent = d[0] + " × " + d[1] + " px · PNG" + (ed.tpl.transparente ? " com fundo transparente" + (ed.tpl.aparar ? ", recortado no tamanho do desenho" : "") : "");
       if (ed.tpl.carrossel) tira();
+      copiarMini();
     });
   }
   function tira() {
