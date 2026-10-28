@@ -207,7 +207,33 @@
     return;
   }
 
+  /* ── Carregamento travado ────────────────────────────────
+     Páginas com "CARREGANDO…" (área do cliente, admin) ficavam paradas
+     sem aviso quando o Supabase demorava ou dava erro. Agora mostram o
+     motivo e um botão para tentar de novo. */
+  var ultimoErro = "";
+  function travou(msg) {
+    var el = document.getElementById("carregando");
+    if (!el || el.hidden || el.dataset.travou) return;
+    el.dataset.travou = "1";
+    el.innerHTML = "NÃO FOI POSSÍVEL CARREGAR." +
+      '<div style="margin-top:14px; letter-spacing:0; font-size:14px; line-height:1.6; color:var(--texto-2)">' + esc(msg) + "</div>" +
+      '<div style="margin-top:20px"><button type="button" class="btn btn-petroleo" onclick="location.reload()">TENTAR DE NOVO</button></div>';
+  }
+  window.addEventListener("unhandledrejection", function (e) {
+    ultimoErro = (e.reason && (e.reason.message || e.reason)) || "erro desconhecido";
+    travou("Erro: " + ultimoErro);
+  });
+  window.addEventListener("error", function (e) { ultimoErro = e.message || ultimoErro; });
+  function vigiarCarregamento() {
+    if (!document.getElementById("carregando")) return;
+    setTimeout(function () {
+      travou("Está demorando mais que o normal. Confira a internet e tente de novo." + (ultimoErro ? " (" + ultimoErro + ")" : ""));
+    }, 15000);
+  }
+
   function iniciar() {
+    vigiarCarregamento();
     montarCabecalho();
     montarRodape();
     avisarSeNaoConfigurado();
