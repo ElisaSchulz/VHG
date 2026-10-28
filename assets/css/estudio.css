@@ -1,0 +1,100 @@
+/* ─────────────────────────────────────────────────────────────
+   estudio.css — aba INSTAGRAM do painel do admin
+   ───────────────────────────────────────────────────────────── */
+.est-secoes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.est-secoes button { font-size: 11px; font-weight: 600; letter-spacing: .14em; color: var(--petroleo); background: none; border: 1px solid var(--linha); padding: 0 14px; min-height: 40px; cursor: pointer; }
+.est-secoes button:hover { border-color: var(--cobre); color: var(--cobre); }
+.est-secoes button.on { background: var(--petroleo); border-color: var(--petroleo); color: var(--papel); }
+.est-secoes .cont { color: var(--cobre); margin-left: 4px; }
+.est-intro { max-width: 760px; margin: 0 0 28px; }
+.est-nota { margin: 18px 0 0; max-width: 760px; }
+
+.est-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 26px 20px; }
+.est-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.est-card .abrir { background: none; border: none; padding: 0; text-align: left; cursor: pointer; width: 100%; color: inherit; }
+.est-card .mini { height: 230px; padding: 14px; background: var(--papel-claro); border: 1px solid var(--linha-suave); display: flex; align-items: center; justify-content: center; transition: border-color .15s; }
+.est-card .mini canvas { max-width: 100%; max-height: 100%; display: block; }
+.est-card .abrir:hover .mini { border-color: var(--cobre); }
+.est-card .nome { font-family: var(--serif); font-size: 19px; line-height: 1.25; color: var(--petroleo); margin-top: 12px; }
+.est-card .desc { font-size: 12.5px; line-height: 1.55; color: var(--texto-4); margin-top: 4px; }
+.est-apagar { font-size: 12.5px; }
+.xadrez { background-color: #FFFFFF; background-image: linear-gradient(45deg, #E9E4DA 25%, transparent 25%, transparent 75%, #E9E4DA 75%), linear-gradient(45deg, #E9E4DA 25%, transparent 25%, transparent 75%, #E9E4DA 75%); background-size: 16px 16px; background-position: 0 0, 8px 8px; }
+.est-card .mini.xadrez { background-color: #FFFFFF; }
+
+.est-pautas { margin: -8px 0 28px; border: 1px solid var(--linha-suave); background: var(--papel-claro); padding: 14px 18px; max-width: 760px; }
+.est-pautas summary { font-size: 11px; font-weight: 600; letter-spacing: .16em; color: var(--petroleo); cursor: pointer; }
+.est-pautas ul { margin: 14px 0 4px; padding-left: 18px; columns: 2 260px; column-gap: 32px; font-size: 14px; line-height: 1.8; color: var(--texto-2); }
+
+/* Identidade */
+.est-identidade { margin-bottom: 10px; }
+.est-paleta { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.est-paleta.apoio { margin-top: 12px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+.est-cor { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; background: var(--papel-claro); border: 1px solid var(--linha-suave); padding: 0 0 14px; cursor: pointer; text-align: left; }
+.est-cor:hover { border-color: var(--cobre); }
+.est-cor .amostra { width: 100%; height: 76px; margin-bottom: 8px; }
+.est-cor.apoio .amostra { height: 40px; }
+.est-cor .nome, .est-cor .hex, .est-cor .uso { padding: 0 14px; }
+.est-cor .nome { font-family: var(--serif); font-size: 17px; color: var(--petroleo); }
+.est-cor .hex { font-size: 11px; font-weight: 600; letter-spacing: .14em; color: var(--texto-3); }
+.est-cor .uso { font-size: 12px; line-height: 1.5; color: var(--texto-4); }
+.est-fontes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.est-fontes .card { padding: 22px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.est-fontes p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.65; color: var(--texto-2); }
+.amostra-fonte { font-size: 40px; line-height: 1.1; color: var(--petroleo); }
+.amostra-fonte.serif { font-family: var(--serif); font-weight: 300; }
+.amostra-fonte.sans { font-family: var(--sans); font-weight: 500; letter-spacing: .02em; }
+.est-regras { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 28px; }
+.est-regras > div { border-top: 1px solid var(--linha); padding: 14px 0 16px; }
+.est-regras .tit { font-size: 11px; font-weight: 600; letter-spacing: .16em; color: var(--petroleo); text-transform: uppercase; }
+.est-regras p { margin: 8px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--texto-2); }
+
+/* Editor */
+.est-topo-ed { margin-bottom: 22px; }
+.est-ed { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); gap: clamp(24px, 4vw, 44px); align-items: start; }
+.est-previa { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.est-tela { display: flex; justify-content: center; align-items: center; background: var(--papel-claro); border: 1px solid var(--linha-suave); padding: 14px; }
+.est-tela canvas { display: block; max-width: 100%; max-height: 68vh; width: auto; height: auto; }
+.est-medida { font-size: 12px; color: var(--texto-4); }
+.est-tira { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+.est-tira button { flex: 0 0 auto; background: none; border: 2px solid transparent; padding: 2px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.est-tira button.on { border-color: var(--cobre); }
+.est-tira canvas { display: block; height: 96px; width: auto; }
+.est-tira span { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; color: var(--texto-3); }
+.est-slide-acoes { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.est-slide-acoes select.input { width: auto; min-height: 36px; padding-top: 6px; padding-bottom: 6px; font-size: 13px; }
+.est-check { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; line-height: 1.5; color: var(--texto-2); cursor: pointer; }
+.est-check input { accent-color: var(--petroleo); width: 16px; height: 16px; margin-top: 2px; flex: 0 0 auto; }
+.est-lado { min-width: 0; }
+.est-titulo { margin: 0 0 22px; font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 3vw, 32px); color: var(--petroleo); }
+.est-campos { display: flex; flex-direction: column; gap: 16px; }
+.est-campos textarea.input { min-height: 84px; }
+.est-campos input[type="range"] { width: 100%; accent-color: var(--petroleo); }
+.est-sep { margin-top: 10px; padding-top: 18px; border-top: 1px solid var(--linha); font-size: 11px; font-weight: 600; letter-spacing: .2em; color: var(--cobre); }
+.est-foto { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.est-foto .btn { cursor: pointer; }
+.est-acoes { display: flex; flex-direction: column; gap: 10px; margin-top: 26px; }
+.est-acoes .btn { width: 100%; }
+.est-status { margin-top: 12px; font-size: 13.5px; line-height: 1.6; color: var(--petroleo); min-height: 1.6em; }
+
+@media (max-width: 860px) {
+  .est-ed { grid-template-columns: 1fr; }
+  .est-previa { position: static; }
+  .est-tela canvas { max-height: 60vh; }
+}
+@media (max-width: 520px) {
+  .est-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 14px; }
+  .est-card .mini { height: 190px; padding: 10px; }
+}
+
+/* Arquivos oficiais */
+.est-arquivos-topo { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.est-arq-grupo { margin-bottom: 22px; }
+.est-arq-grupo .tit { font-size: 11px; font-weight: 600; letter-spacing: .16em; color: var(--petroleo); text-transform: uppercase; margin-bottom: 10px; }
+.est-arquivos { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.est-arq { display: flex; flex-direction: column; gap: 8px; color: var(--texto-2); }
+.est-arq .img { height: 110px; display: flex; align-items: center; justify-content: center; padding: 8px; border: 1px solid var(--linha-suave); transition: border-color .15s; }
+.est-arq .img.escuro { background: var(--petroleo); }
+.est-arq img { max-width: 100%; max-height: 100%; display: block; }
+.est-arq:hover .img { border-color: var(--cobre); }
+.est-arq .nome { font-size: 12.5px; line-height: 1.45; }
+.est-fontes-lista { display: flex; flex-wrap: wrap; gap: 6px; }

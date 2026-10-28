@@ -8,8 +8,9 @@
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200;0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/vhg.css?v=5">
+<link rel="stylesheet" href="assets/css/estudio.css?v=1">
 <style>
   .abas { display: flex; gap: 0; border-bottom: 1px solid var(--linha); margin-bottom: 28px; flex-wrap: wrap; }
   .abas button { background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 14px 18px 14px 0; margin-right: 18px; font-size: 12px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); cursor: pointer; min-height: 44px; }
@@ -64,13 +65,15 @@
         <div class="abas" role="tablist">
           <button type="button" class="on" data-aba="clientes" role="tab">CLIENTES<span class="cont" id="n-clientes"></span></button>
           <button type="button" data-aba="leads" role="tab">PEDIDOS DE CONVERSA<span class="cont" id="n-leads"></span></button>
+          <button type="button" data-aba="instagram" role="tab">INSTAGRAM</button>
         </div>
         <div class="erro" id="erro" role="alert" hidden style="margin-bottom:18px"></div>
         <div id="aba-clientes"></div>
         <div id="aba-leads" hidden></div>
+        <div id="aba-instagram" hidden></div>
       </div>
 
-      <aside style="flex-basis:300px">
+      <aside style="flex-basis:300px" id="lateral">
         <div class="card-escuro">
           <div class="eyebrow cobre">LIBERAR UM NOVO CLIENTE</div>
           <ol class="passo-a-passo">
@@ -114,6 +117,8 @@
 <script src="assets/js/config.js?v=2"></script>
 <script src="assets/js/vhg.js?v=6"></script>
 <script src="assets/js/planos.js?v=2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+<script src="assets/js/estudio-instagram.js?v=1"></script>
 <script>
 (async function () {
   var esc = VHG.esc;
@@ -134,13 +139,19 @@
   function erro(msg) { var e = document.getElementById("erro"); e.textContent = msg || ""; e.hidden = !msg; }
 
   /* ── Abas ─────────────────────────────────────────────── */
+  var estudioMontado = false;
+  function abrirAba(aba) {
+    document.querySelectorAll("[data-aba]").forEach(function (x) { x.classList.toggle("on", x.dataset.aba === aba); });
+    ["clientes", "leads", "instagram"].forEach(function (a) { document.getElementById("aba-" + a).hidden = aba !== a; });
+    // O estúdio do Instagram usa a largura toda
+    document.getElementById("lateral").hidden = aba === "instagram";
+    if (aba === "instagram" && !estudioMontado) { estudioMontado = true; VHG_ESTUDIO.montar(document.getElementById("aba-instagram")); }
+    history.replaceState(null, "", aba === "clientes" ? location.pathname : "#" + aba);
+  }
   document.querySelectorAll("[data-aba]").forEach(function (b) {
-    b.addEventListener("click", function () {
-      document.querySelectorAll("[data-aba]").forEach(function (x) { x.classList.toggle("on", x === b); });
-      document.getElementById("aba-clientes").hidden = b.dataset.aba !== "clientes";
-      document.getElementById("aba-leads").hidden = b.dataset.aba !== "leads";
-    });
+    b.addEventListener("click", function () { abrirAba(b.dataset.aba); });
   });
+  if (location.hash === "#instagram" || location.hash === "#leads") abrirAba(location.hash.slice(1));
 
   /* ── Clientes ─────────────────────────────────────────── */
   async function carregarClientes() {
