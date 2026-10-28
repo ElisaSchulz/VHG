@@ -80,6 +80,11 @@
           </ol>
         </div>
         <div class="card" style="padding:24px 28px">
+          <div class="eyebrow" style="letter-spacing:.22em">SEUS DADOS NO CONTRATO</div>
+          <div class="texto-apoio" id="contratado-resumo"><p style="margin:0">Carregando…</p></div>
+          <button type="button" class="btn btn-linha" id="contratado-editar" style="margin-top:14px" hidden>PREENCHER</button>
+        </div>
+        <div class="card" style="padding:24px 28px">
           <div class="eyebrow" style="letter-spacing:.22em">COMO FUNCIONA</div>
           <div class="texto-apoio">
             <p style="margin:0 0 10px"><b>Ver relatório</b> abre o relatório completo, com o design do site, a qualquer momento — mesmo antes do envio.</p>
@@ -114,6 +119,7 @@
 <script src="assets/js/config.js?v=2"></script>
 <script src="assets/js/vhg.js?v=6"></script>
 <script src="assets/js/planos.js?v=2"></script>
+<script src="assets/js/contrato-modelo.js?v=5"></script>
 <script>
 (async function () {
   var esc = VHG.esc;
@@ -308,6 +314,37 @@
     el.querySelectorAll("[data-editar-lead]").forEach(function (b) { b.addEventListener("click", function () { editarLead(leadsPorId[b.dataset.editarLead]); }); });
   }
 
+  /* ── Dados do Vitor no contrato ──────────────────────── */
+  var CAMPOS_K = VHG_CONTRATO.CAMPOS_CONTRATADO;
+  async function carregarContratado() {
+    var resumo = document.getElementById("contratado-resumo");
+    var botao = document.getElementById("contratado-editar");
+    var r = await c.from("configuracoes").select("valor").eq("chave", "contratado").maybeSingle();
+    if (r.error || !r.data) {
+      resumo.innerHTML = '<p style="margin:0">Para preencher, rode antes o arquivo <b>supabase/7-dados-do-contratado.sql</b> no SQL Editor do Supabase.</p>';
+      botao.hidden = true;
+      return;
+    }
+    var v = r.data.valor || {};
+    var faltando = CAMPOS_K.filter(function (k) { return !String(v[k[0]] || "").trim(); });
+    resumo.innerHTML = '<p style="margin:0 0 10px">Estado civil, RG e CPF aparecem na sua qualificação nos próximos contratos. Os já assinados não mudam.</p>' +
+      CAMPOS_K.map(function (k) { return '<div><b>' + esc(k[1]) + ":</b> " + (v[k[0]] ? esc(v[k[0]]) : "—") + "</div>"; }).join("");
+    botao.textContent = faltando.length ? "PREENCHER" : "EDITAR";
+    botao.hidden = false;
+    botao.onclick = function () {
+      abrirEditor({
+        titulo: "Seus dados no contrato",
+        campos: CAMPOS_K.map(function (k) { return [k[0], k[1], "text", v[k[0]]]; }),
+        salvar: function (n) {
+          var valor = {};
+          CAMPOS_K.forEach(function (k) { valor[k[0]] = String(n[k[0]] || "").trim(); });
+          return c.from("configuracoes").update({ valor: valor, atualizado_em: new Date().toISOString() }).eq("chave", "contratado");
+        },
+        depois: carregarContratado
+      });
+    };
+  }
+
   /* ── Janela de edição (serve para clientes e contatos) ── */
   var dlg = document.getElementById("editor");
   var atual = null;
@@ -363,6 +400,7 @@
 
   carregarClientes();
   carregarLeads();
+  carregarContratado();
 })();
 </script>
 </body>

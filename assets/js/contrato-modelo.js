@@ -26,8 +26,9 @@
       titular: "Vitor Hugo Germano",
       nacionalidade: "brasileiro",
       formacao: "graduado em Economia",
-      // Dados pessoais do titular previstos no contrato aprovado.
-      // Enquanto estiverem vazios, o trecho correspondente não aparece.
+      // Dados pessoais do titular previstos no contrato aprovado. O
+      // admin preenche no painel (tabela configuracoes, chave
+      // "contratado"); enquanto estiverem vazios, o trecho não aparece.
       estadoCivil: "",
       rg: "",
       rgOrgao: "",
@@ -184,5 +185,11 @@
     return { titulo: C[0], versao: CONFIG.VERSAO, texto: C.join("\n\n") };
   }
 
-  window.VHG_CONTRATO = { CONFIG: CONFIG, SERVICOS: SERVICOS, gerar: gerar, faltandoNaFicha: faltandoNaFicha };
+  // Campos do titular que o admin preenche no painel.
+  var CAMPOS_CONTRATADO = [["estadoCivil", "Estado civil"], ["rg", "RG"], ["rgOrgao", "Órgão emissor do RG / UF"], ["cpf", "CPF"]];
+  function usarDadosContratado(v) {
+    CAMPOS_CONTRATADO.forEach(function (c) { if (v && v[c[0]]) CONFIG.CONTRATADO[c[0]] = String(v[c[0]]).trim(); });
+  }
+
+  window.VHG_CONTRATO = { CONFIG: CONFIG, SERVICOS: SERVICOS, CAMPOS_CONTRATADO: CAMPOS_CONTRATADO, usarDadosContratado: usarDadosContratado, gerar: gerar, faltandoNaFicha: faltandoNaFicha };
 })();
