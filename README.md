@@ -16,7 +16,8 @@ O site é **HTML, CSS e JavaScript puro**: não precisa instalar nada nem rodar 
 | `contrato.html` | Contrato (passo 2): gerado com os dados da ficha e assinado eletronicamente no próprio site |
 | `diagnostico.html` | Diagnóstico em 10 etapas, com as mesmas perguntas e a mesma lógica do diagnóstico da HZ. Salva sozinho no Supabase e permite pausar e continuar |
 | `relatorio.html` | Relatório em 13 seções, montado na hora a partir das respostas. O botão "Baixar PDF" usa a impressão do navegador |
-| `admin.html` | Painel do admin: clientes, fichas, diagnósticos, liberação de relatórios e pedidos de conversa. Permite editar o nome dos clientes e editar, adicionar ou apagar contatos, com anotações internas |
+| `admin.html` | Painel do admin: clientes, fichas, diagnósticos, liberação de relatórios e pedidos de conversa. Permite editar o nome dos clientes e editar, adicionar ou apagar contatos, com anotações internas. A aba **Instagram** é um estúdio com os arquivos da identidade visual e modelos editáveis (destaques, carrossel, posts, stories, capas de reels, stickers e recursos de edição de reels) que exportam PNG no tamanho final |
+| `assets/marca/` | Arquivos oficiais da identidade visual (logos, avatares, bases para o Canva, fontes), baixados pela aba Instagram do admin |
 | `politica-privacidade.html` | Política de privacidade (revise o texto antes de publicar) |
 
 Para ver um relatório de exemplo sem precisar de banco: `relatorio.html?demo`.
