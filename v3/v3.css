@@ -1,0 +1,33 @@
+/* ─────────────────────────────────────────────────────────────
+   v3.css — VHG · proposta de versão 3 (prévia em /v3/)
+   Igual à v2 (carrega ../v2/v2.css), trocando só a tipografia:
+   · Títulos: Fraunces "soft" — serifada com pontas arredondadas,
+     combina com os cantos arredondados da v2.
+   · Texto e rótulos: Manrope — sem serifa geométrica e arejada.
+   O logotipo VHG continua em Newsreader, como no manual de marca.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Manrope', system-ui, sans-serif;
+}
+
+/* Fraunces com o eixo "SOFT" no máximo deixa as serifas arredondadas. */
+h1, h2, .h2, .profissionais, .pergunta .frase, .quem-sou .cargo, .etapas .num,
+.plano .nome, .plano .preco .valor, .taxas .faixa b, .fale h2 {
+  font-variation-settings: "SOFT" 100;
+}
+.hero h1 { font-weight: 300; letter-spacing: -.02em; line-height: 1.06; }
+.h2, .quem-sou h2, .fale h2 { letter-spacing: -.015em; }
+.pergunta .frase { letter-spacing: -.02em; }
+.pergunta .frase em, .quem-sou .cargo, .plano .nome span { font-style: italic; }
+
+/* Manrope é um pouco mais larga: rótulos com espaçamento menor. */
+.eyebrow { letter-spacing: .18em; font-weight: 600; }
+.btn { letter-spacing: .1em; font-weight: 700; }
+.nav-desktop a { letter-spacing: .1em; font-weight: 600; }
+.corpo, .etapas p, .plano > p, .plano .item { line-height: 1.7; }
+.etapas .tit { font-weight: 700; }
+
+/* Logotipo continua na fonte da marca. */
+.marca-vhg, .site-footer .logo { font-family: 'Newsreader', Georgia, serif; font-variation-settings: normal; }
