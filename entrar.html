@@ -144,9 +144,24 @@
     var b = document.getElementById("btn-reset");
     b.disabled = true; b.textContent = "ENVIANDO…";
     var volta = location.href.split("#")[0].split("?")[0];
-    await c.auth.resetPasswordForEmail(email, { redirectTo: volta });
-    // Resposta genérica de propósito: não revela se o e-mail tem conta.
+    // Sem limite de tempo, um problema no envio do e-mail (ex.: SMTP) deixava
+    // o botão em "ENVIANDO…" para sempre.
+    var r;
+    try {
+      r = await Promise.race([
+        c.auth.resetPasswordForEmail(email, { redirectTo: volta }),
+        new Promise(function (_, rej) { setTimeout(function () { rej(new Error("tempo")); }, 30000); })
+      ]);
+    } catch (falha) { r = { error: falha }; }
     b.disabled = false; b.textContent = "ENVIAR LINK";
+    if (r && r.error) {
+      console.error("Recuperação de senha:", r.error);
+      var muitas = r.error.status === 429 || /rate limit|seconds/i.test(r.error.message || "");
+      return erro("erro-reset", muitas
+        ? "Já enviamos um link há pouco. Aguarde um minuto e tente de novo."
+        : "Não foi possível enviar o e-mail agora. Tente de novo em instantes ou fale comigo pelo WhatsApp.");
+    }
+    // Resposta genérica de propósito: não revela se o e-mail tem conta.
     document.getElementById("reset-email").textContent = email;
     e.target.hidden = true;
     document.getElementById("reset-enviado").hidden = false;
