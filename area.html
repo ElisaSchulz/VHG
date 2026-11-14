@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/vhg.css?v=5">
+<link rel="stylesheet" href="assets/css/vhg.css?v=6">
 </head>
 <body data-precisa-supabase>
 <div id="vhg-header"></div>
@@ -25,7 +25,6 @@
         <div class="email" id="email"></div>
       </div>
       <div class="botoes">
-        <a href="admin.html" class="btn btn-linha" id="link-admin" hidden>PAINEL DO ADMIN</a>
         <button type="button" class="btn btn-linha" id="sair">SAIR</button>
       </div>
     </div>
@@ -58,7 +57,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
 <script src="assets/js/config.js?v=2"></script>
-<script src="assets/js/vhg.js?v=7"></script>
+<script src="assets/js/vhg.js?v=8"></script>
 <script src="assets/js/planos.js?v=2"></script>
 <script src="assets/js/contrato-modelo.js?v=3"></script>
 <script>
@@ -79,7 +78,7 @@
 
   document.getElementById("ola").textContent = "Olá, " + (VHG.primeiroNome(p, s.user) || "") + ".";
   document.getElementById("email").textContent = s.user.email;
-  if (p && p.papel === "admin") document.getElementById("link-admin").hidden = false;
+  if (p && p.papel === "admin") VHG.barraModo("cliente");
 
   var STATUS = {
     nao_iniciado: { label: "NÃO INICIADO", cor: "#6B6358", acao: "COMEÇAR" },

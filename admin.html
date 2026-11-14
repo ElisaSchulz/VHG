@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200;0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/vhg.css?v=5">
+<link rel="stylesheet" href="assets/css/vhg.css?v=6">
 <link rel="stylesheet" href="assets/css/estudio.css?v=2">
 <style>
   .abas { display: flex; gap: 0; border-bottom: 1px solid var(--linha); margin-bottom: 28px; flex-wrap: wrap; }
@@ -115,7 +115,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
 <script src="assets/js/config.js?v=2"></script>
-<script src="assets/js/vhg.js?v=7"></script>
+<script src="assets/js/vhg.js?v=8"></script>
 <script src="assets/js/planos.js?v=2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
 <script src="assets/js/estudio-instagram.js?v=2"></script>
@@ -130,6 +130,7 @@
   document.getElementById("carregando").hidden = true;
   if (!eu || eu.papel !== "admin") { document.getElementById("negado").hidden = false; return; }
   document.getElementById("conteudo").hidden = false;
+  VHG.barraModo("admin");
   document.getElementById("ola").textContent = "Olá, " + VHG.primeiroNome(eu, s.user) + ".";
   document.getElementById("email").textContent = s.user.email;
 
