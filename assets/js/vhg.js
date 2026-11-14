@@ -194,10 +194,39 @@
   // Atributos do campo de data, para colar dentro de um <input>.
   function attrsData() { return 'type="text" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10" autocomplete="off" data-data'; }
 
+  /* ── Troca entre área do cliente e painel do admin ──────────
+     Só aparece para quem é admin. Fica dentro do cabeçalho fixo,
+     então está sempre à vista, e mostra em qual dos dois a pessoa
+     está agora. atual: "cliente" ou "admin". */
+  function barraModo(atual) {
+    var header = document.getElementById("site-header");
+    if (!header) {
+      // O cabeçalho ainda não foi montado: tenta de novo quando a página terminar de carregar.
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { barraModo(atual); });
+      return;
+    }
+    if (header.querySelector(".barra-modo")) return;
+    function item(chave, href, rotulo) {
+      var on = atual === chave;
+      return '<a href="' + href + '"' + (on ? ' class="on" aria-current="page"' : '') + '>' + rotulo + '</a>';
+    }
+    var div = document.createElement("div");
+    div.className = "barra-modo";
+    div.innerHTML =
+      '<div class="dentro">' +
+        '<span class="rotulo">VOCÊ É ADMIN · ALTERNAR VISÃO</span>' +
+        '<nav class="modo-seg" aria-label="Alternar entre área do cliente e painel do admin">' +
+          item("cliente", "area.html", "ÁREA DO CLIENTE") +
+          item("admin", "admin.html", "PAINEL DO ADMIN") +
+        '</nav>' +
+      '</div>';
+    header.insertBefore(div, header.querySelector(".nav-mobile"));
+  }
+
   window.VHG = {
     mascaraData: mascaraData, dataISO: dataISO, dataBRdeISO: dataBRdeISO, attrsData: attrsData,
     config: C, configurado: configurado, sb: sb, esc: esc, waLink: waLink, ICONE_WHATSAPP: ICONE_WHATSAPP, ICONE_INSTAGRAM: ICONE_INSTAGRAM, ICONE_YOUTUBE: ICONE_YOUTUBE,
-    sessao: sessao, perfil: perfil, exigirLogin: exigirLogin, primeiroNome: primeiroNome, dataBR: dataBR, rolarAte: rolarAte
+    sessao: sessao, perfil: perfil, exigirLogin: exigirLogin, primeiroNome: primeiroNome, dataBR: dataBR, rolarAte: rolarAte, barraModo: barraModo
   };
 
   // Link de convite/nova senha que caiu em outra página (ex.: Site URL
