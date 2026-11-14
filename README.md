@@ -9,7 +9,7 @@ O site é **HTML, CSS e JavaScript puro**: não precisa instalar nada nem rodar 
 | Arquivo | O que é |
 |---|---|
 | `index.html` | Home: hero, provocação, Quem sou, O que faço, Serviços, Fale comigo |
-| `formularios.html` | Pedido de conversa. As respostas vão para a tabela `leads` |
+| `formularios.html` | Endereço antigo do pedido de conversa. Só redireciona para o WhatsApp no fim da página inicial |
 | `entrar.html` | Login, "esqueci minha senha" e criação de senha (pelo link do convite) |
 | `area.html` | Área do cliente: status da ficha e do diagnóstico, e acesso ao relatório |
 | `ficha.html` | Ficha cadastral (passo 1 do cliente): dados de qualificação do contrato, endereço (com busca por CEP) e plano escolhido. Salva sozinha no Supabase |
@@ -40,9 +40,9 @@ No banco ficam guardados **só os dados das respostas**. O relatório não é sa
 2. **Crie as tabelas:** rode os seis arquivos da pasta `supabase/`, **um por vez e na ordem**. Para cada um, abra *SQL Editor › New query*, cole o conteúdo do arquivo inteiro e clique em *Run*:
    1. `1-perfis.sql`
    2. `2-diagnosticos.sql`
-   3. `3-leads.sql`
+   3. `3-leads.sql` (não é mais usado pelo site; pode pular)
    4. `4-fichas.sql`
-   5. `5-admins-e-conferencia.sql`, que no final lista as quatro tabelas criadas.
+   5. `5-admins-e-conferencia.sql`, que no final lista as tabelas criadas.
    6. `6-contratos.sql`, que cria a tabela dos contratos assinados.
 
    Todos podem ser rodados de novo sem perder dados.

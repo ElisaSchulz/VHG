@@ -1,5 +1,10 @@
 -- ─────────────────────────────────────────────────────────────
 --  3-leads.sql — pedidos de conversa (formulário público)
+--
+--  NÃO É MAIS USADO (nov/2026): o formulário saiu do site e os
+--  contatos agora chegam pelo WhatsApp. Não precisa rodar este
+--  arquivo. Se a tabela já existe e não tiver nada que você queira
+--  guardar, dá para apagar com:  drop table public.leads;
 --  VHG Planejamento Financeiro · Supabase
 --
 --  Rode os arquivos na ordem (1, 2, 3, 4, 5), um por vez:

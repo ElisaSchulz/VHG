@@ -15,7 +15,7 @@ update public.perfis set papel = 'admin'
 
 
 -- ── 6) Conferência ───────────────────────────────────────────
--- Deve listar as quatro tabelas.
+-- Deve listar as três tabelas.
 select table_name from information_schema.tables
- where table_schema = 'public' and table_name in ('perfis', 'diagnosticos', 'fichas', 'leads')
+ where table_schema = 'public' and table_name in ('perfis', 'diagnosticos', 'fichas')
  order by table_name;
