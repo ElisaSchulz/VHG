@@ -199,3 +199,31 @@ button:focus-visible, a:focus-visible { outline-offset: 3px; }
   .stepper button { width: 26px; height: 26px; font-size: 11px; }
   .stepper .liga { width: 5px; }
 }
+
+/* ── Barra de admin (alternar área do cliente ↔ painel) ────── */
+.modo-seg { border-radius: var(--r-pill); padding: 3px; gap: 2px; border-color: rgba(242,237,228,.25); }
+.modo-seg a { border-radius: var(--r-pill); transition: background-color .2s, color .2s; }
+.modo-seg a { min-height: 32px; }
+
+/* ── Painel do admin: tabelas e diálogos ───────────────────── */
+.tabela-wrap { border-radius: var(--r-md); }
+.tabela select { border-radius: var(--r-pill); }
+.aviso-config { border-radius: 0; }
+
+/* ── Aba Instagram (estudio.css) ───────────────────────────── */
+/* Só as molduras arredondam: as prévias dos posts e os arquivos da marca
+   continuam com os cantos retos, como saem no PNG. */
+.est-secoes button { border-radius: var(--r-pill); padding: 0 16px; transition: background-color .2s, color .2s, border-color .2s; }
+.est-card .mini, .est-tela, .est-arq .img, .est-pautas { border-radius: var(--r-md); border-color: var(--borda-v2); }
+.est-card .mini { background: var(--branco); box-shadow: var(--sombra-1); transition: border-color .2s, box-shadow .2s, transform .2s; }
+.est-card .abrir:hover .mini { transform: translateY(-2px); box-shadow: var(--sombra-2); }
+.est-card .mini.xadrez, .est-arq .img.xadrez { background-color: #FFFFFF; }
+.est-tela { background: var(--branco); box-shadow: var(--sombra-1); }
+.est-tira button { border-radius: 12px; }
+.est-cor { border-radius: var(--r-md); overflow: hidden; border-color: var(--borda-v2); background: var(--branco); box-shadow: var(--sombra-1); }
+.est-fontes .card { border-radius: var(--r-lg); }
+.est-regras > div { border-top: none; background: var(--papel-claro); border: 1px solid var(--borda-v2); border-radius: var(--r-md); padding: 16px 18px 18px; margin-bottom: 12px; }
+.est-regras { gap: 0 12px; }
+.est-sep { border-top-color: var(--borda-v2); }
+.est-mini { border-radius: 14px; box-shadow: var(--sombra-2); }
+.est-fontes-lista .btn, .est-fontes-lista a { border-radius: var(--r-pill); }

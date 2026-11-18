@@ -11,20 +11,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200;0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/vhg.css?v=6">
 <link rel="stylesheet" href="assets/css/estudio.css?v=2">
+<link rel="stylesheet" href="assets/css/v2.css?v=2">
 <style>
-  .abas { display: flex; gap: 0; border-bottom: 1px solid var(--linha); margin-bottom: 28px; flex-wrap: wrap; }
-  .abas button { background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 14px 18px 14px 0; margin-right: 18px; font-size: 12px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); cursor: pointer; min-height: 44px; }
-  .abas button.on { color: var(--petroleo); border-bottom-color: var(--cobre); }
+  .abas { display: inline-flex; gap: 2px; padding: 4px; margin-bottom: 28px; flex-wrap: wrap; background: var(--papel-claro); border: 1px solid rgba(18,59,71,.09); border-radius: 999px; }
+  .abas button { background: none; border: none; border-radius: 999px; padding: 0 20px; font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--texto-4); cursor: pointer; min-height: 42px; transition: background-color .2s, color .2s; }
+  .abas button:hover { color: var(--petroleo); }
+  .abas button.on { background: var(--petroleo); color: var(--papel); box-shadow: 0 6px 16px -8px rgba(18,59,71,.6); }
   .abas .cont { font-feature-settings: 'tnum'; color: var(--cobre); margin-left: 6px; }
   .selo { font-size: 10.5px; font-weight: 600; letter-spacing: .14em; white-space: nowrap; }
   .acoes-linha { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tabela select { border: 1px solid var(--linha); background: var(--branco); padding: 7px 10px; font-size: 13px; color: var(--petroleo-escuro); border-radius: 0; }
+  .tabela select { border: 1px solid var(--linha); background: var(--branco); padding: 7px 10px; font-size: 13px; color: var(--petroleo-escuro); border-radius: 999px; }
   .tabela .pequeno { font-size: 12.5px; color: var(--texto-4); }
   .vazio-tab { padding: 28px 0; font-size: 14px; color: var(--texto-4); }
   .passo-a-passo { font-size: 14px; line-height: 1.75; color: rgba(242,237,228,.88); margin: 0; padding-left: 18px; }
   .passo-a-passo a { color: var(--cobre); border-bottom: 1px solid rgba(192,138,78,.5); }
-  .passo-a-passo code { font-size: 12.5px; background: rgba(242,237,228,.1); padding: 1px 5px; }
-  dialog.editor { border: 1px solid var(--linha-suave); background: var(--papel-claro); padding: 0; width: min(640px, calc(100vw - 32px)); max-height: calc(100vh - 32px); color: var(--petroleo-escuro); }
+  .passo-a-passo code { font-size: 12.5px; background: rgba(242,237,228,.1); padding: 1px 6px; border-radius: 6px; }
+  dialog.editor { border: 1px solid rgba(18,59,71,.09); border-radius: clamp(22px,3vw,32px); box-shadow: 0 30px 60px -24px rgba(11,37,48,.45); background: var(--papel-claro); padding: 0; width: min(640px, calc(100vw - 32px)); max-height: calc(100vh - 32px); color: var(--petroleo-escuro); }
   dialog.editor::backdrop { background: rgba(11,37,48,.55); }
   dialog.editor form { padding: clamp(22px,4vw,34px); display: flex; flex-direction: column; gap: 18px; }
   dialog.editor h2 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 26px; color: var(--petroleo); }
