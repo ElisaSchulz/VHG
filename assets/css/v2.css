@@ -206,7 +206,7 @@ button:focus-visible, a:focus-visible { outline-offset: 3px; }
 .modo-seg a { min-height: 32px; }
 
 /* ── Painel do admin: tabelas e diálogos ───────────────────── */
-.tabela-wrap { border-radius: var(--r-md); }
+/* .tabela-wrap sem raio: ela não tem fundo, e o canto arredondado cortava o "C" de CLIENTE. */
 .tabela select { border-radius: var(--r-pill); }
 .aviso-config { border-radius: 0; }
 
@@ -227,3 +227,20 @@ button:focus-visible, a:focus-visible { outline-offset: 3px; }
 .est-sep { border-top-color: var(--borda-v2); }
 .est-mini { border-radius: 14px; box-shadow: var(--sombra-2); }
 .est-fontes-lista .btn, .est-fontes-lista a { border-radius: var(--r-pill); }
+
+/* ── Correções ─────────────────────────────────────────────── */
+/* .total acima é a caixa de totais dos formulários; na home, a linha
+   "R$ … no total" dos planos usa a mesma classe e herdava a pílula escura. */
+.plano .preco .total { background: none; border-radius: 0; }
+/* O corpo da página é flex em coluna e .wrap centraliza com margin auto, então
+   o <main> media a largura pelo conteúdo: no celular, a tabela do painel do
+   admin alargava a página inteira em vez de rolar dentro da própria caixa. */
+body > main.wrap { width: 100%; box-sizing: border-box; }
+/* Seletores com textos longos (.seg.largo: estratégia da aposentadoria, perfil
+   de risco, plano na ficha) quebram em duas linhas no celular, e a pílula virava
+   um balão torto. No celular eles empilham, como os seletores verticais. */
+.seg.largo { border-radius: var(--r-md); }
+@media (max-width: 560px) {
+  .seg.largo { display: flex; flex-direction: column; align-items: stretch; max-width: 560px; }
+  .seg.largo button { border-radius: 14px; text-align: left; }
+}
