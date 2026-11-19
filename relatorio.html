@@ -10,11 +10,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,ital,wght@6..72,0,200;6..72,0,300;6..72,0,400;6..72,1,300&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/vhg.css?v=5">
+<link rel="stylesheet" href="assets/css/v2.css?v=3">
 <style>
   body { display: block; }
   .barra-acoes { position: fixed; top: 20px; right: 20px; z-index: 99; display: flex; gap: 8px; }
   .barra-acoes .btn { padding: 14px 22px; font-size: 11px; }
-  .barra-acoes .btn-linha { background: var(--papel-claro); }
+  .barra-acoes .btn-linha { background: rgba(251,249,245,.9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
   .barra-acoes .btn-petroleo { border: 1px solid rgba(242,237,228,.35); }
 
   .capa { background: var(--petroleo); color: var(--papel); min-height: 92vh; padding: clamp(40px,7vw,80px) clamp(24px,5vw,72px); display: flex; flex-direction: column; justify-content: space-between; gap: 60px; }
@@ -29,18 +30,18 @@
 
   .secao { padding: clamp(48px,7vw,80px) clamp(20px,5vw,32px); }
   .secao.fina { padding-top: clamp(44px,6vw,64px); padding-bottom: clamp(44px,6vw,64px); }
-  .secao.fio-topo { border-top: 1px solid var(--linha-suave); }
+  .secao.fio-topo { border-top: 1px solid rgba(18,59,71,.07); }
   .miolo { max-width: 780px; margin: 0 auto; }
   .miolo.largo { max-width: 900px; }
   .olho { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-  .olho .fio { width: 48px; flex-shrink: 0; }
+  .olho .fio { width: 36px; height: 3px; border-radius: 3px; flex-shrink: 0; }
   .olho .t { font-size: 10px; font-weight: 500; letter-spacing: .24em; color: var(--texto-4); flex: 1; text-transform: uppercase; }
   .olho .n { font-size: 10px; font-weight: 500; letter-spacing: .1em; color: var(--texto-6); font-feature-settings: 'tnum'; }
   .olho.claro .t { color: var(--cobre); }
   h2.tit { margin: 0 0 30px; font-family: var(--serif); font-weight: 300; font-size: clamp(26px,4vw,34px); line-height: 1.18; letter-spacing: -.01em; }
   h3.sub { margin: 0 0 16px; font-family: var(--serif); font-weight: 300; font-size: 22px; }
   .lead { margin: -14px 0 24px; font-size: 14.5px; line-height: 1.7; color: var(--texto-2); max-width: 660px; text-wrap: pretty; }
-  .bloco-claro { background: var(--papel-claro); border: 1px solid var(--linha-suave); }
+  .bloco-claro { background: var(--papel-claro); border: 1px solid rgba(18,59,71,.09); border-radius: 20px; }
   .rot-p { font-size: 10px; font-weight: 500; letter-spacing: .14em; color: var(--texto-5); margin-bottom: 6px; text-transform: uppercase; }
   .rot-k { font-size: 9.5px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); margin-bottom: 8px; text-transform: uppercase; }
   .valor-p { font-size: 16px; font-weight: 600; color: var(--petroleo); }
@@ -51,9 +52,9 @@
   .texto p { margin: 0 0 18px; }
   .texto p:last-child { margin: 0; }
 
-  .escuro { background: var(--petroleo); color: var(--papel); padding: clamp(28px,4vw,38px); }
+  .escuro { background: radial-gradient(120% 90% at 100% 0%, rgba(192,138,78,.2) 0%, rgba(192,138,78,0) 60%), var(--petroleo); color: var(--papel); padding: clamp(28px,4vw,38px); border-radius: 24px; }
   .escuro .rot-e { font-size: 10px; font-weight: 500; letter-spacing: .2em; color: var(--cobre); margin-bottom: 10px; text-transform: uppercase; }
-  .escuro .caixinha { background: rgba(242,237,228,.07); padding: 20px 22px; }
+  .escuro .caixinha { background: rgba(242,237,228,.07); padding: 20px 22px; border-radius: 14px; }
   .escuro .caixinha .tx { font-size: 14.5px; line-height: 1.7; color: rgba(242,237,228,.88); }
 
   .grafico { position: relative; width: 100%; padding-bottom: 41.7%; }
@@ -70,6 +71,12 @@
   .vazio p { margin: 0 0 28px; font-size: 15px; line-height: 1.7; color: var(--texto-2); }
   .previa { background: var(--cobre); color: var(--petroleo-escuro); text-align: center; font-size: 11px; font-weight: 600; letter-spacing: .18em; padding: 10px; }
 
+  @media screen {
+    .capa { margin: clamp(10px,1.6vw,18px); border-radius: clamp(28px,4vw,44px); min-height: calc(92vh - 36px); position: relative; overflow: hidden; isolation: isolate;
+      background: radial-gradient(120% 90% at 100% 0%, rgba(192,138,78,.22) 0%, rgba(192,138,78,0) 55%), radial-gradient(80% 80% at 0% 100%, rgba(11,37,48,.7) 0%, rgba(11,37,48,0) 60%), var(--petroleo); }
+    .capa::before { content: ""; position: absolute; z-index: -1; width: clamp(320px,46vw,620px); aspect-ratio: 1; right: clamp(-220px,-12vw,-80px); top: clamp(-260px,-14vw,-120px); border-radius: 50%; border: 1px solid rgba(192,138,78,.28); pointer-events: none; }
+    .encerramento { margin: clamp(10px,1.6vw,18px); border-radius: clamp(28px,4vw,44px); overflow: hidden; }
+  }
   @media print {
     .no-print { display: none !important; }
     body { background: #fff; }
@@ -262,7 +269,7 @@ function renderReport(R) {
     '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-bottom:16px">' +
     '<div class="caixinha"><div class="rot-e">PADRÃO IDENTIFICADO</div><div class="tx">' + R.arquetipo.padrao + "</div></div>" +
     '<div class="caixinha"><div class="rot-e">POR QUE ESTE É O SEU PADRÃO</div><div class="tx">' + R.arquetipo.naoOutro + "</div></div></div>" +
-    '<div style="background:rgba(192,138,78,.18); padding:20px 24px"><div class="rot-e" style="margin-bottom:8px">PRIORIDADE IMEDIATA</div>' +
+    '<div style="background:rgba(192,138,78,.18); padding:20px 24px; border-radius:14px"><div class="rot-e" style="margin-bottom:8px">PRIORIDADE IMEDIATA</div>' +
     '<div style="font-size:16px; line-height:1.6; font-weight:500">' + R.arquetipo.prioridade + "</div></div>" + voz + "</div></div></section>";
 
   // 05 · KPIs

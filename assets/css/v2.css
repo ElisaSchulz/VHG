@@ -1,9 +1,9 @@
 /* ─────────────────────────────────────────────────────────────
-   v2.css — VHG · proposta de versão 2 (prévia em /v2/)
-   Carrega depois de assets/css/vhg.css e só sobrescreve o visual:
-   mesmas cores, mesmas fontes, mesmo conteúdo. O que muda:
-   cantos arredondados, botões em pílula, cartões com sombra suave,
-   cabeçalho translúcido e blocos de destaque "soltos" da borda.
+   v2.css — VHG · visual da versão 2 (oficial desde nov/2026)
+   Carrega depois de vhg.css (e de formulario.css, quando houver)
+   e só sobrescreve o visual: mesmas cores, fontes e conteúdo.
+   Cantos arredondados, botões em pílula, cartões com sombra suave,
+   cabeçalho translúcido e blocos escuros "soltos" da borda.
    ───────────────────────────────────────────────────────────── */
 
 :root {
@@ -29,7 +29,8 @@ body { background: var(--papel); }
 .btn-contorno-papel { border-color: rgba(242,237,228,.35); background: rgba(242,237,228,.06); }
 .btn-contorno-papel:hover { background: rgba(242,237,228,.12); }
 .btn-contorno { border-color: rgba(18,59,71,.35); }
-button:focus-visible, a:focus-visible { outline-offset: 3px; border-radius: var(--r-pill); }
+button:focus-visible, a:focus-visible { outline-offset: 3px; }
+.btn:focus-visible { border-radius: var(--r-pill); }
 
 /* ── Cabeçalho: translúcido, menu em pílulas ───────────────── */
 .site-header { background: rgba(251,249,245,.82); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); border-bottom-color: var(--borda-v2); }
@@ -125,13 +126,6 @@ button:focus-visible, a:focus-visible { outline-offset: 3px; border-radius: var(
 /* ── Rodapé: cantos superiores arredondados ────────────────── */
 .site-footer { border-radius: var(--r-xl) var(--r-xl) 0 0; }
 
-/* ── Aviso flutuante da prévia ─────────────────────────────── */
-.aviso-v2 { position: fixed; z-index: 30; left: 50%; bottom: 16px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; padding: 10px 16px 10px 14px; border-radius: var(--r-pill); background: rgba(11,37,48,.92); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: var(--papel); font-size: 12.5px; font-weight: 500; letter-spacing: .02em; box-shadow: var(--sombra-2); }
-.aviso-v2:hover { color: var(--papel); background: var(--petroleo-escuro); }
-.aviso-v2 .ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--cobre); box-shadow: 0 0 0 4px rgba(192,138,78,.25); }
-.aviso-v2 .seta { color: var(--cobre); padding-left: 10px; border-left: 1px solid rgba(242,237,228,.2); }
-.site-footer .colunas { padding-bottom: calc(clamp(36px,6vw,56px) + 56px); }
-
 @media (prefers-reduced-motion: reduce) {
   .btn, .etapas > div, .plano { transition: none; }
   .btn:hover, .etapas > div:hover, .plano:hover { transform: none; }
@@ -146,4 +140,107 @@ button:focus-visible, a:focus-visible { outline-offset: 3px; border-radius: var(
   .hero .botoes .btn { flex: 1 1 100%; }
   .profissionais > div { padding: 20px 22px 22px; }
   .profissionais > div::before { margin-bottom: 14px; }
+}
+
+/* ── Páginas internas (entrar, área do cliente, política) ──── */
+.card { border-radius: var(--r-lg); border-color: var(--borda-v2); box-shadow: var(--sombra-1); }
+.card-escuro, .confirmacao { border-radius: var(--r-lg); background: radial-gradient(120% 80% at 100% 0%, rgba(192,138,78,.18) 0%, rgba(192,138,78,0) 60%), var(--petroleo); }
+.cabeca-pagina { border-bottom-color: var(--borda-v2); }
+.input, .chip { border-radius: var(--r-sm); border-color: var(--linha); transition: border-color .2s, box-shadow .2s; }
+.input:focus { box-shadow: 0 0 0 4px rgba(18,59,71,.08); }
+.chip { border-radius: var(--r-pill); padding: 11px 18px; }
+.form-card { border-radius: var(--r-lg); }
+.form-card .num { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(192,138,78,.12); font-size: 28px; }
+.progresso .barra, .progresso .barra div { height: 6px; border-radius: 6px; }
+.em-breve, .acao-tabela, .btn-linha { border-radius: var(--r-pill); }
+.login .erro { border-top-color: var(--borda-v2); }
+
+/* ── Formulários longos (ficha e diagnóstico) ──────────────── */
+.d-header { background: rgba(251,249,245,.82); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px); border-bottom-color: var(--borda-v2); }
+.stepper { border-bottom-color: var(--borda-v2); gap: 6px; }
+.stepper button { border-radius: 50%; width: 32px; height: 32px; transition: background-color .2s, color .2s, border-color .2s; }
+.stepper button.feito { background: rgba(192,138,78,.12); }
+.stepper button.atual { box-shadow: 0 6px 16px -6px rgba(18,59,71,.6); }
+.stepper .liga { width: 12px; height: 2px; border-radius: 2px; }
+.linha-eyebrow .fio { height: 3px; width: 36px; border-radius: 3px; flex-basis: 36px; }
+.abertura {
+  border-radius: var(--r-xl); position: relative; overflow: hidden; isolation: isolate;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(192,138,78,.22) 0%, rgba(192,138,78,0) 55%),
+    radial-gradient(80% 80% at 0% 100%, rgba(11,37,48,.7) 0%, rgba(11,37,48,0) 60%),
+    var(--petroleo);
+}
+.abertura::before { content: ""; position: absolute; z-index: -1; width: clamp(260px,40vw,460px); aspect-ratio: 1; right: clamp(-200px,-14vw,-90px); top: clamp(-200px,-14vw,-90px); border-radius: 50%; border: 1px solid rgba(192,138,78,.28); pointer-events: none; }
+.d-card { border-radius: var(--r-lg); border-color: var(--borda-v2); box-shadow: var(--sombra-1); }
+.d-input, .estimativa { border-radius: var(--r-sm); transition: border-color .2s, box-shadow .2s; }
+.d-input:focus { box-shadow: 0 0 0 4px rgba(18,59,71,.08); }
+.fio-grade, .fio-card { background: var(--linha-fina); }
+.seg { border-radius: var(--r-pill); overflow: hidden; background: var(--branco); padding: 3px; border-color: var(--linha); gap: 2px; }
+.seg button { border-radius: var(--r-pill); transition: background-color .2s, color .2s; }
+.seg button + button { border-left: none; }
+.seg.vertical { border-radius: var(--r-md); }
+.seg.vertical button { border-radius: 14px; }
+.seg.vertical button + button { border-top: none; }
+.total { border-radius: var(--r-md); background: radial-gradient(120% 90% at 100% 0%, rgba(192,138,78,.2) 0%, rgba(192,138,78,0) 60%), var(--petroleo); }
+.item-lista { border-radius: var(--r-md); border-color: var(--borda-v2); background: var(--branco); }
+.nota { border-left: none; border-radius: var(--r-md); background: rgba(192,138,78,.09); position: relative; padding-left: 26px; }
+.nota::before { content: ""; position: absolute; left: 12px; top: 16px; bottom: 16px; width: 3px; border-radius: 3px; background: var(--cobre); }
+.revisao { border-radius: var(--r-lg); border-color: var(--borda-v2); box-shadow: var(--sombra-1); }
+.revisao .editar { border-radius: var(--r-pill); padding: 9px 18px; }
+.faixa-escura, .fim { border-radius: var(--r-lg); }
+.fim { background: radial-gradient(70% 120% at 50% 120%, rgba(192,138,78,.24) 0%, rgba(192,138,78,0) 60%), var(--petroleo); }
+.fim .fio, .portao .fio { height: 3px; border-radius: 3px; }
+.msg-erro { border-left: none; border-radius: var(--r-sm); background: rgba(154,59,46,.07); padding: 12px 16px; }
+.d-footer { border-top-color: var(--borda-v2); }
+.portao .caixa { border-radius: var(--r-xl); border-color: var(--borda-v2); box-shadow: var(--sombra-2); }
+@media (max-width: 480px) {
+  .stepper { gap: 3px; padding-left: 8px; padding-right: 8px; }
+  .stepper .passo { gap: 3px; }
+  .stepper button { width: 26px; height: 26px; font-size: 11px; }
+  .stepper .liga { width: 5px; }
+}
+
+/* ── Barra de admin (alternar área do cliente ↔ painel) ────── */
+.modo-seg { border-radius: var(--r-pill); padding: 3px; gap: 2px; border-color: rgba(242,237,228,.25); }
+.modo-seg a { border-radius: var(--r-pill); transition: background-color .2s, color .2s; }
+.modo-seg a { min-height: 32px; }
+
+/* ── Painel do admin: tabelas e diálogos ───────────────────── */
+/* .tabela-wrap sem raio: ela não tem fundo, e o canto arredondado cortava o "C" de CLIENTE. */
+.tabela select { border-radius: var(--r-pill); }
+.aviso-config { border-radius: 0; }
+
+/* ── Aba Instagram (estudio.css) ───────────────────────────── */
+/* Só as molduras arredondam: as prévias dos posts e os arquivos da marca
+   continuam com os cantos retos, como saem no PNG. */
+.est-secoes button { border-radius: var(--r-pill); padding: 0 16px; transition: background-color .2s, color .2s, border-color .2s; }
+.est-card .mini, .est-tela, .est-arq .img, .est-pautas { border-radius: var(--r-md); border-color: var(--borda-v2); }
+.est-card .mini { background: var(--branco); box-shadow: var(--sombra-1); transition: border-color .2s, box-shadow .2s, transform .2s; }
+.est-card .abrir:hover .mini { transform: translateY(-2px); box-shadow: var(--sombra-2); }
+.est-card .mini.xadrez, .est-arq .img.xadrez { background-color: #FFFFFF; }
+.est-tela { background: var(--branco); box-shadow: var(--sombra-1); }
+.est-tira button { border-radius: 12px; }
+.est-cor { border-radius: var(--r-md); overflow: hidden; border-color: var(--borda-v2); background: var(--branco); box-shadow: var(--sombra-1); }
+.est-fontes .card { border-radius: var(--r-lg); }
+.est-regras > div { border-top: none; background: var(--papel-claro); border: 1px solid var(--borda-v2); border-radius: var(--r-md); padding: 16px 18px 18px; margin-bottom: 12px; }
+.est-regras { gap: 0 12px; }
+.est-sep { border-top-color: var(--borda-v2); }
+.est-mini { border-radius: 14px; box-shadow: var(--sombra-2); }
+.est-fontes-lista .btn, .est-fontes-lista a { border-radius: var(--r-pill); }
+
+/* ── Correções ─────────────────────────────────────────────── */
+/* .total acima é a caixa de totais dos formulários; na home, a linha
+   "R$ … no total" dos planos usa a mesma classe e herdava a pílula escura. */
+.plano .preco .total { background: none; border-radius: 0; }
+/* O corpo da página é flex em coluna e .wrap centraliza com margin auto, então
+   o <main> media a largura pelo conteúdo: no celular, a tabela do painel do
+   admin alargava a página inteira em vez de rolar dentro da própria caixa. */
+body > main.wrap { width: 100%; box-sizing: border-box; }
+/* Seletores com textos longos (.seg.largo: estratégia da aposentadoria, perfil
+   de risco, plano na ficha) quebram em duas linhas no celular, e a pílula virava
+   um balão torto. No celular eles empilham, como os seletores verticais. */
+.seg.largo { border-radius: var(--r-md); }
+@media (max-width: 560px) {
+  .seg.largo { display: flex; flex-direction: column; align-items: stretch; max-width: 560px; }
+  .seg.largo button { border-radius: 14px; text-align: left; }
 }
