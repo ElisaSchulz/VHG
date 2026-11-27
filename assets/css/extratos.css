@@ -1,0 +1,148 @@
+/* ─────────────────────────────────────────────────────────────
+   extratos.css — aba "Extratos" do painel do admin (visual v2)
+   ───────────────────────────────────────────────────────────── */
+.ext { display: flex; gap: clamp(28px, 5vw, 56px); flex-wrap: wrap; align-items: flex-start; }
+.ext-principal { flex: 1 1 560px; min-width: 0; }
+.ext-lado { flex: 0 1 290px; min-width: 0; display: flex; flex-direction: column; gap: 22px; position: sticky; top: 140px; }
+@media (max-width: 999px) { .ext-lado { position: static; flex-basis: 100%; } }
+
+.ext-drop { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; border: 1.5px dashed rgba(18,59,71,.28); border-radius: var(--r-lg, 28px); background: var(--papel-claro); padding: 52px 24px; cursor: pointer; transition: border-color .2s, background-color .2s; }
+.ext-drop:hover, .ext-drop.sobre { border-color: var(--cobre); background: #fff; }
+.ext-drop .ic { width: 64px; height: 64px; border-radius: 50%; background: rgba(192,138,78,.14); color: var(--cobre); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+.ext-drop-t { font-family: var(--serif); font-size: clamp(22px, 3vw, 28px); color: var(--petroleo); }
+.ext-drop-s { font-size: 14px; color: var(--texto-3); margin-bottom: 10px; max-width: 440px; }
+.ext-formatos { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+.ext-pill { font-size: 11px; font-weight: 600; letter-spacing: .12em; padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(18,59,71,.12); background: #fff; color: var(--texto-2); font-family: var(--sans); }
+.ext-pill.ok { background: rgba(18,59,71,.06); }
+button.ext-pill { cursor: pointer; } button.ext-pill:hover { border-color: var(--petroleo); }
+.ext-pill.on { background: var(--petroleo); color: var(--papel); border-color: var(--petroleo); }
+.ext-pill.rev { border-color: #EBD3A4; background: #FFF6E2; color: #6A4B1E; }
+.ext-pill.rev.on { background: var(--cobre); border-color: var(--cobre); color: var(--petroleo-escuro); }
+.ext-card { padding: 22px 26px; margin-top: 22px; }
+.ext-lendo { margin: 14px 0; font-size: 13.5px; color: var(--petroleo); display: flex; align-items: center; gap: 10px; }
+.ext-lendo::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(18,59,71,.2); border-top-color: var(--petroleo); animation: ext-gira .8s linear infinite; }
+@keyframes ext-gira { to { transform: rotate(360deg); } }
+
+.ext-senha { background: #FFF6E2; border: 1px solid #EBD3A4; border-radius: var(--r-md, 20px); padding: 18px 20px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; color: #4E3613; }
+.ext-senha .pequeno { font-size: 12.5px; color: #6A4B1E; }
+.ext-senha-linha { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.ext-senha input { flex: 1 1 180px; border: 1px solid var(--linha); border-radius: 999px; padding: 11px 16px; font-size: 14px; background: #fff; }
+.ext-senha .btn, .ext-arqs-acoes .btn, .ext-alerta .btn, .ext-sug .btn, .ext-nova-regra .btn, .ext-regras-acoes .btn { padding: 11px 18px; font-size: 11px; min-height: 0; }
+.ext-erro-txt { color: var(--erro); font-weight: 600; }
+
+.ext-arqs { background: var(--papel-claro); border: 1px solid rgba(18,59,71,.09); border-radius: var(--r-lg, 28px); padding: 10px 18px 16px; margin-bottom: 22px; box-shadow: var(--sombra-1); }
+.ext-arqs.sobre { border-color: var(--cobre); }
+.ext-arq { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--linha-fina); color: var(--petroleo); }
+.ext-arq > svg { flex: none; margin-top: 2px; }
+.ext-arq-tx { flex: 1; min-width: 0; }
+.ext-arq .nome { font-size: 14px; font-weight: 600; color: var(--petroleo); overflow-wrap: anywhere; }
+.ext-arq .meta { font-size: 12.5px; color: var(--texto-4); margin-top: 2px; }
+.ext-conf { display: flex; gap: 6px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; margin-top: 6px; }
+.ext-conf svg { flex: none; margin-top: 2px; }
+.ext-conf.ok { color: #2F6B4C; } .ext-conf.aviso { color: #8A5A22; } .ext-conf.erro { color: var(--erro); }
+.ext-remover { flex: none; background: none; border: 1px solid transparent; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; color: var(--texto-4); cursor: pointer; }
+.ext-remover:hover { border-color: var(--linha); color: var(--erro); }
+.ext-arqs-acoes { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 14px; }
+
+.ext-abas { display: inline-flex; gap: 2px; padding: 4px; margin-bottom: 20px; background: var(--papel-claro); border: 1px solid rgba(18,59,71,.09); border-radius: 999px; flex-wrap: wrap; }
+.ext-abas button { background: none; border: none; border-radius: 999px; padding: 0 18px; font-size: 11.5px; font-weight: 600; letter-spacing: .14em; color: var(--texto-4); cursor: pointer; min-height: 38px; font-family: var(--sans); }
+.ext-abas button:hover { color: var(--petroleo); }
+.ext-abas button.on { background: var(--petroleo); color: var(--papel); }
+.ext-abas .cont { color: var(--cobre); margin-left: 6px; }
+.ext-badge { display: inline-block; margin-left: 6px; min-width: 18px; padding: 1px 6px; border-radius: 999px; background: var(--cobre); color: var(--petroleo-escuro); font-size: 10px; letter-spacing: 0; }
+
+.ext-periodo { font-size: 11px; font-weight: 500; letter-spacing: .22em; color: var(--texto-3); text-transform: uppercase; margin-bottom: 12px; }
+.ext-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.ext-kpi { background: var(--papel-claro); border: 1px solid rgba(18,59,71,.09); border-radius: var(--r-md, 20px); padding: 16px; box-shadow: var(--sombra-1); min-width: 0; }
+.ext-kpi .r { font-size: 10px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); }
+.ext-kpi .v { font-family: var(--serif); font-size: 23px; color: var(--petroleo); margin-top: 8px; font-feature-settings: 'tnum'; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ext-kpi .s { font-size: 12.5px; color: var(--texto-3); margin-top: 4px; }
+.ext-kpi.escuro { background: radial-gradient(120% 80% at 100% 0%, rgba(192,138,78,.22) 0%, rgba(192,138,78,0) 60%), var(--petroleo); border-color: transparent; }
+.ext-kpi.escuro .r { color: var(--cobre-claro); } .ext-kpi.escuro .v { color: var(--papel); } .ext-kpi.escuro .s { color: rgba(242,237,228,.72); }
+
+.ext-bloco { background: var(--papel-claro); border: 1px solid rgba(18,59,71,.09); border-radius: var(--r-lg, 28px); padding: 24px 26px; box-shadow: var(--sombra-1); margin-bottom: 22px; }
+.ext-bloco h3 { margin: 4px 0 18px; font-family: var(--serif); font-weight: 400; font-size: 24px; color: var(--petroleo); }
+.ext-barras { display: flex; flex-direction: column; gap: 4px; }
+.ext-barra { display: grid; grid-template-columns: 136px 1fr 96px 46px; gap: 12px; align-items: center; font-size: 13.5px; color: var(--texto-2); background: none; border: none; padding: 5px 6px; margin: 0 -6px; border-radius: 10px; text-align: left; font-family: var(--sans); cursor: pointer; }
+.ext-barra.estatica { cursor: default; }
+.ext-barra:not(.estatica):hover { background: rgba(18,59,71,.05); }
+.ext-barra .tr { height: 12px; }
+.ext-barra .en { display: block; height: 12px; background: var(--petroleo); border-radius: 0 4px 4px 0; }
+.ext-barra.rev .en { background: repeating-linear-gradient(45deg, var(--cobre) 0 4px, var(--cobre-claro) 4px 7px); }
+.ext-barra .vl { text-align: right; font-weight: 600; color: var(--petroleo-escuro); font-feature-settings: 'tnum'; white-space: nowrap; }
+.ext-barra .pc { text-align: right; color: var(--texto-4); font-size: 12.5px; font-feature-settings: 'tnum'; }
+.ext-insights { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ext-insight { background: #fff; border: 1px solid rgba(18,59,71,.09); border-radius: var(--r-md, 20px); padding: 16px 18px; font-size: 13.5px; line-height: 1.6; color: var(--texto-2); }
+.ext-insight b { color: var(--petroleo); }
+.ext-insight .t { font-size: 10px; font-weight: 600; letter-spacing: .18em; color: var(--cobre); margin-bottom: 6px; }
+.ext-dois { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.ext-dois .ext-bloco { min-width: 0; }
+.ext-mini { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ext-mini th { text-align: left; font-size: 10px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); padding: 0 8px 8px 0; border-bottom: 1px solid var(--linha); }
+.ext-mini td { padding: 9px 8px 9px 0; border-bottom: 1px solid var(--linha-fina); color: var(--texto-2); overflow-wrap: anywhere; }
+.ext-mini .v, .ext-tab .v { text-align: right; font-weight: 600; color: var(--petroleo-escuro); font-feature-settings: 'tnum'; white-space: nowrap; }
+.ext-mini th.v { font-weight: 500; color: var(--texto-4); }
+.ext-mini .c { color: var(--texto-4); font-size: 12px; white-space: nowrap; }
+.ext-mini tr.tot td { border-bottom: none; font-weight: 600; color: var(--petroleo); padding-top: 12px; }
+
+.ext-filtros { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.ext-busca { width: 100%; border: 1px solid var(--linha); border-radius: 999px; padding: 11px 18px; font-size: 14px; background: #fff; margin-bottom: 14px; }
+.ext-tabela-wrap { padding: 14px 20px; overflow-x: auto; }
+.ext-tab { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ext-tab th { text-align: left; font-size: 10px; font-weight: 500; letter-spacing: .18em; color: var(--texto-4); padding: 6px 10px 10px 0; border-bottom: 1px solid var(--linha); }
+.ext-tab td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--linha-fina); color: var(--texto-2); vertical-align: middle; }
+.ext-tab td.d { white-space: nowrap; color: var(--texto-3); }
+.ext-tab td b { color: var(--petroleo); font-weight: 600; overflow-wrap: anywhere; }
+.ext-tab .v.pos { color: #2F6B4C; }
+.ext-tab select { border: 1px solid var(--linha); background: #fff; border-radius: 999px; padding: 6px 10px; font-size: 12.5px; color: var(--petroleo-escuro); max-width: 170px; }
+.ext-tab tr.rev td { background: #FFF6E2; }
+.ext-tab tr.rev select { border-color: var(--cobre); }
+.ext-tag { font-size: 9.5px; font-weight: 600; letter-spacing: .1em; color: var(--texto-4); border: 1px solid var(--linha); border-radius: 999px; padding: 2px 7px; margin-left: 6px; white-space: nowrap; }
+.ext-orig { display: block; font-size: 11px; color: var(--texto-5); margin-top: 2px; }
+.ext-sug td { background: rgba(192,138,78,.1); }
+.ext-sug form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--texto-2); padding: 4px 0; }
+.ext-sug input { border: 1px solid var(--petroleo); border-radius: 999px; padding: 8px 14px; font-size: 13px; min-width: 160px; background: #fff; }
+
+.ext-regras { font-size: 13.5px; margin-bottom: 16px; }
+.ext-regra { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--linha-fina); color: var(--texto-2); }
+.ext-regra code { font-family: var(--sans); font-size: 12px; letter-spacing: .06em; background: rgba(18,59,71,.06); border-radius: 6px; padding: 3px 8px; color: var(--petroleo); }
+.ext-regra span { margin-left: auto; }
+.ext-nova-regra { display: flex; gap: 8px; flex-wrap: wrap; }
+.ext-nova-regra input, .ext-nova-regra select { border: 1px solid var(--linha); border-radius: 999px; padding: 10px 14px; font-size: 13px; background: #fff; }
+.ext-nova-regra input { flex: 1 1 200px; }
+.ext-regras-acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+.ext-priv { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.6; color: rgba(242,237,228,.88); }
+.ext-priv li { display: flex; gap: 10px; }
+.ext-priv svg { color: var(--cobre); flex: none; margin-top: 4px; }
+.ext-priv b { color: var(--papel); }
+.ext-passos { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.75; color: var(--texto-2); }
+.ext-cliente { padding: 18px 20px; }
+.ext-cliente label { display: block; font-size: 10px; font-weight: 500; letter-spacing: .16em; color: var(--texto-4); margin-bottom: 8px; }
+.ext-cliente input { width: 100%; border: 1px solid var(--linha); border-radius: 999px; padding: 11px 16px; font-size: 14px; background: #fff; }
+.ext-baixar { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.ext-baixar button { display: flex; align-items: center; gap: 12px; background: rgba(242,237,228,.08); border: 1px solid rgba(242,237,228,.16); border-radius: 18px; padding: 13px 16px; color: var(--papel); cursor: pointer; text-align: left; font-family: var(--sans); transition: background-color .2s, transform .2s; }
+.ext-baixar button:hover { background: rgba(242,237,228,.14); transform: translateY(-1px); }
+.ext-baixar button.prim { background: var(--cobre); border-color: var(--cobre); color: var(--petroleo-escuro); }
+.ext-baixar button.prim:hover { background: var(--cobre-claro); }
+.ext-baixar button:disabled { opacity: .6; cursor: wait; }
+.ext-baixar .tx { flex: 1; } .ext-baixar .tx b { display: block; font-size: 14px; font-weight: 600; } .ext-baixar .tx span { font-size: 12px; opacity: .78; }
+.ext-status { font-size: 12.5px; color: var(--cobre-claro); min-height: 0; margin-top: 10px; }
+.ext-status:empty { display: none; }
+.ext-nota { display: flex; gap: 10px; font-size: 12.5px; line-height: 1.6; color: rgba(242,237,228,.75); margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(242,237,228,.14); }
+.ext-nota svg { color: var(--cobre); flex: none; margin-top: 3px; }
+.ext-alerta { background: #FFF6E2; border: 1px solid #EBD3A4; border-radius: var(--r-md, 20px); padding: 16px 18px; font-size: 13.5px; line-height: 1.6; color: #6A4B1E; }
+.ext-alerta b { color: #4E3613; }
+.ext-alerta .btn { margin-top: 10px; background: #fff; }
+.ext .pequeno { font-size: 12.5px; color: var(--texto-4); }
+
+@media (max-width: 760px) {
+  .ext-kpis { grid-template-columns: 1fr 1fr; }
+  .ext-insights, .ext-dois { grid-template-columns: 1fr; }
+  .ext-barra { grid-template-columns: 104px 1fr 86px; }
+  .ext-barra .pc { display: none; }
+  .ext-kpi .v { font-size: 20px; }
+  .ext-bloco { padding: 20px 18px; }
+  .ext-tabela-wrap { padding: 10px 12px; }
+  .ext-tab select { max-width: 120px; }
+}
